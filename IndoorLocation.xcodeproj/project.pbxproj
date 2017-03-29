@@ -193,6 +193,7 @@
 				TargetAttributes = {
 					95A1F6191E8BB5C700D2CDD2 = {
 						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = 4HG5879524;
 						ProvisioningStyle = Automatic;
 					};
 					95A1F62D1E8BB5C800D2CDD2 = {
@@ -412,6 +413,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 4HG5879524;
 				INFOPLIST_FILE = IndoorLocation/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Hirschgaenger.IndoorLocation;
@@ -424,6 +426,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = 4HG5879524;
 				INFOPLIST_FILE = IndoorLocation/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Hirschgaenger.IndoorLocation;
