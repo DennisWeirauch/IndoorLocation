@@ -12,7 +12,6 @@ import GameplayKit
 
 class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentationControllerDelegate {
     
-    
     //MARK: IBOutlets and private variables
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var filterSettingsButton: UIButton!
@@ -195,7 +194,6 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
         
         popoverVC.point = CGPoint(x: (view.annotation?.coordinate.latitude)!, y: (view.annotation?.coordinate.longitude)!)
 
-        
         popoverVC.modalPresentationStyle = .popover
         let frame = self.view.frame
 
@@ -207,7 +205,6 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
         popoverVC.popoverPresentationController?.sourceRect = CGRect(x: frame.width / 2, y: frame.height, width: 1, height: 1)
         
         self.present(popoverVC, animated: true, completion: nil)
-
     }
     
     //MARK: UIPopoverPresentationConrollerDelegate functions

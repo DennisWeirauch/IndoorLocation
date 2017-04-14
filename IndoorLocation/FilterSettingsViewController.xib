@@ -16,6 +16,7 @@
                 <outlet property="accelerationUncertaintySlider" destination="wC8-9W-JuR" id="pgP-EF-PmD"/>
                 <outlet property="calibrationModeSegmentedControl" destination="n61-5S-YF6" id="tbN-rN-vZe"/>
                 <outlet property="dataSinkSegmentedControl" destination="agU-pI-hhm" id="oEq-lG-gP1"/>
+                <outlet property="devicePickerView" destination="cDh-sR-1Ql" id="C72-k6-5Bk"/>
                 <outlet property="distanceUncertaintyLabel" destination="L1m-rW-a3h" id="8ne-Cg-Ljs"/>
                 <outlet property="distanceUncertaintySlider" destination="NAV-RB-EUw" id="dF9-mi-emQ"/>
                 <outlet property="filterTypeSegmentedControl" destination="GCj-fZ-nHb" id="7VA-bF-FDM"/>
@@ -125,20 +126,34 @@
                     <nil key="highlightedColor"/>
                 </label>
                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wFZ-px-djR">
-                    <rect key="frame" x="83" y="535" width="34" height="30"/>
+                    <rect key="frame" x="83" y="565" width="34" height="30"/>
                     <state key="normal" title="Start"/>
                     <connections>
                         <action selector="onStartButtonTapped:" destination="-1" eventType="touchUpInside" id="s6s-X1-9WT"/>
                     </connections>
                 </button>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Device:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8PF-Rs-fPJ">
+                    <rect key="frame" x="8" y="470" width="184" height="18"/>
+                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                    <nil key="textColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cDh-sR-1Ql">
+                    <rect key="frame" x="8" y="500" width="184" height="50"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="50" id="tRG-3p-XvI"/>
+                    </constraints>
+                </pickerView>
             </subviews>
             <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             <constraints>
+                <constraint firstItem="cDh-sR-1Ql" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="03Z-PQ-vzn"/>
                 <constraint firstItem="I21-Xp-0R4" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="06V-Nf-UTd"/>
                 <constraint firstAttribute="trailing" secondItem="cul-K8-Ql5" secondAttribute="trailing" constant="8" id="0Yf-no-Xpy"/>
                 <constraint firstAttribute="trailing" secondItem="NAV-RB-EUw" secondAttribute="trailing" constant="8" id="1a4-4x-jCV"/>
                 <constraint firstAttribute="trailing" secondItem="xni-ds-owL" secondAttribute="trailing" constant="8" id="1zu-ag-yfs"/>
                 <constraint firstAttribute="trailing" secondItem="wC8-9W-JuR" secondAttribute="trailing" constant="8" id="2Aw-rA-Azi"/>
+                <constraint firstItem="8PF-Rs-fPJ" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="bottom" multiplier="470/640" id="4Xd-d1-wGn"/>
                 <constraint firstItem="wC8-9W-JuR" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="5hV-5K-RuX"/>
                 <constraint firstItem="Rjv-VK-5fK" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="bottom" multiplier="190/640" id="6BI-uA-9oj"/>
                 <constraint firstItem="RA3-dt-ukf" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="bottom" multiplier="20/640" id="6FP-xf-snC"/>
@@ -149,10 +164,14 @@
                 <constraint firstAttribute="trailing" secondItem="RA3-dt-ukf" secondAttribute="trailing" constant="8" id="C7T-SB-JUt"/>
                 <constraint firstAttribute="trailing" secondItem="GCj-fZ-nHb" secondAttribute="trailing" constant="8" id="GOH-1e-4BX"/>
                 <constraint firstItem="cul-K8-Ql5" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="KgC-f0-PeZ"/>
+                <constraint firstAttribute="trailing" secondItem="8PF-Rs-fPJ" secondAttribute="trailing" constant="8" id="L2X-gr-Zur"/>
                 <constraint firstItem="wFZ-px-djR" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="UDi-Pc-daq"/>
+                <constraint firstItem="cDh-sR-1Ql" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="bottom" multiplier="500/640" id="VdP-L5-G0C"/>
                 <constraint firstItem="8HU-7K-G15" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="WMC-At-mW8"/>
                 <constraint firstItem="GCj-fZ-nHb" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="WwA-SV-WzU"/>
                 <constraint firstAttribute="trailing" secondItem="L1m-rW-a3h" secondAttribute="trailing" constant="8" id="afX-2r-mXf"/>
+                <constraint firstItem="8PF-Rs-fPJ" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="ai2-KW-yf0"/>
+                <constraint firstAttribute="trailing" secondItem="cDh-sR-1Ql" secondAttribute="trailing" constant="8" id="bB9-9D-Scc"/>
                 <constraint firstItem="NAV-RB-EUw" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="c6M-7C-LEB"/>
                 <constraint firstItem="n61-5S-YF6" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="dfO-KP-es7"/>
                 <constraint firstItem="RA3-dt-ukf" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="fO1-JP-PZn"/>
@@ -164,7 +183,7 @@
                 <constraint firstItem="NAV-RB-EUw" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="bottom" multiplier="145/640" id="lKL-HW-Bzy"/>
                 <constraint firstItem="agU-pI-hhm" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="bottom" multiplier="360/640" id="ltq-To-b0X"/>
                 <constraint firstAttribute="trailing" secondItem="I21-Xp-0R4" secondAttribute="trailing" constant="8" id="oMI-dj-Yps"/>
-                <constraint firstItem="wFZ-px-djR" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="bottom" multiplier="535/640" id="opa-J0-YcU"/>
+                <constraint firstItem="wFZ-px-djR" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="bottom" multiplier="565/640" id="opa-J0-YcU"/>
                 <constraint firstItem="I21-Xp-0R4" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="bottom" multiplier="220/640" id="qEC-Kd-b3P"/>
                 <constraint firstItem="agU-pI-hhm" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="qM5-S3-ps6"/>
                 <constraint firstItem="Rjv-VK-5fK" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="8" id="ryi-uM-8rH"/>
@@ -178,5 +197,13 @@
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
         </view>
+        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="MLx-WR-Gha">
+            <rect key="frame" x="0.0" y="0.0" width="42" height="21"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <fontDescription key="fontDescription" type="system" pointSize="17"/>
+            <nil key="textColor"/>
+            <nil key="highlightedColor"/>
+            <point key="canvasLocation" x="200" y="248"/>
+        </label>
     </objects>
 </document>

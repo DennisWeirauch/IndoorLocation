@@ -15,6 +15,9 @@ enum FilterType: Int {
 }
 
 class Settings: NSObject {
+    
+    static let sharedInstance = Settings()
+
     var accelerationUncertainty = 25
     
     var distanceUncertainty = 50
@@ -27,17 +30,7 @@ class Settings: NSObject {
     
     var filterType = FilterType.none
     
-    static let sharedInstance = Settings()
-    
-//    func getSharedInstance() -> Settings {
-//        if (self.settings == nil) {
-//            self.settings = Settings()
-//            return settings!
-//        } else {
-//            return self.settings!
-//        }
-//    }
-    override init() {
+    private override init() {
         super.init()
     }
 }

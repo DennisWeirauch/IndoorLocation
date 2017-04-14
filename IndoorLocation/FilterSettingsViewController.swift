@@ -8,7 +8,7 @@
 
 import UIKit
 
-class FilterSettingsViewController: UIViewController {
+class FilterSettingsViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
 
     //MARK: IBOutlets and private variables
     @IBOutlet weak var accelerationUncertaintyLabel: UILabel!
@@ -21,6 +21,8 @@ class FilterSettingsViewController: UIViewController {
     @IBOutlet weak var calibrationModeSegmentedControl: UISegmentedControl!
     @IBOutlet weak var dataSinkSegmentedControl: UISegmentedControl!
     @IBOutlet weak var filterTypeSegmentedControl: UISegmentedControl!
+    
+    @IBOutlet weak var devicePickerView: UIPickerView!
     
     @IBOutlet weak var startButton: UIButton!
     
@@ -35,11 +37,34 @@ class FilterSettingsViewController: UIViewController {
         
         distanceUncertaintyLabel.text = "Distance Uncertainty: \(settings.distanceUncertainty)"
         distanceUncertaintySlider.value = Float(settings.distanceUncertainty)
+        
+        // Set up Picker View
+        devicePickerView.dataSource = self
+        devicePickerView.delegate = self
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+    }
+    
+    //MARK: UIPickerViewDataSource
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 1
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        return NetworkManager.sharedInstance.services.count
+    }
+    
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        return NetworkManager.sharedInstance.services[row].name
+    }
+    
+    //MARK: UIPickerViewDelegate
+    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+        let service = NetworkManager.sharedInstance.services[row]
+        NetworkManager.sharedInstance.selectedService = service
     }
     
     //MARK: IBActions

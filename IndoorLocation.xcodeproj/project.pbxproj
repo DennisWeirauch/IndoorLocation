@@ -31,6 +31,8 @@
 		95A1F63E1E8BB5C800D2CDD2 /* IndoorLocationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A1F63D1E8BB5C800D2CDD2 /* IndoorLocationUITests.swift */; };
 		95E3DCBB1E9D2F0E006D6C08 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E3DCBA1E9D2F0E006D6C08 /* Settings.swift */; };
 		95E3DCBF1E9D3E9E006D6C08 /* settings.png in Resources */ = {isa = PBXBuildFile; fileRef = 95E3DCBE1E9D3E9E006D6C08 /* settings.png */; };
+		95E3DCC11E9E3672006D6C08 /* PozyxDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E3DCC01E9E3672006D6C08 /* PozyxDriver.swift */; };
+		95E3DCC31EA0E014006D6C08 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E3DCC21EA0E014006D6C08 /* NetworkManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,6 +83,8 @@
 		95A1F63F1E8BB5C800D2CDD2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		95E3DCBA1E9D2F0E006D6C08 /* Settings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		95E3DCBE1E9D3E9E006D6C08 /* settings.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settings.png; sourceTree = "<group>"; };
+		95E3DCC01E9E3672006D6C08 /* PozyxDriver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PozyxDriver.swift; path = ../PozyxDriver.swift; sourceTree = "<group>"; };
+		95E3DCC21EA0E014006D6C08 /* NetworkManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -156,20 +160,17 @@
 		95A1F61C1E8BB5C700D2CDD2 /* IndoorLocation */ = {
 			isa = PBXGroup;
 			children = (
+				95E3DCC21EA0E014006D6C08 /* NetworkManager.swift */,
 				959C84D61E97BCAA00EB4AA4 /* Images */,
+				95E3DCC41EA100D3006D6C08 /* Maps */,
 				959C84D71E97BCC700EB4AA4 /* Views */,
 				95A1F61D1E8BB5C700D2CDD2 /* AppDelegate.swift */,
 				95A1F6241E8BB5C700D2CDD2 /* Assets.xcassets */,
-				950769611E8D3DFB00233FF8 /* CoordinateConverter.swift */,
-				9507695F1E8D3C0C00233FF8 /* FloorplanOverlay.swift */,
-				9507696B1E8D400A00233FF8 /* FloorplanOverlayRenderer.swift */,
-				950769691E8D3FCA00233FF8 /* HideBackgroundOverlay.swift */,
 				95A1F6291E8BB5C700D2CDD2 /* Info.plist */,
-				950769651E8D3F5300233FF8 /* MKMapRectRotated.swift */,
 				956227C91E965F2700288A1A /* Particle.swift */,
+				95E3DCC01E9E3672006D6C08 /* PozyxDriver.swift */,
 				95E3DCBA1E9D2F0E006D6C08 /* Settings.swift */,
 				950769631E8D3F0400233FF8 /* Utilities.swift */,
-				950769671E8D3F8C00233FF8 /* VisibleMapRegionDelegate.swift */,
 			);
 			path = IndoorLocation;
 			sourceTree = "<group>";
@@ -190,6 +191,19 @@
 				95A1F63F1E8BB5C800D2CDD2 /* Info.plist */,
 			);
 			path = IndoorLocationUITests;
+			sourceTree = "<group>";
+		};
+		95E3DCC41EA100D3006D6C08 /* Maps */ = {
+			isa = PBXGroup;
+			children = (
+				950769611E8D3DFB00233FF8 /* CoordinateConverter.swift */,
+				9507695F1E8D3C0C00233FF8 /* FloorplanOverlay.swift */,
+				9507696B1E8D400A00233FF8 /* FloorplanOverlayRenderer.swift */,
+				950769691E8D3FCA00233FF8 /* HideBackgroundOverlay.swift */,
+				950769651E8D3F5300233FF8 /* MKMapRectRotated.swift */,
+				950769671E8D3F8C00233FF8 /* VisibleMapRegionDelegate.swift */,
+			);
+			name = Maps;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -343,7 +357,9 @@
 				950769601E8D3C0C00233FF8 /* FloorplanOverlay.swift in Sources */,
 				959C84D41E97BB4700EB4AA4 /* FilterSettingsViewController.swift in Sources */,
 				950769641E8D3F0400233FF8 /* Utilities.swift in Sources */,
+				95E3DCC11E9E3672006D6C08 /* PozyxDriver.swift in Sources */,
 				9507696C1E8D400A00233FF8 /* FloorplanOverlayRenderer.swift in Sources */,
+				95E3DCC31EA0E014006D6C08 /* NetworkManager.swift in Sources */,
 				95A1F61E1E8BB5C700D2CDD2 /* AppDelegate.swift in Sources */,
 				950769681E8D3F8C00233FF8 /* VisibleMapRegionDelegate.swift in Sources */,
 			);
