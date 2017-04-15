@@ -17,9 +17,9 @@
 		950769701E8D419B00233FF8 /* room_10_blueprint.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9507696F1E8D419B00233FF8 /* room_10_blueprint.pdf */; };
 		952BDE061E92A114003DD94C /* AnchorSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952BDE041E92A114003DD94C /* AnchorSettingsViewController.swift */; };
 		952BDE071E92A114003DD94C /* AnchorSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 952BDE051E92A114003DD94C /* AnchorSettingsViewController.xib */; };
-		956227CA1E965F2700288A1A /* Particle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956227C91E965F2700288A1A /* Particle.swift */; };
+		956227CA1E965F2700288A1A /* ParticleFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956227C91E965F2700288A1A /* ParticleFilter.swift */; };
 		956227CC1E96A95600288A1A /* particle.png in Resources */ = {isa = PBXBuildFile; fileRef = 956227CB1E96A95600288A1A /* particle.png */; };
-		956227CE1E96AD9000288A1A /* particle_mean.png in Resources */ = {isa = PBXBuildFile; fileRef = 956227CD1E96AD9000288A1A /* particle_mean.png */; };
+		956227CE1E96AD9000288A1A /* position.png in Resources */ = {isa = PBXBuildFile; fileRef = 956227CD1E96AD9000288A1A /* position.png */; };
 		956227D21E96BA7C00288A1A /* anchor.png in Resources */ = {isa = PBXBuildFile; fileRef = 956227D11E96BA7C00288A1A /* anchor.png */; };
 		959C84D41E97BB4700EB4AA4 /* FilterSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959C84D21E97BB4700EB4AA4 /* FilterSettingsViewController.swift */; };
 		959C84D51E97BB4700EB4AA4 /* FilterSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 959C84D31E97BB4700EB4AA4 /* FilterSettingsViewController.xib */; };
@@ -29,10 +29,12 @@
 		95A1F6251E8BB5C700D2CDD2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 95A1F6241E8BB5C700D2CDD2 /* Assets.xcassets */; };
 		95A1F6331E8BB5C800D2CDD2 /* IndoorLocationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A1F6321E8BB5C800D2CDD2 /* IndoorLocationTests.swift */; };
 		95A1F63E1E8BB5C800D2CDD2 /* IndoorLocationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A1F63D1E8BB5C800D2CDD2 /* IndoorLocationUITests.swift */; };
-		95E3DCBB1E9D2F0E006D6C08 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E3DCBA1E9D2F0E006D6C08 /* Settings.swift */; };
+		95E3DCBB1E9D2F0E006D6C08 /* FilterSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E3DCBA1E9D2F0E006D6C08 /* FilterSettings.swift */; };
 		95E3DCBF1E9D3E9E006D6C08 /* settings.png in Resources */ = {isa = PBXBuildFile; fileRef = 95E3DCBE1E9D3E9E006D6C08 /* settings.png */; };
 		95E3DCC11E9E3672006D6C08 /* PozyxDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E3DCC01E9E3672006D6C08 /* PozyxDriver.swift */; };
 		95E3DCC31EA0E014006D6C08 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E3DCC21EA0E014006D6C08 /* NetworkManager.swift */; };
+		95E3DCC81EA103A5006D6C08 /* IndoorLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E3DCC71EA103A5006D6C08 /* IndoorLocationManager.swift */; };
+		95E3DCCA1EA10817006D6C08 /* BayesianFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E3DCC91EA10817006D6C08 /* BayesianFilter.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,9 +65,9 @@
 		9507696F1E8D419B00233FF8 /* room_10_blueprint.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = room_10_blueprint.pdf; sourceTree = "<group>"; };
 		952BDE041E92A114003DD94C /* AnchorSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AnchorSettingsViewController.swift; path = ../AnchorSettingsViewController.swift; sourceTree = "<group>"; };
 		952BDE051E92A114003DD94C /* AnchorSettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = AnchorSettingsViewController.xib; path = ../AnchorSettingsViewController.xib; sourceTree = "<group>"; };
-		956227C91E965F2700288A1A /* Particle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Particle.swift; sourceTree = "<group>"; };
+		956227C91E965F2700288A1A /* ParticleFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParticleFilter.swift; sourceTree = "<group>"; };
 		956227CB1E96A95600288A1A /* particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle.png; sourceTree = "<group>"; };
-		956227CD1E96AD9000288A1A /* particle_mean.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle_mean.png; sourceTree = "<group>"; };
+		956227CD1E96AD9000288A1A /* position.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = position.png; sourceTree = "<group>"; };
 		956227D11E96BA7C00288A1A /* anchor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = anchor.png; sourceTree = "<group>"; };
 		959C84D21E97BB4700EB4AA4 /* FilterSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterSettingsViewController.swift; sourceTree = "<group>"; };
 		959C84D31E97BB4700EB4AA4 /* FilterSettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FilterSettingsViewController.xib; sourceTree = "<group>"; };
@@ -81,10 +83,12 @@
 		95A1F6391E8BB5C800D2CDD2 /* IndoorLocationUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IndoorLocationUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		95A1F63D1E8BB5C800D2CDD2 /* IndoorLocationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndoorLocationUITests.swift; sourceTree = "<group>"; };
 		95A1F63F1E8BB5C800D2CDD2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		95E3DCBA1E9D2F0E006D6C08 /* Settings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		95E3DCBA1E9D2F0E006D6C08 /* FilterSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterSettings.swift; sourceTree = "<group>"; };
 		95E3DCBE1E9D3E9E006D6C08 /* settings.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settings.png; sourceTree = "<group>"; };
 		95E3DCC01E9E3672006D6C08 /* PozyxDriver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PozyxDriver.swift; path = ../PozyxDriver.swift; sourceTree = "<group>"; };
 		95E3DCC21EA0E014006D6C08 /* NetworkManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
+		95E3DCC71EA103A5006D6C08 /* IndoorLocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IndoorLocationManager.swift; sourceTree = "<group>"; };
+		95E3DCC91EA10817006D6C08 /* BayesianFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BayesianFilter.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,8 +120,8 @@
 			isa = PBXGroup;
 			children = (
 				956227D11E96BA7C00288A1A /* anchor.png */,
-				956227CD1E96AD9000288A1A /* particle_mean.png */,
 				956227CB1E96A95600288A1A /* particle.png */,
+				956227CD1E96AD9000288A1A /* position.png */,
 				95E3DCBE1E9D3E9E006D6C08 /* settings.png */,
 				9507696F1E8D419B00233FF8 /* room_10_blueprint.pdf */,
 			);
@@ -160,16 +164,14 @@
 		95A1F61C1E8BB5C700D2CDD2 /* IndoorLocation */ = {
 			isa = PBXGroup;
 			children = (
-				95E3DCC21EA0E014006D6C08 /* NetworkManager.swift */,
+				95E3DCCB1EA22244006D6C08 /* IndoorLocation */,
 				959C84D61E97BCAA00EB4AA4 /* Images */,
 				95E3DCC41EA100D3006D6C08 /* Maps */,
+				95E3DCC61EA10315006D6C08 /* Network */,
 				959C84D71E97BCC700EB4AA4 /* Views */,
 				95A1F61D1E8BB5C700D2CDD2 /* AppDelegate.swift */,
 				95A1F6241E8BB5C700D2CDD2 /* Assets.xcassets */,
 				95A1F6291E8BB5C700D2CDD2 /* Info.plist */,
-				956227C91E965F2700288A1A /* Particle.swift */,
-				95E3DCC01E9E3672006D6C08 /* PozyxDriver.swift */,
-				95E3DCBA1E9D2F0E006D6C08 /* Settings.swift */,
 				950769631E8D3F0400233FF8 /* Utilities.swift */,
 			);
 			path = IndoorLocation;
@@ -204,6 +206,26 @@
 				950769671E8D3F8C00233FF8 /* VisibleMapRegionDelegate.swift */,
 			);
 			name = Maps;
+			sourceTree = "<group>";
+		};
+		95E3DCC61EA10315006D6C08 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				95E3DCC21EA0E014006D6C08 /* NetworkManager.swift */,
+				95E3DCC01E9E3672006D6C08 /* PozyxDriver.swift */,
+			);
+			name = Network;
+			sourceTree = "<group>";
+		};
+		95E3DCCB1EA22244006D6C08 /* IndoorLocation */ = {
+			isa = PBXGroup;
+			children = (
+				95E3DCC91EA10817006D6C08 /* BayesianFilter.swift */,
+				95E3DCBA1E9D2F0E006D6C08 /* FilterSettings.swift */,
+				95E3DCC71EA103A5006D6C08 /* IndoorLocationManager.swift */,
+				956227C91E965F2700288A1A /* ParticleFilter.swift */,
+			);
+			name = IndoorLocation;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -314,7 +336,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				956227CE1E96AD9000288A1A /* particle_mean.png in Resources */,
+				956227CE1E96AD9000288A1A /* position.png in Resources */,
 				956227D21E96BA7C00288A1A /* anchor.png in Resources */,
 				956227CC1E96A95600288A1A /* particle.png in Resources */,
 				95E3DCBF1E9D3E9E006D6C08 /* settings.png in Resources */,
@@ -349,11 +371,12 @@
 			files = (
 				950769621E8D3DFB00233FF8 /* CoordinateConverter.swift in Sources */,
 				95A1F6201E8BB5C700D2CDD2 /* ViewController.swift in Sources */,
-				95E3DCBB1E9D2F0E006D6C08 /* Settings.swift in Sources */,
+				95E3DCBB1E9D2F0E006D6C08 /* FilterSettings.swift in Sources */,
+				95E3DCC81EA103A5006D6C08 /* IndoorLocationManager.swift in Sources */,
 				952BDE061E92A114003DD94C /* AnchorSettingsViewController.swift in Sources */,
 				9507696A1E8D3FCA00233FF8 /* HideBackgroundOverlay.swift in Sources */,
 				950769661E8D3F5300233FF8 /* MKMapRectRotated.swift in Sources */,
-				956227CA1E965F2700288A1A /* Particle.swift in Sources */,
+				956227CA1E965F2700288A1A /* ParticleFilter.swift in Sources */,
 				950769601E8D3C0C00233FF8 /* FloorplanOverlay.swift in Sources */,
 				959C84D41E97BB4700EB4AA4 /* FilterSettingsViewController.swift in Sources */,
 				950769641E8D3F0400233FF8 /* Utilities.swift in Sources */,
@@ -362,6 +385,7 @@
 				95E3DCC31EA0E014006D6C08 /* NetworkManager.swift in Sources */,
 				95A1F61E1E8BB5C700D2CDD2 /* AppDelegate.swift in Sources */,
 				950769681E8D3F8C00233FF8 /* VisibleMapRegionDelegate.swift in Sources */,
+				95E3DCCA1EA10817006D6C08 /* BayesianFilter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

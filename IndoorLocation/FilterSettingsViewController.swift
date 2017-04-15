@@ -26,18 +26,21 @@ class FilterSettingsViewController: UIViewController, UIPickerViewDataSource, UI
     
     @IBOutlet weak var startButton: UIButton!
     
-    let settings = Settings.sharedInstance
+    let filterSettings = IndoorLocationManager.sharedInstance.filterSettings
     
     //MARK: ViewController lifecyle
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        accelerationUncertaintyLabel.text = "Acceleration Uncertainty: \(settings.accelerationUncertainty)"
-        accelerationUncertaintySlider.value = Float(settings.accelerationUncertainty)
+        if let accelerationUncertainty = filterSettings.accelerationUncertainty {
+            accelerationUncertaintyLabel.text = "Acceleration Uncertainty: \(accelerationUncertainty)"
+            accelerationUncertaintySlider.value = Float(accelerationUncertainty)
+        }
         
-        distanceUncertaintyLabel.text = "Distance Uncertainty: \(settings.distanceUncertainty)"
-        distanceUncertaintySlider.value = Float(settings.distanceUncertainty)
-        
+        if let distanceUncertainty = filterSettings.distanceUncertainty {
+            distanceUncertaintyLabel.text = "Distance Uncertainty: \(distanceUncertainty)"
+            distanceUncertaintySlider.value = Float(distanceUncertainty)
+        }
         // Set up Picker View
         devicePickerView.dataSource = self
         devicePickerView.delegate = self
@@ -71,12 +74,12 @@ class FilterSettingsViewController: UIViewController, UIPickerViewDataSource, UI
     @IBAction func onSliderValueChanged(_ sender: UISlider) {
         switch sender.tag {
         case 1:
-            settings.accelerationUncertainty = Int(accelerationUncertaintySlider.value)
-            accelerationUncertaintyLabel.text = "Acceleration Uncertainty: \(settings.accelerationUncertainty)"
+            filterSettings.accelerationUncertainty = Double(accelerationUncertaintySlider.value)
+            accelerationUncertaintyLabel.text = "Acceleration Uncertainty: \(filterSettings.accelerationUncertainty!)"
         
         case 2:
-            settings.distanceUncertainty = Int(distanceUncertaintySlider.value)
-            distanceUncertaintyLabel.text = "Distance Uncertainty: \(settings.distanceUncertainty)"
+            filterSettings.distanceUncertainty = Double(distanceUncertaintySlider.value)
+            distanceUncertaintyLabel.text = "Distance Uncertainty: \(filterSettings.distanceUncertainty!)"
             
         default:
             break
@@ -86,19 +89,19 @@ class FilterSettingsViewController: UIViewController, UIPickerViewDataSource, UI
     @IBAction func onSegmentedControlValueChanged(_ sender: UISegmentedControl) {
         switch sender.tag {
         case 1:
-            settings.positioningModeIsRelative = sender.selectedSegmentIndex == 0
+            filterSettings.positioningModeIsRelative = sender.selectedSegmentIndex == 0
         case 2:
-            settings.calibrationModeIsAutomatic = sender.selectedSegmentIndex == 0
+            filterSettings.calibrationModeIsAutomatic = sender.selectedSegmentIndex == 0
         case 3:
-            settings.dataSinkIsLocal = sender.selectedSegmentIndex == 0
+            filterSettings.dataSinkIsLocal = sender.selectedSegmentIndex == 0
         case 4:
             switch sender.selectedSegmentIndex {
             case 0:
-                settings.filterType = .none
+                filterSettings.filterType = .none
             case 1:
-                settings.filterType = .kalman
+                filterSettings.filterType = .kalman
             case 2:
-                settings.filterType = .particle
+                filterSettings.filterType = .particle
             default:
                 break
             }

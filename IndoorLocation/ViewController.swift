@@ -8,7 +8,6 @@
 
 import Foundation
 import MapKit
-import GameplayKit
 
 class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentationControllerDelegate {
     
@@ -23,16 +22,6 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
     var floorplan: FloorplanOverlay!
     
     var coordinateConverter: CoordinateConverter!
-    
-    // Anchors and Tags
-    var anchor1: CGPoint!
-    var anchor2: CGPoint!
-    var anchor3: CGPoint!
-
-    var mean: CGPoint!
-    
-    let numberParticles = 100
-    var particles = [Particle]()
 
     //MARK: ViewController lifecycle
     override func viewDidLoad() {
@@ -53,22 +42,6 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
         let anchorPair = GeoAnchorPair(fromAnchor: mapAnchor1, toAnchor: mapAnchor2)
 
         coordinateConverter = CoordinateConverter(anchors: anchorPair)
-
-        anchor1 = CGPoint(x: 290, y: 300)
-        anchor2 = CGPoint(x: 550, y: 300)
-        anchor3 = CGPoint(x: 550, y: 30)
-        
-        particles = []
-        let randomGenerator = GKGaussianDistribution(randomSource: GKRandomSource(), mean: 0, deviation: 15)
-        for _ in 0..<numberParticles {
-            // Roll the dice...
-            let noisyXCoordinate = 500 + randomGenerator.nextInt()
-            let noisyYCoordinate = 80 + randomGenerator.nextInt()
-            let particle = Particle(x: Double(noisyXCoordinate), y: Double(noisyYCoordinate), weight: 1.0)
-            particles.append(particle)
-        }
-        
-        mean = calculateMeanOfParticles(particles: particles)
         
         // === Initialize our assets
         
@@ -162,8 +135,8 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
                 annotationView.rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
                 annotationView.isDraggable = true
                 
-            case "Mean":
-                image = UIImage(named: "particle_mean.png")
+            case "Position":
+                image = UIImage(named: "position.png")
                 resizeRect = CGRect(x: 0, y: 0, width: 30, height: 30)
                 annotationView.canShowCallout = false
                 
@@ -231,47 +204,46 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
     
     //MARK: Private API
     func createAnnotationsForMapView(_ mapView: MKMapView, aboutFloorplan floorplan: FloorplanOverlay) -> [MKPointAnnotation] {
-        // Drop pins at the Anchor's positions.
-        let anchor1Annotation = MKPointAnnotation()
-        anchor1Annotation.title = "Anchor 1"
-        anchor1Annotation.subtitle = "Anchor"
-        anchor1Annotation.coordinate = coordinateConverter.coordinateFromPDFPoint(self.anchor1)
         
-        let anchor2Annotation = MKPointAnnotation()
-        anchor2Annotation.title = "Anchor 2"
-        anchor2Annotation.subtitle = "Anchor"
-        anchor2Annotation.coordinate = coordinateConverter.coordinateFromPDFPoint(self.anchor2)
-        
-        let anchor3Annotation = MKPointAnnotation()
-        anchor3Annotation.title = "Anchor 3"
-        anchor3Annotation.subtitle = "Anchor"
-        anchor3Annotation.coordinate = coordinateConverter.coordinateFromPDFPoint(self.anchor3)
+        var annotations = [MKPointAnnotation]()
 
-        let meanAnnotation = MKPointAnnotation()
-        meanAnnotation.title = "Mean"
-        meanAnnotation.subtitle = "Mean"
-        meanAnnotation.coordinate = coordinateConverter.coordinateFromPDFPoint(self.mean)
+        if let anchors = IndoorLocationManager.sharedInstance.anchors {
+            
+            for (index, anchor) in anchors.enumerated() {
+                let anchorAnnotation = MKPointAnnotation()
+                anchorAnnotation.title = "Anchor \(index)"
+                anchorAnnotation.subtitle = "Anchor"
+                anchorAnnotation.coordinate = coordinateConverter.coordinateFromPDFPoint(anchor)
+                annotations.append(anchorAnnotation)
+            }
+        }
         
-        var particleAnnotations = [MKPointAnnotation]()
-        for i in 0..<numberParticles {
-            let particleAnnotation = MKPointAnnotation()
-            particleAnnotation.title = "Particle \(i)"
-            particleAnnotation.subtitle = "Particle"
-            particleAnnotation.coordinate = coordinateConverter.coordinateFromPDFPoint(CGPoint(x: CGFloat(particles[i].x), y: CGFloat(particles[i].y)))
-            particleAnnotations.append(particleAnnotation)
+        if let position = IndoorLocationManager.sharedInstance.position {
+            
+            let positionAnnotation = MKPointAnnotation()
+            positionAnnotation.title = "Position"
+            positionAnnotation.subtitle = "Position"
+            positionAnnotation.coordinate = coordinateConverter.coordinateFromPDFPoint(position)
+            annotations.append(positionAnnotation)
         }
-        return [anchor1Annotation, anchor2Annotation, anchor3Annotation, meanAnnotation] + particleAnnotations
-    }
-    
-    func calculateMeanOfParticles(particles: [Particle]) -> CGPoint {
-        var totalX = 0.0
-        var totalY = 0.0
-        for i in 0..<particles.count {
-            totalX += particles[i].x
-            totalY += particles[i].y
+        
+        switch IndoorLocationManager.sharedInstance.filterSettings.filterType {
+            
+        case .none, .kalman:
+            break
+            
+        case .particle:
+            let filter = IndoorLocationManager.sharedInstance.filter as! ParticleFilter
+            let particles = filter.particles
+            for i in 0..<particles.count {
+                let particleAnnotation = MKPointAnnotation()
+                particleAnnotation.title = "Particle \(i)"
+                particleAnnotation.subtitle = "Particle"
+                particleAnnotation.coordinate = coordinateConverter.coordinateFromPDFPoint(CGPoint(x: CGFloat(particles[i].x), y: CGFloat(particles[i].y)))
+                annotations.append(particleAnnotation)
+            }
         }
-        let meanX = totalX / Double(particles.count)
-        let meanY = totalY / Double(particles.count)
-        return CGPoint(x: meanX, y: meanY)
+        
+        return annotations
     }
 }
