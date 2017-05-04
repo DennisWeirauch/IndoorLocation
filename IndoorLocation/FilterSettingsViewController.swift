@@ -109,10 +109,4 @@ class FilterSettingsViewController: UIViewController, UIPickerViewDataSource, UI
             break
         }
     }
-    
-    @IBAction func onStartButtonTapped(_ sender: Any) {
-        self.dismiss(animated: true, completion: {
-            //Begin tracking
-        })
-    }
 }

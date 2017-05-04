@@ -36,7 +36,7 @@ class IndoorLocationManager: NSObject {
         
         super.init()
         
-        calibrate()
+        calibrate() //TODO: Remove calibrate call from init()
         
         position = filter?.getPosition()
     }
@@ -48,5 +48,14 @@ class IndoorLocationManager: NSObject {
         let anchor3 = CGPoint(x: 550, y: 30)
         
         self.anchors = [anchor1, anchor2, anchor3]
+    }
+    
+    func beginPositioning() {
+        print("Begin positioning!")
+        NetworkManager.sharedInstance.setupStream()
+    }
+    
+    func stopPositioning() {
+        print("Stop positioning!")
     }
 }

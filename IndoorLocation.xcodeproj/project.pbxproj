@@ -35,6 +35,8 @@
 		95E3DCC31EA0E014006D6C08 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E3DCC21EA0E014006D6C08 /* NetworkManager.swift */; };
 		95E3DCC81EA103A5006D6C08 /* IndoorLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E3DCC71EA103A5006D6C08 /* IndoorLocationManager.swift */; };
 		95E3DCCA1EA10817006D6C08 /* BayesianFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E3DCC91EA10817006D6C08 /* BayesianFilter.swift */; };
+		95E3DCCD1EAE0235006D6C08 /* start.png in Resources */ = {isa = PBXBuildFile; fileRef = 95E3DCCC1EAE0235006D6C08 /* start.png */; };
+		95E3DCCF1EAE0375006D6C08 /* stop.png in Resources */ = {isa = PBXBuildFile; fileRef = 95E3DCCE1EAE0375006D6C08 /* stop.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -89,6 +91,8 @@
 		95E3DCC21EA0E014006D6C08 /* NetworkManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		95E3DCC71EA103A5006D6C08 /* IndoorLocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IndoorLocationManager.swift; sourceTree = "<group>"; };
 		95E3DCC91EA10817006D6C08 /* BayesianFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BayesianFilter.swift; sourceTree = "<group>"; };
+		95E3DCCC1EAE0235006D6C08 /* start.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = start.png; sourceTree = "<group>"; };
+		95E3DCCE1EAE0375006D6C08 /* stop.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = stop.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +127,8 @@
 				956227CB1E96A95600288A1A /* particle.png */,
 				956227CD1E96AD9000288A1A /* position.png */,
 				95E3DCBE1E9D3E9E006D6C08 /* settings.png */,
+				95E3DCCC1EAE0235006D6C08 /* start.png */,
+				95E3DCCE1EAE0375006D6C08 /* stop.png */,
 				9507696F1E8D419B00233FF8 /* room_10_blueprint.pdf */,
 			);
 			name = Images;
@@ -338,6 +344,8 @@
 			files = (
 				956227CE1E96AD9000288A1A /* position.png in Resources */,
 				956227D21E96BA7C00288A1A /* anchor.png in Resources */,
+				95E3DCCF1EAE0375006D6C08 /* stop.png in Resources */,
+				95E3DCCD1EAE0235006D6C08 /* start.png in Resources */,
 				956227CC1E96A95600288A1A /* particle.png in Resources */,
 				95E3DCBF1E9D3E9E006D6C08 /* settings.png in Resources */,
 				952BDE071E92A114003DD94C /* AnchorSettingsViewController.xib in Resources */,
@@ -529,11 +537,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = 4HG5879524;
 				INFOPLIST_FILE = IndoorLocation/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Hirschgaenger.IndoorLocation;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -542,11 +552,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = 4HG5879524;
 				INFOPLIST_FILE = IndoorLocation/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Hirschgaenger.IndoorLocation;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;

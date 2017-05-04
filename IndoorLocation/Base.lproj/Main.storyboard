@@ -39,13 +39,26 @@
                                     <action selector="onMenuButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="g7Q-yd-ZAp"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="right" contentVerticalAlignment="top" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hTu-lZ-zBf">
+                                <rect key="frame" x="16" y="20" width="40" height="40"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="40" id="dSa-hl-lfK"/>
+                                    <constraint firstAttribute="height" constant="40" id="tBH-Iy-KNU"/>
+                                </constraints>
+                                <state key="normal" title="Start"/>
+                                <connections>
+                                    <action selector="onStartButtonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="YIz-M0-z7K"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="hTu-lZ-zBf" firstAttribute="leading" secondItem="wPI-qk-Tef" secondAttribute="leadingMargin" id="8jD-xR-VXo"/>
                             <constraint firstAttribute="trailing" secondItem="bsp-1Z-Ngq" secondAttribute="trailing" id="D0n-Yy-3ij"/>
                             <constraint firstItem="G1N-rU-nE1" firstAttribute="top" secondItem="bsp-1Z-Ngq" secondAttribute="bottom" id="FUY-DS-2kp"/>
                             <constraint firstItem="bsp-1Z-Ngq" firstAttribute="top" secondItem="wPI-qk-Tef" secondAttribute="top" id="HiC-EV-DTJ"/>
                             <constraint firstItem="bsp-1Z-Ngq" firstAttribute="leading" secondItem="wPI-qk-Tef" secondAttribute="leading" id="Njv-q8-mXl"/>
+                            <constraint firstItem="hTu-lZ-zBf" firstAttribute="top" secondItem="fho-Dw-qGu" secondAttribute="bottom" id="PJM-BR-H9Y"/>
                             <constraint firstItem="1K6-lE-O74" firstAttribute="top" secondItem="fho-Dw-qGu" secondAttribute="bottom" id="ZiH-xR-vCq"/>
                             <constraint firstItem="1K6-lE-O74" firstAttribute="trailing" secondItem="wPI-qk-Tef" secondAttribute="trailingMargin" id="xqH-UH-xk8"/>
                         </constraints>
@@ -53,6 +66,7 @@
                     <connections>
                         <outlet property="filterSettingsButton" destination="1K6-lE-O74" id="45J-8B-Bww"/>
                         <outlet property="mapView" destination="bsp-1Z-Ngq" id="wSa-dr-JHB"/>
+                        <outlet property="startButton" destination="hTu-lZ-zBf" id="ptS-99-GOv"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

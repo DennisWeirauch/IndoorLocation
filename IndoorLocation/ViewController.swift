@@ -14,6 +14,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
     //MARK: IBOutlets and private variables
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var filterSettingsButton: UIButton!
+    @IBOutlet weak var startButton: UIButton!
     
     /// Helper class for managing the scroll & zoom of the MapView camera.
     var visibleMapRegionDelegate: VisibleMapRegionDelegate!
@@ -22,15 +23,37 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
     var floorplan: FloorplanOverlay!
     
     var coordinateConverter: CoordinateConverter!
+    
+    //MARK: State machine
+    fileprivate enum IndoorLocationState {
+        case idle
+        case ranging
+        case positioning
+    }
+    
+    fileprivate var state = IndoorLocationState.idle {
+        didSet {
+            switch state {
+            case .idle:
+                let startButtonImage = UIImage(named: "start.png")
+                startButton.setImage(startButtonImage, for: .normal)
+
+            case .positioning, .ranging:
+                let startButtonImage = UIImage(named: "stop.png")
+                startButton.setImage(startButtonImage, for: .normal)
+            }
+        }
+    }
 
     //MARK: ViewController lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let buttonImage = UIImage(named: "settings.png")
-        filterSettingsButton.imageRect(forContentRect: CGRect(x: 0, y: 0, width: 10, height: 10))
-        filterSettingsButton.setImage(buttonImage, for: .normal)
+        let settingsButtonImage = UIImage(named: "settings.png")
+        filterSettingsButton.setImage(settingsButtonImage, for: .normal)
 
+        state = .idle
+        
         /*
          We setup a pair of anchors that will define how the floorplan image
          maps to geographic co-ordinates.
@@ -200,6 +223,17 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
         popoverVC.popoverPresentationController?.sourceRect = CGRect(x: frame.width, y: frame.height / 2, width: 1, height: 1)
         
         self.present(popoverVC, animated: true, completion: nil)
+    }
+    
+    @IBAction func onStartButtonTapped(_ sender: Any) {
+        switch state {
+        case .idle:
+            state = .positioning
+            IndoorLocationManager.sharedInstance.beginPositioning()
+        default:
+            state = .idle
+            IndoorLocationManager.sharedInstance.stopPositioning()
+        }
     }
     
     //MARK: Private API
