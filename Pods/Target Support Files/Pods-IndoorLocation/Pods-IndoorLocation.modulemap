@@ -1,0 +1,6 @@
+framework module Pods_IndoorLocation {
+  umbrella header "Pods-IndoorLocation-umbrella.h"
+
+  export *
+  module * { export * }
+}
