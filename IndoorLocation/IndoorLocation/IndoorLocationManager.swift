@@ -36,23 +36,35 @@ class IndoorLocationManager: NSObject {
         
         super.init()
         
-        calibrate() //TODO: Remove calibrate call from init()
-        
         position = filter?.getPosition()
     }
     
-    func calibrate() {
-        //TODO: Calibrate either from Pozyx or manually
-        let anchor1 = CGPoint(x: 290, y: 300)
-        let anchor2 = CGPoint(x: 550, y: 300)
-        let anchor3 = CGPoint(x: 550, y: 30)
-        
-        self.anchors = [anchor1, anchor2, anchor3]
+    func calibrate(resultCallback: @escaping () -> Void) {
+        NetworkManager.sharedInstance.calibratePozyx() { data in
+            guard let data = data else {
+                print("No calibration data received")
+                return
+            }
+            let calibrationData = String(data: data, encoding: String.Encoding.utf8)
+            // Remove carriage return and split string at "&" characters
+            guard let splitData = calibrationData?.components(separatedBy: "\r")[0].components(separatedBy: "&") else {
+                print("Wrong format of calibration data!")
+                return
+            }
+            let anchor1 = CGPoint(x: Double((splitData[0].components(separatedBy: "=")[1]))!,
+                                  y: Double((splitData[1].components(separatedBy: "=")[1]))!)
+            let anchor2 = CGPoint(x: Double((splitData[2].components(separatedBy: "=")[1]))!,
+                                  y: Double((splitData[3].components(separatedBy: "=")[1]))!)
+            let anchor3 = CGPoint(x: Double((splitData[4].components(separatedBy: "=")[1]))!,
+                                  y: Double((splitData[5].components(separatedBy: "=")[1]))!)
+            self.anchors = [anchor1, anchor2, anchor3]
+            
+            resultCallback()
+        }
     }
     
     func beginPositioning() {
         print("Begin positioning!")
-        NetworkManager.sharedInstance.setupStream()
     }
     
     func stopPositioning() {

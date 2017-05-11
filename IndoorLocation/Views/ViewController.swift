@@ -9,7 +9,7 @@
 import Foundation
 import MapKit
 
-class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentationControllerDelegate {
+class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentationControllerDelegate, FilterSettingViewControllerDelegate {
     
     //MARK: IBOutlets and private variables
     @IBOutlet weak var mapView: MKMapView!
@@ -85,11 +85,10 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
         // Disable tileset.
         mapView.add(HideBackgroundOverlay.hideBackgroundOverlay(), level: .aboveRoads)
         
-        let annotations = createAnnotationsForMapView(mapView!, aboutFloorplan: floorplan)
-
         // Draw the floorplan!
         mapView.add(floorplan)
-        mapView.addAnnotations(annotations)
+        
+        createAnnotations()
     }
 
     override func didReceiveMemoryWarning() {
@@ -97,7 +96,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
         // Dispose of any resources that can be recreated.
     }
 
-    //MARK: MKMapViewDelegate functions
+    //MARK: MKMapViewDelegate
     /**
      Check for when the MKMapView is zoomed or scrolled in case we need to
      bounce back to the floorplan. If, instead, you're using e.g.
@@ -203,9 +202,26 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
         self.present(popoverVC, animated: true, completion: nil)
     }
     
-    //MARK: UIPopoverPresentationConrollerDelegate functions
+    //MARK: UIPopoverPresentationConrollerDelegate
     func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
         return UIModalPresentationStyle.none
+    }
+    
+    //MARK: FilterSettingsViewControllerDelegate
+    func updateAnnotationsForAnchors() {
+        var annotations = [MKPointAnnotation]()
+        
+        if let anchors = IndoorLocationManager.sharedInstance.anchors {
+            
+            for (index, anchor) in anchors.enumerated() {
+                let anchorAnnotation = MKPointAnnotation()
+                anchorAnnotation.title = "Anchor \(index)"
+                anchorAnnotation.subtitle = "Anchor"
+                anchorAnnotation.coordinate = coordinateConverter.coordinateFromPDFPoint(anchor)
+                annotations.append(anchorAnnotation)
+            }
+        }
+        mapView.addAnnotations(annotations)
     }
     
     //MARK: IBActions
@@ -222,6 +238,8 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
         popoverVC.popoverPresentationController?.sourceView = self.view
         popoverVC.popoverPresentationController?.sourceRect = CGRect(x: frame.width, y: frame.height / 2, width: 1, height: 1)
         
+        popoverVC.delegate = self
+        
         self.present(popoverVC, animated: true, completion: nil)
     }
     
@@ -237,21 +255,10 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
     }
     
     //MARK: Private API
-    func createAnnotationsForMapView(_ mapView: MKMapView, aboutFloorplan floorplan: FloorplanOverlay) -> [MKPointAnnotation] {
+    private func createAnnotations() {
         
         var annotations = [MKPointAnnotation]()
 
-        if let anchors = IndoorLocationManager.sharedInstance.anchors {
-            
-            for (index, anchor) in anchors.enumerated() {
-                let anchorAnnotation = MKPointAnnotation()
-                anchorAnnotation.title = "Anchor \(index)"
-                anchorAnnotation.subtitle = "Anchor"
-                anchorAnnotation.coordinate = coordinateConverter.coordinateFromPDFPoint(anchor)
-                annotations.append(anchorAnnotation)
-            }
-        }
-        
         if let position = IndoorLocationManager.sharedInstance.position {
             
             let positionAnnotation = MKPointAnnotation()
@@ -278,6 +285,6 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
             }
         }
         
-        return annotations
+        mapView.addAnnotations(annotations)
     }
 }

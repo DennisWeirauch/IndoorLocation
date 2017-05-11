@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import Embassy
 
-class NetworkManager: NSObject, NetServiceDelegate, NetServiceBrowserDelegate, StreamDelegate {
+class NetworkManager: NSObject, NetServiceDelegate, NetServiceBrowserDelegate {
     
     static let sharedInstance = NetworkManager()
     
@@ -18,53 +19,47 @@ class NetworkManager: NSObject, NetServiceDelegate, NetServiceBrowserDelegate, S
     var services = [NetService]()
     var selectedService: NetService?
     
-    var inputStream: InputStream?
-    var outputStream: OutputStream?
-    
-    var successfullySentData = false
-    
+    var eventLoop: SelectorEventLoop?
+
     private override init() {
         super.init()
         netService.delegate = self
         netServiceBrowser.delegate = self
-    }
-    
-    func resume() {
-        netService.publish()
-        netServiceBrowser.searchForServices(ofType: "_arduino._tcp.", inDomain: "local.")
-    }
-    
-    func pause() {
-        netService.stop()
-        netServiceBrowser.stop()
-    }
-    
-    func setupStream() {
         
-        successfullySentData = false
-
-        guard let service = selectedService else {
-            print("Failure in setting up stream: No Service selected!")
-            return
+        setupServer()
+    }
+    
+    //MARK: Private API
+    private func setupServer() {
+        eventLoop = try! SelectorEventLoop(selector: try! SelectSelector())
+        let server = DefaultHTTPServer(eventLoop: eventLoop!, interface: "::", port: 8080) {(
+            environ: [String: Any],
+            startResponse: ((String, [(String, String)]) -> Void),
+            sendBody: ((Data) -> Void)) in
+            // Start HTTP response
+            startResponse("200 OK", [])
+            // Send empty response
+            sendBody(Data())
+            // Ciao Rest Connector sends data in path, http body is not used
+            let data = environ["PATH_INFO"]! as! String
+            print(data)
+            
+            self.receivedData(data)
         }
         
-        if service.getInputStream(&inputStream, outputStream: &outputStream) {
-            guard let strongInputStream = inputStream, let strongOutputStream = outputStream else {
-                print("Failure in setting up stream: Could not get streams!")
-                return
-            }
-            strongInputStream.delegate = self
-            strongOutputStream.delegate = self
-            
-            strongInputStream.schedule(in: .current, forMode: .defaultRunLoopMode)
-            strongOutputStream.schedule(in: .current, forMode: .defaultRunLoopMode)
-            
-            strongInputStream.open()
-            strongOutputStream.open()
+        // Start HTTP server to listen on the port
+        try! server.start()
+        
+        print("Server running")
+        // Run server task in background thread
+        DispatchQueue.global(qos: .background).async {
+            // Run event loop
+            self.eventLoop?.runForever()
         }
- 
-//        selectedService?.delegate = self
-//        selectedService?.resolve(withTimeout: 10)
+    }
+    
+    private func receivedData(_ data: String) {
+        
     }
     
     //MARK: NetServiceBrowserDelegate
@@ -77,114 +72,33 @@ class NetworkManager: NSObject, NetServiceDelegate, NetServiceBrowserDelegate, S
             }
         }
     }
-    /*
-    //MARK: NetServiceDelegate
-    func netServiceDidResolveAddress(_ sender: NetService) {
-        print("Did resolve address for \(sender)")
-        let name = sender.name
-        let type = sender.type + sender.domain
-        let addresses = sender.addresses!.flatMap({getIFAddress($0)})
-        let port = sender.port
-        
-        var txtData = [[String]]()
-        if let txtRecord = sender.txtRecordData() {
-            for (key, value) in NetService.dictionary(fromTXTRecord: txtRecord) {
-                txtData.append([key, String(data: value, encoding: String.Encoding.utf8)!])
-            }
-        }
-        print("Name: \(name)")
-        print("Type: \(type)")
-        print("Addresses: \(addresses)")
-        print("Port: \(port)")
-        
-        print(txtData)
+    
+    //MARK: Public API
+    func resume() {
+        //TODO: Start server here
+        netService.publish()
+        netServiceBrowser.searchForServices(ofType: "_arduino._tcp.", inDomain: "local.")
     }
     
-    // Get the local ip addresses used by this node
-    func getIFAddress(_ data : Data) -> String? {
-        
-        //let hostname = [CChar](count: Int(INET6_ADDRSTRLEN), repeatedValue: 0)
-        let hostname = UnsafeMutablePointer<Int8>.allocate(capacity: Int(INET6_ADDRSTRLEN))
-        
-        var _ = getnameinfo(
-            (data as NSData).bytes.bindMemory(to: sockaddr.self, capacity: data.count), socklen_t(data.count),
-            hostname, socklen_t(INET6_ADDRSTRLEN),
-            nil, 0,
-            NI_NUMERICHOST)
-        
-        let string = String(cString: hostname)
-        
-        // link local addresses don't cound
-        if string.hasPrefix("fe80:") || string.hasPrefix("127.") {
-            return nil
-        }
-        
-        hostname.deinitialize()
-        return string
+    func pause() {
+        //TODO: Pause Server here
+        netService.stop()
+        netServiceBrowser.stop()
     }
-    */
     
-    //MARK: StreamDelegate
-    func stream(_ aStream: Stream, handle eventCode: Stream.Event) {
-        switch (eventCode){
-            
-        case Stream.Event.errorOccurred:
-            print("ErrorOccurred")
-            break
-            
-        case Stream.Event.endEncountered:
-            print("EndEncountered")
-            break
-
-        case Stream.Event.hasBytesAvailable:
-            print("HasBytesAvaible")
-            
-            var buffer = [UInt8](repeating: 0, count: 4096)
-            
-            if (aStream == inputStream) {
-                
-                guard let strongInputStream = inputStream else { return }
-                
-                while (strongInputStream.hasBytesAvailable){
-                    let len = strongInputStream.read(&buffer, maxLength: buffer.count)
-                    print(len)
-                    if (len > 0) {
-                        let output = NSString(bytes: &buffer, length: len, encoding: String.Encoding.utf8.rawValue)
-                        if (output != ""){
-                            print("Server response: %@", output!)
-                        }
-                    }
-                }
+    func calibratePozyx(resultCallback: @escaping (Data?) -> Void) {
+        let url = URL(string: "http://192.168.1.111:8080/arduino/calibrate")
+        let task = URLSession.shared.dataTask(with: url!) { data, response, error in
+            guard error == nil else {
+                print(error!)
+                return
             }
-
-        case Stream.Event.openCompleted:
-            print("OpenCompleted")
-            
-        case Stream.Event.hasSpaceAvailable:
-            print("HasSpaceAvailable")
-            
-            if (aStream == outputStream) {
-                guard let strongOutputStream = outputStream else { return }
-                
-                if (!successfullySentData) {
-                    let message = "Ich baller jetzt mal mega viele Daten rein!"
-                    let buffer = [UInt8](message.utf8)
-                    
-                    let len = strongOutputStream.write(buffer, maxLength: buffer.count)
-                    if (len > 0) {
-                        print("Successfully sent \(len) byte(s) to stream")
-                        successfullySentData = true
-
-                    } else {
-                        print("Error sending data!")
-                    }
-                }
+            guard let data = data else {
+                print("Data is empty")
+                return
             }
-            
-        default:
-            print("Default case")
-
-        break
+            resultCallback(data)
         }
+        task.resume()
     }
 }

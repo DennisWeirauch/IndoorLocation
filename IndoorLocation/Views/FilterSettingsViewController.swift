@@ -8,6 +8,10 @@
 
 import UIKit
 
+protocol FilterSettingViewControllerDelegate {
+    func updateAnnotationsForAnchors()
+}
+
 class FilterSettingsViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
 
     //MARK: IBOutlets and private variables
@@ -24,8 +28,8 @@ class FilterSettingsViewController: UIViewController, UIPickerViewDataSource, UI
     
     @IBOutlet weak var devicePickerView: UIPickerView!
     
-    @IBOutlet weak var startButton: UIButton!
-    
+    var delegate: FilterSettingViewControllerDelegate?
+
     let filterSettings = IndoorLocationManager.sharedInstance.filterSettings
     
     //MARK: ViewController lifecyle
@@ -107,6 +111,12 @@ class FilterSettingsViewController: UIViewController, UIPickerViewDataSource, UI
             }
         default:
             break
+        }
+    }
+    
+    @IBAction func onButtonTapped(_ sender: Any) {
+        IndoorLocationManager.sharedInstance.calibrate {
+            self.delegate?.updateAnnotationsForAnchors()
         }
     }
 }
