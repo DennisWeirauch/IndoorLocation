@@ -116,6 +116,7 @@ class FilterSettingsViewController: UIViewController, UIPickerViewDataSource, UI
     
     @IBAction func onButtonTapped(_ sender: Any) {
         IndoorLocationManager.sharedInstance.calibrate {
+            print("Successfully calibrated!")
             self.delegate?.updateAnnotationsForAnchors()
         }
     }

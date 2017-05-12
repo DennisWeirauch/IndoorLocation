@@ -40,7 +40,7 @@ class IndoorLocationManager: NSObject {
     }
     
     func calibrate(resultCallback: @escaping () -> Void) {
-        NetworkManager.sharedInstance.calibratePozyx() { data in
+        NetworkManager.sharedInstance.pozyxTask(task: .calibrate) { data in
             guard let data = data else {
                 print("No calibration data received")
                 return

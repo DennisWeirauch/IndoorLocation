@@ -222,6 +222,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
             }
         }
         mapView.addAnnotations(annotations)
+        //TODO: Refresh map view
     }
     
     //MARK: IBActions

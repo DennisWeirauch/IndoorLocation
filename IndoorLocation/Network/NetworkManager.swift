@@ -9,6 +9,13 @@
 import UIKit
 import Embassy
 
+enum TaskType : String {
+    case beginRanging = "r"
+    case stopRanging = "s"
+    case calibrate = "c"
+    case setAnchors = "a"
+}
+
 class NetworkManager: NSObject, NetServiceDelegate, NetServiceBrowserDelegate {
     
     static let sharedInstance = NetworkManager()
@@ -31,8 +38,8 @@ class NetworkManager: NSObject, NetServiceDelegate, NetServiceBrowserDelegate {
     
     //MARK: Private API
     private func setupServer() {
-        eventLoop = try! SelectorEventLoop(selector: try! SelectSelector())
-        let server = DefaultHTTPServer(eventLoop: eventLoop!, interface: "::", port: 8080) {(
+        let eventLoop = try! SelectorEventLoop(selector: try! KqueueSelector())
+        let server = DefaultHTTPServer(eventLoop: eventLoop, interface: "::", port: 8080) {(
             environ: [String: Any],
             startResponse: ((String, [(String, String)]) -> Void),
             sendBody: ((Data) -> Void)) in
@@ -47,14 +54,14 @@ class NetworkManager: NSObject, NetServiceDelegate, NetServiceBrowserDelegate {
             self.receivedData(data)
         }
         
-        // Start HTTP server to listen on the port
-        try! server.start()
-        
-        print("Server running")
         // Run server task in background thread
         DispatchQueue.global(qos: .background).async {
+            // Start HTTP server to listen on the port
+            try! server.start()
+            
+            print("Server running")
             // Run event loop
-            self.eventLoop?.runForever()
+            eventLoop.runForever()
         }
     }
     
@@ -86,15 +93,22 @@ class NetworkManager: NSObject, NetServiceDelegate, NetServiceBrowserDelegate {
         netServiceBrowser.stop()
     }
     
-    func calibratePozyx(resultCallback: @escaping (Data?) -> Void) {
-        let url = URL(string: "http://192.168.1.111:8080/arduino/calibrate")
+    func pozyxTask(task: TaskType, data: String = "", resultCallback: @escaping (Data?) -> Void) {
+        var urlString = "http://"
+        if let service = selectedService {
+            urlString.append(service.name + ".local")
+        } else {
+            urlString.append("192.168.1.111")
+        }
+        urlString.append(":8080/arduino/")
+        var txData = data
+        if task == .beginRanging {
+            txData = "192.168.1.60"
+        }
+        let url = URL(string: urlString + task.rawValue + "/" + txData)
         let task = URLSession.shared.dataTask(with: url!) { data, response, error in
             guard error == nil else {
                 print(error!)
-                return
-            }
-            guard let data = data else {
-                print("Data is empty")
                 return
             }
             resultCallback(data)
