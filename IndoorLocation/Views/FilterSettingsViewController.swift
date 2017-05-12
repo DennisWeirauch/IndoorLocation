@@ -30,7 +30,7 @@ class FilterSettingsViewController: UIViewController, UIPickerViewDataSource, UI
     
     var delegate: FilterSettingViewControllerDelegate?
 
-    let filterSettings = IndoorLocationManager.sharedInstance.filterSettings
+    let filterSettings = IndoorLocationManager.shared.filterSettings
     
     //MARK: ViewController lifecyle
     override func viewDidLoad() {
@@ -61,17 +61,17 @@ class FilterSettingsViewController: UIViewController, UIPickerViewDataSource, UI
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return NetworkManager.sharedInstance.services.count
+        return NetworkManager.shared.services.count
     }
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return NetworkManager.sharedInstance.services[row].name
+        return NetworkManager.shared.services[row].name
     }
     
     //MARK: UIPickerViewDelegate
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        let service = NetworkManager.sharedInstance.services[row]
-        NetworkManager.sharedInstance.selectedService = service
+        let service = NetworkManager.shared.services[row]
+        NetworkManager.shared.selectedService = service
     }
     
     //MARK: IBActions
@@ -115,7 +115,7 @@ class FilterSettingsViewController: UIViewController, UIPickerViewDataSource, UI
     }
     
     @IBAction func onButtonTapped(_ sender: Any) {
-        IndoorLocationManager.sharedInstance.calibrate {
+        IndoorLocationManager.shared.calibrate {
             print("Successfully calibrated!")
             self.delegate?.updateAnnotationsForAnchors()
         }

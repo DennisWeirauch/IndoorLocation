@@ -211,7 +211,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
     func updateAnnotationsForAnchors() {
         var annotations = [MKPointAnnotation]()
         
-        if let anchors = IndoorLocationManager.sharedInstance.anchors {
+        if let anchors = IndoorLocationManager.shared.anchors {
             
             for (index, anchor) in anchors.enumerated() {
                 let anchorAnnotation = MKPointAnnotation()
@@ -248,10 +248,10 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
         switch state {
         case .idle:
             state = .positioning
-            IndoorLocationManager.sharedInstance.beginPositioning()
+            IndoorLocationManager.shared.beginPositioning()
         default:
             state = .idle
-            IndoorLocationManager.sharedInstance.stopPositioning()
+            IndoorLocationManager.shared.stopPositioning()
         }
     }
     
@@ -260,7 +260,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
         
         var annotations = [MKPointAnnotation]()
 
-        if let position = IndoorLocationManager.sharedInstance.position {
+        if let position = IndoorLocationManager.shared.position {
             
             let positionAnnotation = MKPointAnnotation()
             positionAnnotation.title = "Position"
@@ -269,13 +269,13 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
             annotations.append(positionAnnotation)
         }
         
-        switch IndoorLocationManager.sharedInstance.filterSettings.filterType {
+        switch IndoorLocationManager.shared.filterSettings.filterType {
             
         case .none, .kalman:
             break
             
         case .particle:
-            let filter = IndoorLocationManager.sharedInstance.filter as! ParticleFilter
+            let filter = IndoorLocationManager.shared.filter as! ParticleFilter
             let particles = filter.particles
             for i in 0..<particles.count {
                 let particleAnnotation = MKPointAnnotation()

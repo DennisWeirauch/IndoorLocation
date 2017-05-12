@@ -18,20 +18,18 @@ enum TaskType : String {
 
 class NetworkManager: NSObject, NetServiceDelegate, NetServiceBrowserDelegate {
     
-    static let sharedInstance = NetworkManager()
+    static let shared = NetworkManager()
     
-    let netService = NetService(domain: "", type: "_indoorLocation._tcp", name: UIDevice.current.name, port: 1812)
-    let netServiceBrowser = NetServiceBrowser()
+//    let netService = NetService(domain: "", type: "_indoorLocation._tcp", name: UIDevice.current.name, port: 1812)
+//    let netServiceBrowser = NetServiceBrowser()
     
     var services = [NetService]()
     var selectedService: NetService?
     
-    var eventLoop: SelectorEventLoop?
-
     private override init() {
         super.init()
-        netService.delegate = self
-        netServiceBrowser.delegate = self
+//        netService.delegate = self
+//        netServiceBrowser.delegate = self
         
         setupServer()
     }
@@ -49,7 +47,6 @@ class NetworkManager: NSObject, NetServiceDelegate, NetServiceBrowserDelegate {
             sendBody(Data())
             // Ciao Rest Connector sends data in path, http body is not used
             let data = environ["PATH_INFO"]! as! String
-            print(data)
             
             self.receivedData(data)
         }
@@ -66,21 +63,41 @@ class NetworkManager: NSObject, NetServiceDelegate, NetServiceBrowserDelegate {
     }
     
     private func receivedData(_ data: String) {
-        
+        print(data)
     }
     
+    /*
     //MARK: NetServiceBrowserDelegate
     func netServiceBrowser(_ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool) {
-        if (!services.contains(service)) {
-            services.append(service)
-            // Automatically select first found service
-            if (selectedService == nil) {
-                selectedService = service
+        print("Found \(service.name)")
+        service.delegate = self
+        service.resolve(withTimeout: 10)
+    }
+    
+    func netServiceDidResolveAddress(_ sender: NetService) {
+        if (sender != netService) {
+            if (!services.contains(sender)) {
+                services.append(sender)
+                // Automatically select first found service
+                if (selectedService == nil) {
+                    selectedService = sender
+                }
             }
+//            let addresses = sender.addresses!.flatMap { getIFAddress($0) }
         }
     }
     
+    func netServiceDidStop(_ sender: NetService) {
+        print("Stopped \(sender.name)")
+    }
+    
+    func netService(_ sender: NetService, didNotResolve errorDict: [String : NSNumber]) {
+        print(sender)
+        print(errorDict)
+    }
+    */
     //MARK: Public API
+    /*
     func resume() {
         //TODO: Start server here
         netService.publish()
@@ -92,17 +109,21 @@ class NetworkManager: NSObject, NetServiceDelegate, NetServiceBrowserDelegate {
         netService.stop()
         netServiceBrowser.stop()
     }
+    */
     
     func pozyxTask(task: TaskType, data: String = "", resultCallback: @escaping (Data?) -> Void) {
         var urlString = "http://"
         if let service = selectedService {
             urlString.append(service.name + ".local")
+            //TODO: Resolve IP of Arduino's service and use it for url. Should not need ATS permission that way
+//            urlString.append(getIFAddress((service.addresses?.first)!)!)
         } else {
             urlString.append("192.168.1.111")
         }
         urlString.append(":8080/arduino/")
         var txData = data
         if task == .beginRanging {
+            //TODO: Get IP of device
             txData = "192.168.1.60"
         }
         let url = URL(string: urlString + task.rawValue + "/" + txData)

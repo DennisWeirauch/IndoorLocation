@@ -16,7 +16,7 @@ enum FilterType: Int {
 
 class IndoorLocationManager: NSObject {
     
-    static let sharedInstance = IndoorLocationManager()
+    static let shared = IndoorLocationManager()
     
     var anchors: [CGPoint]?
     
@@ -40,7 +40,7 @@ class IndoorLocationManager: NSObject {
     }
     
     func calibrate(resultCallback: @escaping () -> Void) {
-        NetworkManager.sharedInstance.pozyxTask(task: .calibrate) { data in
+        NetworkManager.shared.pozyxTask(task: .calibrate) { data in
             guard let data = data else {
                 print("No calibration data received")
                 return

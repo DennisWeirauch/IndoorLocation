@@ -32,7 +32,6 @@
 		95A1F63E1E8BB5C800D2CDD2 /* IndoorLocationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A1F63D1E8BB5C800D2CDD2 /* IndoorLocationUITests.swift */; };
 		95E3DCBB1E9D2F0E006D6C08 /* FilterSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E3DCBA1E9D2F0E006D6C08 /* FilterSettings.swift */; };
 		95E3DCBF1E9D3E9E006D6C08 /* settings.png in Resources */ = {isa = PBXBuildFile; fileRef = 95E3DCBE1E9D3E9E006D6C08 /* settings.png */; };
-		95E3DCC11E9E3672006D6C08 /* PozyxDriver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E3DCC01E9E3672006D6C08 /* PozyxDriver.swift */; };
 		95E3DCC31EA0E014006D6C08 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E3DCC21EA0E014006D6C08 /* NetworkManager.swift */; };
 		95E3DCC81EA103A5006D6C08 /* IndoorLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E3DCC71EA103A5006D6C08 /* IndoorLocationManager.swift */; };
 		95E3DCCA1EA10817006D6C08 /* BayesianFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E3DCC91EA10817006D6C08 /* BayesianFilter.swift */; };
@@ -90,7 +89,6 @@
 		95A1F63F1E8BB5C800D2CDD2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		95E3DCBA1E9D2F0E006D6C08 /* FilterSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterSettings.swift; sourceTree = "<group>"; };
 		95E3DCBE1E9D3E9E006D6C08 /* settings.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settings.png; sourceTree = "<group>"; };
-		95E3DCC01E9E3672006D6C08 /* PozyxDriver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PozyxDriver.swift; sourceTree = "<group>"; };
 		95E3DCC21EA0E014006D6C08 /* NetworkManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		95E3DCC71EA103A5006D6C08 /* IndoorLocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IndoorLocationManager.swift; sourceTree = "<group>"; };
 		95E3DCC91EA10817006D6C08 /* BayesianFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BayesianFilter.swift; sourceTree = "<group>"; };
@@ -249,7 +247,6 @@
 			isa = PBXGroup;
 			children = (
 				95E3DCC21EA0E014006D6C08 /* NetworkManager.swift */,
-				95E3DCC01E9E3672006D6C08 /* PozyxDriver.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -479,7 +476,6 @@
 				950769601E8D3C0C00233FF8 /* FloorplanOverlay.swift in Sources */,
 				959C84D41E97BB4700EB4AA4 /* FilterSettingsViewController.swift in Sources */,
 				950769641E8D3F0400233FF8 /* Utilities.swift in Sources */,
-				95E3DCC11E9E3672006D6C08 /* PozyxDriver.swift in Sources */,
 				9507696C1E8D400A00233FF8 /* FloorplanOverlayRenderer.swift in Sources */,
 				95E3DCC31EA0E014006D6C08 /* NetworkManager.swift in Sources */,
 				95A1F61E1E8BB5C700D2CDD2 /* AppDelegate.swift in Sources */,
