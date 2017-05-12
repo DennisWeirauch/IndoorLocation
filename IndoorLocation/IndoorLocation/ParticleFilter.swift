@@ -24,11 +24,11 @@ class Particle: NSObject {
 
 class ParticleFilter: BayesianFilter {
     
-    let numberOfParticles = 100
+    let numberOfParticles = IndoorLocationManager.shared.filterSettings.numberOfParticles!
     
     var particles: [Particle]
     
-    init() {
+    override init() {
         particles = [Particle]()
         let randomGenerator = GKGaussianDistribution(randomSource: GKRandomSource(), mean: 0, deviation: 15)
         
@@ -40,15 +40,11 @@ class ParticleFilter: BayesianFilter {
         }
     }
     
-    func predict() {
+    override func predict() {
         print("Predict")
     }
     
-    func update(measurements: [Double]) {
-        print("Update with measurements \(measurements)")
-    }
-    
-    func getPosition() -> CGPoint {
+    override func update(measurements: [Double], successCallback: () -> Void) {
         var totalX = 0.0
         var totalY = 0.0
         for i in 0..<particles.count {
@@ -57,6 +53,9 @@ class ParticleFilter: BayesianFilter {
         }
         let meanX = totalX / Double(particles.count)
         let meanY = totalY / Double(particles.count)
-        return CGPoint(x: meanX, y: meanY)
+        
+        position = CGPoint(x: meanX, y: meanY)
+        
+        successCallback()
     }
 }

@@ -46,7 +46,7 @@ class NetworkManager: NSObject, NetServiceDelegate, NetServiceBrowserDelegate {
             // Send empty response
             sendBody(Data())
             // Ciao Rest Connector sends data in path, http body is not used
-            let data = environ["PATH_INFO"]! as! String
+            let data = environ["PATH_INFO"]! as? String
             
             self.receivedData(data)
         }
@@ -62,8 +62,8 @@ class NetworkManager: NSObject, NetServiceDelegate, NetServiceBrowserDelegate {
         }
     }
     
-    private func receivedData(_ data: String) {
-        print(data)
+    private func receivedData(_ data: String?) {
+        IndoorLocationManager.shared.newData(data)
     }
     
     /*
@@ -121,11 +121,13 @@ class NetworkManager: NSObject, NetServiceDelegate, NetServiceBrowserDelegate {
             urlString.append("192.168.1.111")
         }
         urlString.append(":8080/arduino/")
+        
         var txData = data
         if task == .beginRanging {
             //TODO: Get IP of device
-            txData = "192.168.1.60"
+            txData = "192.168.1.60:8080"
         }
+        
         let url = URL(string: urlString + task.rawValue + "/" + txData)
         let task = URLSession.shared.dataTask(with: url!) { data, response, error in
             guard error == nil else {

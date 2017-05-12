@@ -8,11 +8,16 @@
 
 import UIKit
 
-protocol BayesianFilter {
-
-    func predict()
+class BayesianFilter {
     
-    func update(measurements: [Double])
+    var position = CGPoint(x: 0, y: 0)
     
-    func getPosition() -> CGPoint
+    func predict() {}
+    
+    func update(measurements: [Double], successCallback: () -> Void) {
+        position.x = CGFloat(measurements[0])
+        position.y = CGFloat(measurements[1])
+        
+        successCallback()
+    }
 }

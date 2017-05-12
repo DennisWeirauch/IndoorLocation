@@ -22,12 +22,15 @@ class FilterSettings: NSObject {
     
     var distanceUncertainty: Double?
     
+    var numberOfParticles: Int?
+    
     init(positioningModeIsRelative: Bool,
          calibrationModeIsAutomatic: Bool,
          dataSinkIsLocal: Bool,
          filterType: FilterType,
          accelerationUncertainty: Double? = nil,
-         distanceUncertainty: Double? = nil) {
+         distanceUncertainty: Double? = nil,
+         numberOfParticles: Int? = nil) {
         
         self.positioningModeIsRelative = positioningModeIsRelative
         self.calibrationModeIsAutomatic = calibrationModeIsAutomatic
@@ -35,6 +38,7 @@ class FilterSettings: NSObject {
         self.filterType = filterType
         self.accelerationUncertainty = accelerationUncertainty
         self.distanceUncertainty = distanceUncertainty
+        self.numberOfParticles = numberOfParticles
         
         super.init()
     }

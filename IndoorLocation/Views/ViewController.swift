@@ -9,7 +9,7 @@
 import Foundation
 import MapKit
 
-class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentationControllerDelegate, FilterSettingViewControllerDelegate {
+class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentationControllerDelegate, IndoorLocationManagerDelegate {
     
     //MARK: IBOutlets and private variables
     @IBOutlet weak var mapView: MKMapView!
@@ -54,6 +54,8 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
 
         state = .idle
         
+        IndoorLocationManager.shared.delegate = self
+        
         /*
          We setup a pair of anchors that will define how the floorplan image
          maps to geographic co-ordinates.
@@ -87,8 +89,6 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
         
         // Draw the floorplan!
         mapView.add(floorplan)
-        
-        createAnnotations()
     }
 
     override func didReceiveMemoryWarning() {
@@ -143,26 +143,26 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
          annotations. To learn more about showing annotations,
          see "Annotating Maps".
          */
-        if let subtitle = annotation.subtitle {
+        if let customAnnotation = annotation as? CustomAnnotation {
             let annotationView = MKAnnotationView()
             
             var image: UIImage?
             var resizeRect: CGRect
             
-            switch subtitle! {
-            case "Anchor":
+            switch customAnnotation.annotationType {
+            case .anchor:
                 image = UIImage(named: "anchor.png")
                 resizeRect = CGRect(x: 0, y: 0, width: 30, height: 30)
                 annotationView.canShowCallout = true
                 annotationView.rightCalloutAccessoryView = UIButton(type: .detailDisclosure)
                 annotationView.isDraggable = true
                 
-            case "Position":
+            case .position:
                 image = UIImage(named: "position.png")
                 resizeRect = CGRect(x: 0, y: 0, width: 30, height: 30)
                 annotationView.canShowCallout = false
                 
-            case "Particle":
+            case .particle:
                 image = UIImage(named: "particle.png")
                 resizeRect = CGRect(x: 0, y: 0, width: 4, height: 4)
                 annotationView.canShowCallout = false
@@ -207,20 +207,54 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
         return UIModalPresentationStyle.none
     }
     
-    //MARK: FilterSettingsViewControllerDelegate
-    func updateAnnotationsForAnchors() {
-        var annotations = [MKPointAnnotation]()
+    //MARK: IndoorLocationManagerDelegate
+    func updateAnnotationsFor(_ annotationType: AnnotationType) {
+        var annotations = [CustomAnnotation]()
         
-        if let anchors = IndoorLocationManager.shared.anchors {
-            
-            for (index, anchor) in anchors.enumerated() {
-                let anchorAnnotation = MKPointAnnotation()
-                anchorAnnotation.title = "Anchor \(index)"
-                anchorAnnotation.subtitle = "Anchor"
-                anchorAnnotation.coordinate = coordinateConverter.coordinateFromPDFPoint(anchor)
-                annotations.append(anchorAnnotation)
+        //Remove all annotations of type to change
+        for annotation in mapView.annotations {
+            let customAnnotation = annotation as? CustomAnnotation
+            if (customAnnotation?.annotationType == annotationType) {
+                mapView.removeAnnotation(annotation)
             }
         }
+        
+        //Create new annotations
+        switch annotationType {
+        case .anchor:
+            if let anchors = IndoorLocationManager.shared.anchors {
+                
+                for (index, anchor) in anchors.enumerated() {
+                    let anchorAnnotation = CustomAnnotation(.anchor)
+                    anchorAnnotation.title = "Anchor \(index)"
+                    anchorAnnotation.subtitle = "Anchor"
+                    anchorAnnotation.coordinate = coordinateConverter.coordinateFromPDFPoint(anchor)
+                    annotations.append(anchorAnnotation)
+                }
+            }
+        case .position:
+            if let position = IndoorLocationManager.shared.filter?.position {
+                let positionAnnotation = CustomAnnotation(.position)
+                positionAnnotation.title = "Position"
+                positionAnnotation.subtitle = "Position"
+                positionAnnotation.coordinate = coordinateConverter.coordinateFromPDFPoint(position)
+                annotations.append(positionAnnotation)
+            }
+        case .particle:
+            let filter = IndoorLocationManager.shared.filter as! ParticleFilter
+            let particles = filter.particles
+            for i in 0..<particles.count {
+                let particleAnnotation = CustomAnnotation(.particle)
+                particleAnnotation.title = "Particle \(i)"
+                particleAnnotation.subtitle = "Particle"
+                particleAnnotation.coordinate = coordinateConverter.coordinateFromPDFPoint(CGPoint(x: CGFloat(particles[i].x), y: CGFloat(particles[i].y)))
+                annotations.append(particleAnnotation)
+            }
+        case .covariance:
+            //TODO: Add annotation for covariance of Kalman filter
+            break
+        }
+        
         mapView.addAnnotations(annotations)
         //TODO: Refresh map view
     }
@@ -239,8 +273,6 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
         popoverVC.popoverPresentationController?.sourceView = self.view
         popoverVC.popoverPresentationController?.sourceRect = CGRect(x: frame.width, y: frame.height / 2, width: 1, height: 1)
         
-        popoverVC.delegate = self
-        
         self.present(popoverVC, animated: true, completion: nil)
     }
     
@@ -253,39 +285,5 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
             state = .idle
             IndoorLocationManager.shared.stopPositioning()
         }
-    }
-    
-    //MARK: Private API
-    private func createAnnotations() {
-        
-        var annotations = [MKPointAnnotation]()
-
-        if let position = IndoorLocationManager.shared.position {
-            
-            let positionAnnotation = MKPointAnnotation()
-            positionAnnotation.title = "Position"
-            positionAnnotation.subtitle = "Position"
-            positionAnnotation.coordinate = coordinateConverter.coordinateFromPDFPoint(position)
-            annotations.append(positionAnnotation)
-        }
-        
-        switch IndoorLocationManager.shared.filterSettings.filterType {
-            
-        case .none, .kalman:
-            break
-            
-        case .particle:
-            let filter = IndoorLocationManager.shared.filter as! ParticleFilter
-            let particles = filter.particles
-            for i in 0..<particles.count {
-                let particleAnnotation = MKPointAnnotation()
-                particleAnnotation.title = "Particle \(i)"
-                particleAnnotation.subtitle = "Particle"
-                particleAnnotation.coordinate = coordinateConverter.coordinateFromPDFPoint(CGPoint(x: CGFloat(particles[i].x), y: CGFloat(particles[i].y)))
-                annotations.append(particleAnnotation)
-            }
-        }
-        
-        mapView.addAnnotations(annotations)
     }
 }

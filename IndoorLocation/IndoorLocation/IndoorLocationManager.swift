@@ -8,41 +8,51 @@
 
 import UIKit
 
-enum FilterType: Int {
-    case none = 0
+enum FilterType {
+    case none
     case kalman
     case particle
+}
+
+enum AnnotationType {
+    case position
+    case anchor
+    case particle
+    case covariance
+}
+
+protocol IndoorLocationManagerDelegate {
+    func updateAnnotationsFor(_ annotationType: AnnotationType)
 }
 
 class IndoorLocationManager: NSObject {
     
     static let shared = IndoorLocationManager()
     
+    var delegate: IndoorLocationManagerDelegate?
+    
     var anchors: [CGPoint]?
     
-    var position: CGPoint?
-    
-    var filter: BayesianFilter?
+    var filter: BayesianFilter? = nil
     
     var filterSettings: FilterSettings
     
     private override init() {
-        filter = ParticleFilter()
-        
         filterSettings = FilterSettings(positioningModeIsRelative: true,
                                         calibrationModeIsAutomatic: true,
                                         dataSinkIsLocal: true,
-                                        filterType: .particle)
+                                        filterType: .none)
+        //TODO: Move to FilterSettingsVC
+        filter = BayesianFilter()
         
         super.init()
-        
-        position = filter?.getPosition()
     }
     
-    func calibrate(resultCallback: @escaping () -> Void) {
+    //MARK: Public API
+    func calibrate() {
         NetworkManager.shared.pozyxTask(task: .calibrate) { data in
             guard let data = data else {
-                print("No calibration data received")
+                print("No calibration data received!")
                 return
             }
             let calibrationData = String(data: data, encoding: String.Encoding.utf8)
@@ -59,15 +69,44 @@ class IndoorLocationManager: NSObject {
                                   y: Double((splitData[5].components(separatedBy: "=")[1]))!)
             self.anchors = [anchor1, anchor2, anchor3]
             
-            resultCallback()
+            self.delegate?.updateAnnotationsFor(.anchor)
         }
     }
     
     func beginPositioning() {
         print("Begin positioning!")
+        NetworkManager.shared.pozyxTask(task: .beginRanging) { _ in }
     }
     
     func stopPositioning() {
         print("Stop positioning!")
+        NetworkManager.shared.pozyxTask(task: .stopRanging) { _ in }
+    }
+    
+    func newData(_ data: String?) {
+        guard let data = data else {
+            print("No ranging data received!")
+            return
+        }
+
+        let splitData = data.components(separatedBy: "&")
+        let xPos = Double(splitData[0].components(separatedBy: "=")[1])!
+        let yPos = Double(splitData[1].components(separatedBy: "=")[1])!
+        let xAcc = Double(splitData[2].components(separatedBy: "=")[1])!
+        let yAcc = Double(splitData[3].components(separatedBy: "=")[1])!
+        let zAcc = Double(splitData[4].components(separatedBy: "=")[1])!
+        
+        filter?.update(measurements: [xPos, yPos, xAcc, yAcc, zAcc]) { _ in
+            delegate?.updateAnnotationsFor(.position)
+            
+            switch (filterSettings.filterType) {
+            case .kalman:
+                delegate?.updateAnnotationsFor(.covariance)
+            case .particle:
+                delegate?.updateAnnotationsFor(.particle)
+            default:
+                break
+            }
+        }
     }
 }

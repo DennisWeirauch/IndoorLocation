@@ -18,6 +18,7 @@
 		950769701E8D419B00233FF8 /* room_10_blueprint.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9507696F1E8D419B00233FF8 /* room_10_blueprint.pdf */; };
 		952BDE061E92A114003DD94C /* AnchorSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952BDE041E92A114003DD94C /* AnchorSettingsViewController.swift */; };
 		952BDE071E92A114003DD94C /* AnchorSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 952BDE051E92A114003DD94C /* AnchorSettingsViewController.xib */; };
+		955A85921EC5F99B00EA3105 /* CustomAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955A85911EC5F99B00EA3105 /* CustomAnnotation.swift */; };
 		956227CA1E965F2700288A1A /* ParticleFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956227C91E965F2700288A1A /* ParticleFilter.swift */; };
 		956227CC1E96A95600288A1A /* particle.png in Resources */ = {isa = PBXBuildFile; fileRef = 956227CB1E96A95600288A1A /* particle.png */; };
 		956227CE1E96AD9000288A1A /* position.png in Resources */ = {isa = PBXBuildFile; fileRef = 956227CD1E96AD9000288A1A /* position.png */; };
@@ -69,6 +70,7 @@
 		9507696F1E8D419B00233FF8 /* room_10_blueprint.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = room_10_blueprint.pdf; sourceTree = "<group>"; };
 		952BDE041E92A114003DD94C /* AnchorSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnchorSettingsViewController.swift; sourceTree = "<group>"; };
 		952BDE051E92A114003DD94C /* AnchorSettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AnchorSettingsViewController.xib; sourceTree = "<group>"; };
+		955A85911EC5F99B00EA3105 /* CustomAnnotation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAnnotation.swift; sourceTree = "<group>"; };
 		956227C91E965F2700288A1A /* ParticleFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParticleFilter.swift; sourceTree = "<group>"; };
 		956227CB1E96A95600288A1A /* particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle.png; sourceTree = "<group>"; };
 		956227CD1E96AD9000288A1A /* position.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = position.png; sourceTree = "<group>"; };
@@ -234,6 +236,7 @@
 			isa = PBXGroup;
 			children = (
 				950769611E8D3DFB00233FF8 /* CoordinateConverter.swift */,
+				955A85911EC5F99B00EA3105 /* CustomAnnotation.swift */,
 				9507695F1E8D3C0C00233FF8 /* FloorplanOverlay.swift */,
 				9507696B1E8D400A00233FF8 /* FloorplanOverlayRenderer.swift */,
 				950769691E8D3FCA00233FF8 /* HideBackgroundOverlay.swift */,
@@ -466,6 +469,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				950769621E8D3DFB00233FF8 /* CoordinateConverter.swift in Sources */,
+				955A85921EC5F99B00EA3105 /* CustomAnnotation.swift in Sources */,
 				95A1F6201E8BB5C700D2CDD2 /* ViewController.swift in Sources */,
 				95E3DCBB1E9D2F0E006D6C08 /* FilterSettings.swift in Sources */,
 				95E3DCC81EA103A5006D6C08 /* IndoorLocationManager.swift in Sources */,
