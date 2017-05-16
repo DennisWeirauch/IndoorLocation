@@ -9,7 +9,7 @@
 import UIKit
 import GameplayKit
 
-class Particle: NSObject {
+class Particle {
     var x: Double = 0.0
     var y: Double = 0.0
     

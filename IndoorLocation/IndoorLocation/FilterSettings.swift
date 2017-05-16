@@ -8,7 +8,7 @@
 
 import UIKit
 
-class FilterSettings: NSObject {
+class FilterSettings {
     
     var positioningModeIsRelative: Bool
     
@@ -39,7 +39,5 @@ class FilterSettings: NSObject {
         self.accelerationUncertainty = accelerationUncertainty
         self.distanceUncertainty = distanceUncertainty
         self.numberOfParticles = numberOfParticles
-        
-        super.init()
     }
 }

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class FilterSettingsViewController: UIViewController, UIPickerViewDataSource, UIPickerViewDelegate {
+class FilterSettingsViewController: UIViewController {
 
     //MARK: IBOutlets and private variables
     @IBOutlet weak var accelerationUncertaintyLabel: UILabel!
@@ -21,9 +21,7 @@ class FilterSettingsViewController: UIViewController, UIPickerViewDataSource, UI
     @IBOutlet weak var calibrationModeSegmentedControl: UISegmentedControl!
     @IBOutlet weak var dataSinkSegmentedControl: UISegmentedControl!
     @IBOutlet weak var filterTypeSegmentedControl: UISegmentedControl!
-    
-    @IBOutlet weak var devicePickerView: UIPickerView!
-    
+        
     let filterSettings = IndoorLocationManager.shared.filterSettings
     
     //MARK: ViewController lifecyle
@@ -39,33 +37,11 @@ class FilterSettingsViewController: UIViewController, UIPickerViewDataSource, UI
             distanceUncertaintyLabel.text = "Distance Uncertainty: \(distanceUncertainty)"
             distanceUncertaintySlider.value = Float(distanceUncertainty)
         }
-        // Set up Picker View
-        devicePickerView.dataSource = self
-        devicePickerView.delegate = self
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
-    }
-    
-    //MARK: UIPickerViewDataSource
-    func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return NetworkManager.shared.services.count
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return NetworkManager.shared.services[row].name
-    }
-    
-    //MARK: UIPickerViewDelegate
-    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        let service = NetworkManager.shared.services[row]
-        NetworkManager.shared.selectedService = service
     }
     
     //MARK: IBActions

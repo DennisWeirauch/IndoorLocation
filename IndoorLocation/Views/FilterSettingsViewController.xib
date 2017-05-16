@@ -16,7 +16,6 @@
                 <outlet property="accelerationUncertaintySlider" destination="wC8-9W-JuR" id="pgP-EF-PmD"/>
                 <outlet property="calibrationModeSegmentedControl" destination="n61-5S-YF6" id="tbN-rN-vZe"/>
                 <outlet property="dataSinkSegmentedControl" destination="agU-pI-hhm" id="oEq-lG-gP1"/>
-                <outlet property="devicePickerView" destination="cDh-sR-1Ql" id="C72-k6-5Bk"/>
                 <outlet property="distanceUncertaintyLabel" destination="L1m-rW-a3h" id="8ne-Cg-Ljs"/>
                 <outlet property="distanceUncertaintySlider" destination="NAV-RB-EUw" id="dF9-mi-emQ"/>
                 <outlet property="filterTypeSegmentedControl" destination="GCj-fZ-nHb" id="7VA-bF-FDM"/>
@@ -130,18 +129,6 @@
                                         <action selector="onSegmentedControlValueChanged:" destination="-1" eventType="valueChanged" id="AkK-cM-Cpn"/>
                                     </connections>
                                 </segmentedControl>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Device:" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8PF-Rs-fPJ">
-                                    <rect key="frame" x="20" y="447" width="160" height="16"/>
-                                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                    <nil key="textColor"/>
-                                    <nil key="highlightedColor"/>
-                                </label>
-                                <pickerView contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cDh-sR-1Ql">
-                                    <rect key="frame" x="20" y="467" width="160" height="60"/>
-                                    <constraints>
-                                        <constraint firstAttribute="height" constant="60" id="tRG-3p-XvI"/>
-                                    </constraints>
-                                </pickerView>
                                 <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KRZ-4t-KgZ">
                                     <rect key="frame" x="69" y="285" width="62" height="30"/>
                                     <state key="normal" title="Calibrate"/>
@@ -152,20 +139,16 @@
                             </subviews>
                             <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             <constraints>
-                                <constraint firstItem="cDh-sR-1Ql" firstAttribute="leading" secondItem="3dI-4s-1OF" secondAttribute="leading" constant="20" id="0T0-an-eTg"/>
                                 <constraint firstItem="d7h-iM-YPQ" firstAttribute="top" secondItem="RA3-dt-ukf" secondAttribute="bottom" constant="8" symbolic="YES" id="0XD-AS-ptN"/>
                                 <constraint firstItem="n61-5S-YF6" firstAttribute="top" secondItem="cul-K8-Ql5" secondAttribute="bottom" constant="4" id="1on-p5-fus"/>
                                 <constraint firstAttribute="trailing" secondItem="wC8-9W-JuR" secondAttribute="trailing" constant="20" id="56e-h4-xeD"/>
                                 <constraint firstItem="n61-5S-YF6" firstAttribute="leading" secondItem="3dI-4s-1OF" secondAttribute="leading" constant="20" id="5JU-De-9b4"/>
                                 <constraint firstItem="GCj-fZ-nHb" firstAttribute="leading" secondItem="3dI-4s-1OF" secondAttribute="leading" constant="20" id="6Os-NW-4fT"/>
-                                <constraint firstItem="cDh-sR-1Ql" firstAttribute="top" secondItem="8PF-Rs-fPJ" secondAttribute="bottom" constant="4" id="BW1-Q7-AF9"/>
                                 <constraint firstAttribute="trailing" secondItem="NAV-RB-EUw" secondAttribute="trailing" constant="20" id="C3s-7B-5ir"/>
-                                <constraint firstAttribute="trailing" secondItem="cDh-sR-1Ql" secondAttribute="trailing" constant="20" id="CKn-iF-J6f"/>
                                 <constraint firstAttribute="trailing" secondItem="xni-ds-owL" secondAttribute="trailing" constant="20" id="DYj-DY-bBC"/>
                                 <constraint firstItem="NAV-RB-EUw" firstAttribute="leading" secondItem="3dI-4s-1OF" secondAttribute="leading" constant="20" id="E6M-IB-eM0"/>
                                 <constraint firstItem="KRZ-4t-KgZ" firstAttribute="centerX" secondItem="3dI-4s-1OF" secondAttribute="centerX" id="HhC-CX-Brz"/>
                                 <constraint firstItem="Rjv-VK-5fK" firstAttribute="top" secondItem="NAV-RB-EUw" secondAttribute="bottom" constant="10" id="IjM-Mh-1RW"/>
-                                <constraint firstItem="8PF-Rs-fPJ" firstAttribute="leading" secondItem="3dI-4s-1OF" secondAttribute="leading" constant="20" id="LPN-nF-gUj"/>
                                 <constraint firstItem="cul-K8-Ql5" firstAttribute="top" secondItem="I21-Xp-0R4" secondAttribute="bottom" constant="12" id="O3o-Vo-ydq"/>
                                 <constraint firstItem="cul-K8-Ql5" firstAttribute="leading" secondItem="3dI-4s-1OF" secondAttribute="leading" constant="20" id="OVp-WS-ofz"/>
                                 <constraint firstItem="GCj-fZ-nHb" firstAttribute="top" secondItem="8HU-7K-G15" secondAttribute="bottom" constant="4" id="P6f-dp-Tq2"/>
@@ -173,14 +156,12 @@
                                 <constraint firstAttribute="trailing" secondItem="agU-pI-hhm" secondAttribute="trailing" constant="20" id="TON-eo-9ej"/>
                                 <constraint firstItem="agU-pI-hhm" firstAttribute="top" secondItem="xni-ds-owL" secondAttribute="bottom" constant="4" id="TYS-qo-FeQ"/>
                                 <constraint firstItem="KRZ-4t-KgZ" firstAttribute="top" secondItem="n61-5S-YF6" secondAttribute="bottom" constant="8" symbolic="YES" id="VX0-5r-0wB"/>
-                                <constraint firstItem="8PF-Rs-fPJ" firstAttribute="top" secondItem="GCj-fZ-nHb" secondAttribute="bottom" constant="12" id="XJc-kl-n1Y"/>
                                 <constraint firstAttribute="height" constant="540" id="Xok-8g-wV6"/>
                                 <constraint firstAttribute="trailing" secondItem="cul-K8-Ql5" secondAttribute="trailing" constant="20" id="XxR-UU-2tp"/>
                                 <constraint firstAttribute="trailing" secondItem="I21-Xp-0R4" secondAttribute="trailing" constant="20" id="ZKg-36-js3"/>
                                 <constraint firstItem="agU-pI-hhm" firstAttribute="leading" secondItem="3dI-4s-1OF" secondAttribute="leading" constant="20" id="ZoM-g2-Wnh"/>
                                 <constraint firstAttribute="width" constant="200" id="a3l-da-t2z"/>
                                 <constraint firstItem="8HU-7K-G15" firstAttribute="leading" secondItem="3dI-4s-1OF" secondAttribute="leading" constant="20" id="b8N-1B-zP3"/>
-                                <constraint firstAttribute="trailing" secondItem="8PF-Rs-fPJ" secondAttribute="trailing" constant="20" id="bWc-I1-YqR"/>
                                 <constraint firstItem="xni-ds-owL" firstAttribute="top" secondItem="KRZ-4t-KgZ" secondAttribute="bottom" constant="12" id="cYT-pZ-H7N"/>
                                 <constraint firstItem="NAV-RB-EUw" firstAttribute="top" secondItem="L1m-rW-a3h" secondAttribute="bottom" constant="4" id="ctJ-X6-67A"/>
                                 <constraint firstItem="I21-Xp-0R4" firstAttribute="top" secondItem="Rjv-VK-5fK" secondAttribute="bottom" constant="4" id="evc-DM-5W1"/>

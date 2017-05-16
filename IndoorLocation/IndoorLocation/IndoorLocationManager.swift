@@ -25,7 +25,7 @@ protocol IndoorLocationManagerDelegate {
     func updateAnnotationsFor(_ annotationType: AnnotationType)
 }
 
-class IndoorLocationManager: NSObject {
+class IndoorLocationManager {
     
     static let shared = IndoorLocationManager()
     
@@ -37,15 +37,34 @@ class IndoorLocationManager: NSObject {
     
     var filterSettings: FilterSettings
     
-    private override init() {
+    private init() {
         filterSettings = FilterSettings(positioningModeIsRelative: true,
                                         calibrationModeIsAutomatic: true,
                                         dataSinkIsLocal: true,
                                         filterType: .none)
         //TODO: Move to FilterSettingsVC
         filter = BayesianFilter()
+    }
+    
+    //MARK: Private API
+    private func parseData(_ stringData: String) -> [String : Double]? {
         
-        super.init()
+        // Check that returned data is of expected format
+        if (stringData.range(of: "([A-Za-z]+-?[0-9-]*=-?[0-9.]+&)*([A-Za-z]+-?[0-9.]*=-?[0-9.]+)\\r?\\n?", options: .regularExpression) != stringData.startIndex..<stringData.endIndex) {
+            print("Wrong format of calibration data! Received: \(String(describing: stringData))")
+            return nil
+        }
+        
+        // Remove carriage return and split string at "&" characters
+        let splitData = stringData.components(separatedBy: "\r").first?.components(separatedBy: "&")
+        
+        var parsedData = [String : Double]()
+        for component in splitData! {
+            let key = component.components(separatedBy: "=")[0]
+            let value = Double(component.components(separatedBy: "=")[1])
+            parsedData[key] = value!
+        }
+        return parsedData
     }
     
     //MARK: Public API
@@ -55,19 +74,22 @@ class IndoorLocationManager: NSObject {
                 print("No calibration data received!")
                 return
             }
-            let calibrationData = String(data: data, encoding: String.Encoding.utf8)
-            // Remove carriage return and split string at "&" characters
-            guard let splitData = calibrationData?.components(separatedBy: "\r")[0].components(separatedBy: "&") else {
-                print("Wrong format of calibration data!")
-                return
+            
+            let stringData = String(data: data, encoding: String.Encoding.utf8)!
+
+            guard let anchorDict = self.parseData(stringData) else { return }
+
+            var anchors = [CGPoint]()
+            for i in 0..<anchorDict.count/2 {
+                guard let xCoordinate = anchorDict["xPos\(i)"], let yCoordinate = anchorDict["yPos\(i)"] else {
+                    print("Error retrieving data from anchorDict")
+                    return
+                }
+                //TODO: Delete scaling factor when maps are set up correctly
+                anchors.append(CGPoint(x: xCoordinate/10, y: yCoordinate/10))
             }
-            let anchor1 = CGPoint(x: Double((splitData[0].components(separatedBy: "=")[1]))!,
-                                  y: Double((splitData[1].components(separatedBy: "=")[1]))!)
-            let anchor2 = CGPoint(x: Double((splitData[2].components(separatedBy: "=")[1]))!,
-                                  y: Double((splitData[3].components(separatedBy: "=")[1]))!)
-            let anchor3 = CGPoint(x: Double((splitData[4].components(separatedBy: "=")[1]))!,
-                                  y: Double((splitData[5].components(separatedBy: "=")[1]))!)
-            self.anchors = [anchor1, anchor2, anchor3]
+            
+            self.anchors = anchors
             
             self.delegate?.updateAnnotationsFor(.anchor)
         }
@@ -89,14 +111,26 @@ class IndoorLocationManager: NSObject {
             return
         }
 
-        let splitData = data.components(separatedBy: "&")
-        let xPos = Double(splitData[0].components(separatedBy: "=")[1])!
-        let yPos = Double(splitData[1].components(separatedBy: "=")[1])!
-        let xAcc = Double(splitData[2].components(separatedBy: "=")[1])!
-        let yAcc = Double(splitData[3].components(separatedBy: "=")[1])!
-        let zAcc = Double(splitData[4].components(separatedBy: "=")[1])!
+        guard let measurementDict = parseData(data) else { return }
         
-        filter?.update(measurements: [xPos, yPos, xAcc, yAcc, zAcc]) { _ in
+        guard let anchors = anchors else { return }
+        var measurements = [Double]()
+        for i in 0..<anchors.count {
+            guard let distance = measurementDict["dist\(i)"] else {
+                print("Error retrieving data from measurementDict")
+                return
+            }
+            measurements.append(distance/10)
+        }
+        
+        guard let xAcc = measurementDict["xAcc"], let yAcc = measurementDict["yAcc"] else {
+            print("Error retrieving data from measurementDict")
+            return
+        }
+        measurements.append(xAcc)
+        measurements.append(yAcc)
+        
+        filter?.update(measurements: measurements) {
             delegate?.updateAnnotationsFor(.position)
             
             switch (filterSettings.filterType) {
