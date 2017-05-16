@@ -8,7 +8,7 @@
 
 import Foundation
 import MapKit
-
+import Accelerate
 
 /**
  - parameter a:
@@ -153,4 +153,26 @@ extension MKMapSize {
     func area() -> Double {
         return height * width
     }
+}
+
+func invertMatrix(_ matrix: [Double]) -> [Double] {
+    var inMatrix = matrix
+    
+    // Get the dimensions of the matrix
+    var dim: Int32 = Int32(sqrt(Double(matrix.count)))
+    
+    var pivot = Int32(0)
+    var workspace = 0.0
+    var error = Int32(0)
+    
+    // Perform LU factorization
+    dgetrf_(&dim, &dim, &inMatrix, &dim, &pivot, &error)
+    
+    if error != 0 {
+        return inMatrix
+    }
+    
+    // Calculate inverse from LU factorization
+    dgetri_(&dim, &inMatrix, &dim, &pivot, &workspace, &dim, &error)
+    return inMatrix
 }
