@@ -186,7 +186,9 @@ class CoordinateConverter: NSObject {
     }
     
     func coordinateFromPDFPoint(_ pdfPoint: CGPoint) -> CLLocationCoordinate2D {
-        return MKCoordinateForMapPoint(MKMapPointFromPDFPoint(pdfPoint))
+        //TODO: Delete scaling factor when maps are set up correctly
+        let modPoint = CGPoint(x: pdfPoint.x / 10, y: pdfPoint.y / 10)
+        return MKCoordinateForMapPoint(MKMapPointFromPDFPoint(modPoint))
     }
     
     /**

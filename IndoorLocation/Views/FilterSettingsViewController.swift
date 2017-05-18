@@ -28,14 +28,41 @@ class FilterSettingsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if let accelerationUncertainty = filterSettings.accelerationUncertainty {
-            accelerationUncertaintyLabel.text = "Acceleration Uncertainty: \(accelerationUncertainty)"
+        // Set up UISliders
+        let accelerationUncertainty = filterSettings.accelerationUncertainty
+            accelerationUncertaintyLabel.text = "Acc. Uncertainty: \(Int(accelerationUncertainty))"
             accelerationUncertaintySlider.value = Float(accelerationUncertainty)
-        }
         
-        if let distanceUncertainty = filterSettings.distanceUncertainty {
-            distanceUncertaintyLabel.text = "Distance Uncertainty: \(distanceUncertainty)"
+        let distanceUncertainty = filterSettings.distanceUncertainty
+            distanceUncertaintyLabel.text = "Dist. Uncertainty: \(Int(distanceUncertainty))"
             distanceUncertaintySlider.value = Float(distanceUncertainty)
+        
+        // Set up UISegmentedControls
+        positioningModeSegmentedControl.selectedSegmentIndex = filterSettings.positioningModeIsRelative ? 0 : 1
+        
+        calibrationModeSegmentedControl.selectedSegmentIndex = filterSettings.calibrationModeIsAutomatic ? 0 : 1
+        
+        dataSinkSegmentedControl.selectedSegmentIndex = filterSettings.dataSinkIsLocal ? 0 : 1
+        
+        switch filterSettings.filterType {
+        case .none:
+            filterTypeSegmentedControl.selectedSegmentIndex = 0
+        case .kalman:
+            filterTypeSegmentedControl.selectedSegmentIndex = 1
+        case .particle:
+            filterTypeSegmentedControl.selectedSegmentIndex = 2
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        // Initialize Filter
+        switch filterSettings.filterType {
+        case .none:
+            IndoorLocationManager.shared.filter = BayesianFilter()
+        case .kalman:
+            IndoorLocationManager.shared.filter = KalmanFilter(updateTime: 0.5)
+        case .particle:
+            IndoorLocationManager.shared.filter = ParticleFilter()
         }
     }
 
@@ -49,11 +76,11 @@ class FilterSettingsViewController: UIViewController {
         switch sender.tag {
         case 1:
             filterSettings.accelerationUncertainty = Double(accelerationUncertaintySlider.value)
-            accelerationUncertaintyLabel.text = "Acceleration Uncertainty: \(filterSettings.accelerationUncertainty!)"
+            accelerationUncertaintyLabel.text = "Acc. Uncertainty: \(Int(filterSettings.accelerationUncertainty))"
         
         case 2:
             filterSettings.distanceUncertainty = Double(distanceUncertaintySlider.value)
-            distanceUncertaintyLabel.text = "Distance Uncertainty: \(filterSettings.distanceUncertainty!)"
+            distanceUncertaintyLabel.text = "Dist. Uncertainty: \(Int(filterSettings.distanceUncertainty))"
             
         default:
             break

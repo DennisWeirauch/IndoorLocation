@@ -10,34 +10,21 @@ import UIKit
 
 class FilterSettings {
     
-    var positioningModeIsRelative: Bool
+    var positioningModeIsRelative = true
     
-    var calibrationModeIsAutomatic: Bool
+    var calibrationModeIsAutomatic = true
     
-    var dataSinkIsLocal: Bool
+    var dataSinkIsLocal = true
     
-    var filterType: FilterType
+    var filterType: FilterType = .none
     
-    var accelerationUncertainty: Double?
+    // Kalman filter parameters
+    var accelerationUncertainty: Double = 25
     
-    var distanceUncertainty: Double?
+    var distanceUncertainty: Double = 50
     
-    var numberOfParticles: Int?
+    var processingUncertainty: Double = 40
     
-    init(positioningModeIsRelative: Bool,
-         calibrationModeIsAutomatic: Bool,
-         dataSinkIsLocal: Bool,
-         filterType: FilterType,
-         accelerationUncertainty: Double? = nil,
-         distanceUncertainty: Double? = nil,
-         numberOfParticles: Int? = nil) {
-        
-        self.positioningModeIsRelative = positioningModeIsRelative
-        self.calibrationModeIsAutomatic = calibrationModeIsAutomatic
-        self.dataSinkIsLocal = dataSinkIsLocal
-        self.filterType = filterType
-        self.accelerationUncertainty = accelerationUncertainty
-        self.distanceUncertainty = distanceUncertainty
-        self.numberOfParticles = numberOfParticles
-    }
+    // Particle filter parameters
+    var numberOfParticles: Int = 100
 }

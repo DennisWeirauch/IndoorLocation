@@ -38,12 +38,7 @@ class IndoorLocationManager {
     var filterSettings: FilterSettings
     
     private init() {
-        filterSettings = FilterSettings(positioningModeIsRelative: true,
-                                        calibrationModeIsAutomatic: true,
-                                        dataSinkIsLocal: true,
-                                        filterType: .none)
-        //TODO: Move to FilterSettingsVC
-        filter = BayesianFilter()
+        filterSettings = FilterSettings()
     }
     
     //MARK: Private API
@@ -85,8 +80,7 @@ class IndoorLocationManager {
                     print("Error retrieving data from anchorDict")
                     return
                 }
-                //TODO: Delete scaling factor when maps are set up correctly
-                anchors.append(CGPoint(x: xCoordinate/10, y: yCoordinate/10))
+                anchors.append(CGPoint(x: xCoordinate, y: yCoordinate))
             }
             
             self.anchors = anchors
@@ -97,6 +91,7 @@ class IndoorLocationManager {
     
     func beginPositioning() {
         print("Begin positioning!")
+        filter?.predict()
         NetworkManager.shared.pozyxTask(task: .beginRanging) { _ in }
     }
     
@@ -120,7 +115,7 @@ class IndoorLocationManager {
                 print("Error retrieving data from measurementDict")
                 return
             }
-            measurements.append(distance/10)
+            measurements.append(distance)
         }
         
         guard let xAcc = measurementDict["xAcc"], let yAcc = measurementDict["yAcc"] else {
@@ -136,7 +131,9 @@ class IndoorLocationManager {
             switch (filterSettings.filterType) {
             case .kalman:
                 delegate?.updateAnnotationsFor(.covariance)
+                filter?.predict()
             case .particle:
+                filter?.predict()
                 delegate?.updateAnnotationsFor(.particle)
             default:
                 break

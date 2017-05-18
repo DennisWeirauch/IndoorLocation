@@ -24,7 +24,7 @@ class Particle {
 
 class ParticleFilter: BayesianFilter {
     
-    let numberOfParticles = IndoorLocationManager.shared.filterSettings.numberOfParticles!
+    let numberOfParticles = IndoorLocationManager.shared.filterSettings.numberOfParticles
     
     var particles: [Particle]
     

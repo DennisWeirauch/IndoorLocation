@@ -31,6 +31,7 @@
 		95A1F6251E8BB5C700D2CDD2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 95A1F6241E8BB5C700D2CDD2 /* Assets.xcassets */; };
 		95A1F6331E8BB5C800D2CDD2 /* IndoorLocationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A1F6321E8BB5C800D2CDD2 /* IndoorLocationTests.swift */; };
 		95A1F63E1E8BB5C800D2CDD2 /* IndoorLocationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A1F63D1E8BB5C800D2CDD2 /* IndoorLocationUITests.swift */; };
+		95C3C1AE1ECC3C5100704437 /* KalmanFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C3C1AD1ECC3C5100704437 /* KalmanFilter.swift */; };
 		95E3DCBB1E9D2F0E006D6C08 /* FilterSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E3DCBA1E9D2F0E006D6C08 /* FilterSettings.swift */; };
 		95E3DCBF1E9D3E9E006D6C08 /* settings.png in Resources */ = {isa = PBXBuildFile; fileRef = 95E3DCBE1E9D3E9E006D6C08 /* settings.png */; };
 		95E3DCC31EA0E014006D6C08 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E3DCC21EA0E014006D6C08 /* NetworkManager.swift */; };
@@ -89,6 +90,7 @@
 		95A1F6391E8BB5C800D2CDD2 /* IndoorLocationUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IndoorLocationUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		95A1F63D1E8BB5C800D2CDD2 /* IndoorLocationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndoorLocationUITests.swift; sourceTree = "<group>"; };
 		95A1F63F1E8BB5C800D2CDD2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		95C3C1AD1ECC3C5100704437 /* KalmanFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KalmanFilter.swift; sourceTree = "<group>"; };
 		95E3DCBA1E9D2F0E006D6C08 /* FilterSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterSettings.swift; sourceTree = "<group>"; };
 		95E3DCBE1E9D3E9E006D6C08 /* settings.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settings.png; sourceTree = "<group>"; };
 		95E3DCC21EA0E014006D6C08 /* NetworkManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
@@ -261,6 +263,7 @@
 				95E3DCBA1E9D2F0E006D6C08 /* FilterSettings.swift */,
 				95E3DCC71EA103A5006D6C08 /* IndoorLocationManager.swift */,
 				956227C91E965F2700288A1A /* ParticleFilter.swift */,
+				95C3C1AD1ECC3C5100704437 /* KalmanFilter.swift */,
 			);
 			path = IndoorLocation;
 			sourceTree = "<group>";
@@ -477,6 +480,7 @@
 				9507696A1E8D3FCA00233FF8 /* HideBackgroundOverlay.swift in Sources */,
 				950769661E8D3F5300233FF8 /* MKMapRectRotated.swift in Sources */,
 				956227CA1E965F2700288A1A /* ParticleFilter.swift in Sources */,
+				95C3C1AE1ECC3C5100704437 /* KalmanFilter.swift in Sources */,
 				950769601E8D3C0C00233FF8 /* FloorplanOverlay.swift in Sources */,
 				959C84D41E97BB4700EB4AA4 /* FilterSettingsViewController.swift in Sources */,
 				950769641E8D3F0400233FF8 /* Utilities.swift in Sources */,
