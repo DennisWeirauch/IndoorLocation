@@ -32,7 +32,6 @@ class NetworkManager {
     //MARK: Private API
     private func setupServer() {
         let eventLoop = try! SelectorEventLoop(selector: try! KqueueSelector())
-        //TODO: Try to change interface back to ::1
         let server = DefaultHTTPServer(eventLoop: eventLoop, interface: "::", port: port) {(
             environ: [String: Any],
             startResponse: ((String, [(String, String)]) -> Void),
