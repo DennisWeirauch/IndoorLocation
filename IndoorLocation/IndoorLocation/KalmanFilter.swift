@@ -165,6 +165,10 @@ class KalmanFilter: BayesianFilter {
         position = CGPoint(x: state[0], y: state[1])
         
         print("New pos:  \(position)")
+        
+        print("Covar. x: \(P[0])")
+        print("Covar. y: \(P[6])")
+        
         successCallback()
     }
     

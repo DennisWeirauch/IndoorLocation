@@ -11,8 +11,6 @@
 		950769601E8D3C0C00233FF8 /* FloorplanOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9507695F1E8D3C0C00233FF8 /* FloorplanOverlay.swift */; };
 		950769621E8D3DFB00233FF8 /* CoordinateConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950769611E8D3DFB00233FF8 /* CoordinateConverter.swift */; };
 		950769641E8D3F0400233FF8 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950769631E8D3F0400233FF8 /* Utilities.swift */; };
-		950769661E8D3F5300233FF8 /* MKMapRectRotated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950769651E8D3F5300233FF8 /* MKMapRectRotated.swift */; };
-		950769681E8D3F8C00233FF8 /* VisibleMapRegionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950769671E8D3F8C00233FF8 /* VisibleMapRegionDelegate.swift */; };
 		9507696A1E8D3FCA00233FF8 /* HideBackgroundOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950769691E8D3FCA00233FF8 /* HideBackgroundOverlay.swift */; };
 		9507696C1E8D400A00233FF8 /* FloorplanOverlayRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9507696B1E8D400A00233FF8 /* FloorplanOverlayRenderer.swift */; };
 		950769701E8D419B00233FF8 /* room_10_blueprint.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9507696F1E8D419B00233FF8 /* room_10_blueprint.pdf */; };
@@ -64,8 +62,6 @@
 		9507695F1E8D3C0C00233FF8 /* FloorplanOverlay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloorplanOverlay.swift; sourceTree = "<group>"; };
 		950769611E8D3DFB00233FF8 /* CoordinateConverter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoordinateConverter.swift; sourceTree = "<group>"; };
 		950769631E8D3F0400233FF8 /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
-		950769651E8D3F5300233FF8 /* MKMapRectRotated.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MKMapRectRotated.swift; sourceTree = "<group>"; };
-		950769671E8D3F8C00233FF8 /* VisibleMapRegionDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VisibleMapRegionDelegate.swift; sourceTree = "<group>"; };
 		950769691E8D3FCA00233FF8 /* HideBackgroundOverlay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HideBackgroundOverlay.swift; sourceTree = "<group>"; };
 		9507696B1E8D400A00233FF8 /* FloorplanOverlayRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloorplanOverlayRenderer.swift; sourceTree = "<group>"; };
 		9507696F1E8D419B00233FF8 /* room_10_blueprint.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = room_10_blueprint.pdf; sourceTree = "<group>"; };
@@ -242,8 +238,6 @@
 				9507695F1E8D3C0C00233FF8 /* FloorplanOverlay.swift */,
 				9507696B1E8D400A00233FF8 /* FloorplanOverlayRenderer.swift */,
 				950769691E8D3FCA00233FF8 /* HideBackgroundOverlay.swift */,
-				950769651E8D3F5300233FF8 /* MKMapRectRotated.swift */,
-				950769671E8D3F8C00233FF8 /* VisibleMapRegionDelegate.swift */,
 			);
 			path = Maps;
 			sourceTree = "<group>";
@@ -478,7 +472,6 @@
 				95E3DCC81EA103A5006D6C08 /* IndoorLocationManager.swift in Sources */,
 				952BDE061E92A114003DD94C /* AnchorSettingsViewController.swift in Sources */,
 				9507696A1E8D3FCA00233FF8 /* HideBackgroundOverlay.swift in Sources */,
-				950769661E8D3F5300233FF8 /* MKMapRectRotated.swift in Sources */,
 				956227CA1E965F2700288A1A /* ParticleFilter.swift in Sources */,
 				95C3C1AE1ECC3C5100704437 /* KalmanFilter.swift in Sources */,
 				950769601E8D3C0C00233FF8 /* FloorplanOverlay.swift in Sources */,
@@ -487,7 +480,6 @@
 				9507696C1E8D400A00233FF8 /* FloorplanOverlayRenderer.swift in Sources */,
 				95E3DCC31EA0E014006D6C08 /* NetworkManager.swift in Sources */,
 				95A1F61E1E8BB5C700D2CDD2 /* AppDelegate.swift in Sources */,
-				950769681E8D3F8C00233FF8 /* VisibleMapRegionDelegate.swift in Sources */,
 				95E3DCCA1EA10817006D6C08 /* BayesianFilter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -8,6 +8,10 @@
 
 import UIKit
 
+protocol FilterSettingsViewControllerDelegate {
+    func toggleFloorplanVisible(_ floorPlanVisible: Bool)
+}
+
 class FilterSettingsViewController: UIViewController {
 
     //MARK: IBOutlets and private variables
@@ -23,6 +27,7 @@ class FilterSettingsViewController: UIViewController {
     @IBOutlet weak var filterTypeSegmentedControl: UISegmentedControl!
         
     let filterSettings = IndoorLocationManager.shared.filterSettings
+    var delegate: FilterSettingsViewControllerDelegate?
     
     //MARK: ViewController lifecyle
     override func viewDidLoad() {
@@ -91,6 +96,7 @@ class FilterSettingsViewController: UIViewController {
         switch sender.tag {
         case 1:
             filterSettings.positioningModeIsRelative = sender.selectedSegmentIndex == 0
+            delegate?.toggleFloorplanVisible(!filterSettings.positioningModeIsRelative)
         case 2:
             filterSettings.calibrationModeIsAutomatic = sender.selectedSegmentIndex == 0
         case 3:

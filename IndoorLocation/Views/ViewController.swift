@@ -9,15 +9,12 @@
 import Foundation
 import MapKit
 
-class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentationControllerDelegate, IndoorLocationManagerDelegate {
+class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentationControllerDelegate, IndoorLocationManagerDelegate, FilterSettingsViewControllerDelegate {
     
     //MARK: IBOutlets and private variables
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var filterSettingsButton: UIButton!
     @IBOutlet weak var startButton: UIButton!
-    
-    /// Helper class for managing the scroll & zoom of the MapView camera.
-    var visibleMapRegionDelegate: VisibleMapRegionDelegate!
     
     /// Store the data about our floorplan here.
     var floorplan: FloorplanOverlay!
@@ -27,7 +24,6 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
     //MARK: State machine
     fileprivate enum IndoorLocationState {
         case idle
-        case ranging
         case positioning
     }
     
@@ -38,7 +34,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
                 let startButtonImage = UIImage(named: "start.png")
                 startButton.setImage(startButtonImage, for: .normal)
 
-            case .positioning, .ranging:
+            case .positioning:
                 let startButtonImage = UIImage(named: "stop.png")
                 startButton.setImage(startButtonImage, for: .normal)
             }
@@ -67,48 +63,19 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
         let anchorPair = GeoAnchorPair(fromAnchor: mapAnchor1, toAnchor: mapAnchor2)
 
         coordinateConverter = CoordinateConverter(anchors: anchorPair)
-        
-        // === Initialize our assets
-        
-        /*
-         We have to specify subdirectory here since we copy our folder
-         reference during "Copy Bundle Resources" section under target
-         settings build phases.
-         */
+
         let pdfUrl = Bundle.main.url(forResource: "room_10_blueprint", withExtension: "pdf")!
         
         floorplan = FloorplanOverlay(floorplanUrl: pdfUrl, withPDFBox: CGPDFBox.trimBox, andCoordinateConverter: coordinateConverter)
         
-        visibleMapRegionDelegate = VisibleMapRegionDelegate(floorplanBounds: floorplan.boundingMapRectIncludingRotations,
-                                                            boundingPDFBox: floorplan.floorplanPDFBox,
-                                                            floorplanCenter: floorplan.coordinate,
-                                                            floorplanUprightMKMapCameraHeading: floorplan.getFloorplanUprightMKMapCameraHeading())
-        
         // Disable tileset.
         mapView.add(HideBackgroundOverlay.hideBackgroundOverlay(), level: .aboveRoads)
         
-        // Draw the floorplan!
-        mapView.add(floorplan)
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        setupCamera()
     }
 
     //MARK: MKMapViewDelegate
-    /**
-     Check for when the MKMapView is zoomed or scrolled in case we need to
-     bounce back to the floorplan. If, instead, you're using e.g.
-     MKUserTrackingModeFollow then you'll want to disable
-     snapMapViewToFloorplan since it will conflict with the user-follow
-     scroll/zoom.
-     */
-    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-        visibleMapRegionDelegate.mapView(mapView, regionDidChangeAnimated:animated)
-    }
-    
-    /// Produce each type of renderer that might exist in our mapView.
+    // Produce each type of renderer that might exist in our mapView.
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         
         if (overlay.isKind(of: FloorplanOverlay.self)) {
@@ -136,13 +103,8 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
         return MKOverlayRenderer()
     }
     
-    /// Produce each type of annotation view that might exist in our MapView.
+    // Produce each type of annotation view that might exist in our MapView.
     func mapView(_ mapView: MKMapView, viewFor annotation: MKAnnotation) -> MKAnnotationView? {
-        /*
-         For now, all we have are some quick and dirty pins for viewing debug
-         annotations. To learn more about showing annotations,
-         see "Annotating Maps".
-         */
         if let customAnnotation = annotation as? CustomAnnotation {
             let annotationView = MKAnnotationView()
             
@@ -183,23 +145,24 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
     }
     
     func mapView(_ mapView: MKMapView, annotationView view: MKAnnotationView, calloutAccessoryControlTapped control: UIControl) {
-        let popoverVC = AnchorSettingsViewController(nibName: "AnchorSettingsViewController", bundle: nil)
+        let anchorSettingsVC = AnchorSettingsViewController(nibName: "AnchorSettingsViewController", bundle: nil)
         
-        popoverVC.name = (view.annotation?.title)!
+        anchorSettingsVC.name = (view.annotation?.title)!
         
-        popoverVC.point = CGPoint(x: (view.annotation?.coordinate.latitude)!, y: (view.annotation?.coordinate.longitude)!)
+        anchorSettingsVC.point = CGPoint(x: (view.annotation?.coordinate.latitude)!, y: (view.annotation?.coordinate.longitude)!)
 
-        popoverVC.modalPresentationStyle = .popover
+        anchorSettingsVC.modalPresentationStyle = .popover
         let frame = self.view.frame
 
-        popoverVC.preferredContentSize = CGSize(width: frame.width - 20, height: 180)
+        anchorSettingsVC.preferredContentSize = CGSize(width: frame.width - 20, height: 180)
         
-        popoverVC.popoverPresentationController?.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
-        popoverVC.popoverPresentationController?.delegate = self
-        popoverVC.popoverPresentationController?.sourceView = self.view
-        popoverVC.popoverPresentationController?.sourceRect = CGRect(x: frame.width / 2, y: frame.height, width: 1, height: 1)
+        let popoverVC = anchorSettingsVC.popoverPresentationController
+        popoverVC?.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
+        popoverVC?.delegate = self
+        popoverVC?.sourceView = self.view
+        popoverVC?.sourceRect = CGRect(x: frame.width / 2, y: frame.height, width: 1, height: 1)
         
-        self.present(popoverVC, animated: true, completion: nil)
+        self.present(anchorSettingsVC, animated: true, completion: nil)
     }
     
     //MARK: UIPopoverPresentationConrollerDelegate
@@ -211,7 +174,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
     func updateAnnotationsFor(_ annotationType: AnnotationType) {
         var annotations = [CustomAnnotation]()
         
-        //Remove all annotations of type to change
+        // Remove all annotations of type to change
         for annotation in mapView.annotations {
             let customAnnotation = annotation as? CustomAnnotation
             if (customAnnotation?.annotationType == annotationType) {
@@ -219,11 +182,10 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
             }
         }
         
-        //Create new annotations
+        // Create new annotations
         switch annotationType {
         case .anchor:
             if let anchors = IndoorLocationManager.shared.anchors {
-                
                 for (index, anchor) in anchors.enumerated() {
                     let anchorAnnotation = CustomAnnotation(.anchor)
                     anchorAnnotation.title = "Anchor \(index)"
@@ -256,24 +218,35 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
         }
         
         mapView.addAnnotations(annotations)
-        //TODO: Refresh map view
+    }
+    
+    //MARK: FilterSettingsViewControllerDelegate
+    func toggleFloorplanVisible(_ floorPlanVisible: Bool) {
+        if floorPlanVisible {
+            mapView.add(floorplan)
+        } else {
+            mapView.remove(floorplan)
+        }
     }
     
     //MARK: IBActions
-    @IBAction func onMenuButtonTapped(_ sender: Any) {
-        let popoverVC = FilterSettingsViewController(nibName: "FilterSettingsViewController", bundle: nil)
+    @IBAction func onSettingsButtonTapped(_ sender: Any) {
+        let filterSettingsVC = FilterSettingsViewController(nibName: "FilterSettingsViewController", bundle: nil)
         
-        popoverVC.modalPresentationStyle = .popover
+        filterSettingsVC.modalPresentationStyle = .popover
         let frame = self.view.frame
         
-        popoverVC.preferredContentSize = CGSize(width: 200, height: frame.height)
+        filterSettingsVC.preferredContentSize = CGSize(width: 200, height: frame.height)
+        filterSettingsVC.delegate = self
         
-        popoverVC.popoverPresentationController?.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
-        popoverVC.popoverPresentationController?.delegate = self
-        popoverVC.popoverPresentationController?.sourceView = self.view
-        popoverVC.popoverPresentationController?.sourceRect = CGRect(x: frame.width, y: frame.height / 2, width: 1, height: 1)
+        let popoverVC = filterSettingsVC.popoverPresentationController
+        popoverVC?.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
+        popoverVC?.delegate = self
+        popoverVC?.sourceView = self.view
+        popoverVC?
+            .sourceRect = CGRect(x: frame.width, y: frame.height / 2, width: 1, height: 1)
         
-        self.present(popoverVC, animated: true, completion: nil)
+        self.present(filterSettingsVC, animated: true, completion: nil)
     }
     
     @IBAction func onStartButtonTapped(_ sender: Any) {
@@ -285,5 +258,28 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
             state = .idle
             IndoorLocationManager.shared.stopPositioning()
         }
+    }
+    
+    //MARK: Private API
+    private func setupCamera() {
+        
+        let mapViewVisibleMapRectArea: Double = mapView.visibleMapRect.size.area()
+        
+        let maxZoomedOut: MKMapRect = mapView.mapRectThatFits(floorplan.boundingMapRect)
+        let maxZoomedOutArea: Double = maxZoomedOut.size.area()
+        
+        let zoomFactor: Double = sqrt(maxZoomedOutArea / mapViewVisibleMapRectArea)
+        let currentAltitude: CLLocationDistance = mapView.camera.altitude
+        let newAltitude: CLLocationDistance = currentAltitude * zoomFactor
+        
+        let newCamera: MKMapCamera = mapView.camera.copy() as! MKMapCamera
+        
+        newCamera.altitude = newAltitude
+        
+        newCamera.centerCoordinate = floorplan.coordinate
+        
+        newCamera.heading = floorplan.getFloorplanUprightMKMapCameraHeading()
+        
+        mapView.setCamera(newCamera, animated: false)
     }
 }

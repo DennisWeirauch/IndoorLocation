@@ -12,26 +12,10 @@ import MapKit
 class FloorplanOverlay: NSObject, MKOverlay {
     
     /**
-     Same as boundingMapRect but slightly larger to fit on-screen under
-     any MKMapCamera rotation.
-     */
-    var boundingMapRectIncludingRotations = MKMapRect()
-    
-    /**
      Cache the CGAffineTransform used to help draw the floorplan to the
      screen inside an MKMapView.
      */
     var transformerFromPDFToMk = CGAffineTransform()
-    
-    /**
-     Same as boundingMapRect, but more precise.
-     The AAPLMapRectRotated you'll get here fits snugly accounting for the
-     rotation of the floorplan (relative to North) whereas the
-     boundingMapRect must be "North-aligned" since it's an MKMapRect.
-     If you're still not 100% sure, toggle the "debug switch" in the sample
-     code and look at the overlays that are drawn.
-     */
-    var floorplanPDFBox: MKMapRectRotated
     
     /// The PDF document to be rendered.
     var pdfPage: CGPDFPage
@@ -96,10 +80,6 @@ class FloorplanOverlay: NSObject, MKOverlay {
          */
         let pdfDoc = CGPDFDocument(floorplanUrl as CFURL)!
         
-        /*
-         In this example the floorplan PDF has only one page, so we pick
-         "page 1" of the PDF.
-         */
         pdfPage = pdfDoc.page(at: 1)!
         
         // Figure out which region of the PDF is to be drawn.
@@ -113,26 +93,7 @@ class FloorplanOverlay: NSObject, MKOverlay {
          */
         let polygonFromPDFRectCorners = coordinateConverter.polygonFromPDFRectCorners(pdfBoxRectangle)
         boundingMapRect = polygonFromPDFRectCorners.boundingMapRect
-        
-        /*
-         We need a quick way to check whether your screen is currently
-         looking inside vs. outside the floorplan, in order to "clamp" your
-         MKMapView.
-         */
-        assert(polygonFromPDFRectCorners.pointCount == 4)
-        let points = polygonFromPDFRectCorners.points()
-        floorplanPDFBox = MKMapRectRotatedMake(points[0], corner2: points[1], corner3: points[2], corner4: points[3])
-        
-        /*
-         For the purposes of clamping MKMapCamera zoom, we need a slightly
-         padded MKMapRect that allows the entire floorplan can be visible
-         regardless of camera rotation. Otherwise, depending on the
-         MKMapCamera rotation, auto-zoom might prevent the user from zooming
-         out far enough to see the entire floorplan and/or auto-scroll might
-         prevent the user from seeing the edge of the floorplan.
-         */
-        boundingMapRectIncludingRotations = coordinateConverter.boundingMapRectIncludingRotations(pdfBoxRectangle)
-        
+
         // For coordinate just return the centroid of boundingMapRect
         coordinate = MKCoordinateForMapPoint(boundingMapRect.getCenter())
     }
@@ -169,21 +130,5 @@ class FloorplanOverlay: NSObject, MKOverlay {
          positive value if it is valid.
          */
         return ((result < CLLocationDirection(0.0)) ? (result + CLLocationDirection(360.0)) : result)
-    }
-    
-    /**
-     Create an MKPolygon overlay given a custom CGPath (whose coordinates
-     are specified in the PDF points)
-     - parameter pdfPath: an array of CGPoint, each element is a PDF
-     coordinate along the path.
-     - returns: A closed MapKit polygon made up of the points in PDF path.
-     */
-    func polygonFromCustomPDFPath(_ pdfPath: [CGPoint]) -> MKPolygon {
-        // Calculate the corresponding MKMapPoint for each PDF point.
-        var coordinates = pdfPath.map { pathPoint in
-            return coordinateConverter.MKMapPointFromPDFPoint(pathPoint)
-        }
-        
-        return MKPolygon(points: &coordinates, count: coordinates.count)
     }
 }

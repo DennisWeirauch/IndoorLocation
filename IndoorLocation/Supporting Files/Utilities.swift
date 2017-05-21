@@ -10,28 +10,6 @@ import Foundation
 import MapKit
 import Accelerate
 
-/**
- - parameter a:
- - parameter b:
- - note: If numbers are the same, always chooses first
- - returns: the SMALLER of the two numbers (not the minimum) e.g.
- smallest(-5.0, 0.01) returns 0.01.
- */
-func smallest(_ a: Double, b: Double) -> Double {
-    return (fabs(a) <= fabs(b)) ? a: b
-}
-
-/**
- - parameter val: value to clamp.
- - parameter min: least possible value.
- - parameter max: greatest possible value.
- 
- - returns: clamped version of val such that it falls between min and max.
- */
-func clamp(_ val: Double, min: Double, max: Double) -> Double {
-    return (val < min) ? min : ((val > max) ? max : val)
-}
-
 extension MKMapPoint {
     /**
      - parameter a: Point A.
@@ -40,18 +18,6 @@ extension MKMapPoint {
      */
     static func midpoint(_ a: MKMapPoint, b: MKMapPoint) -> MKMapPoint {
         return MKMapPoint(x: (a.x + b.x) * 0.5, y: (a.y + b.y) * 0.5)
-    }
-    
-    /**
-     - parameter other: ending point.
-     - returns: The MKMapPointDisplacement between two MKMapPoint objects.
-     */
-    func displacementToPoint(_ other: MKMapPoint) -> MKMapPointDisplacement {
-        let dx = (other.x - x)
-        let dy = (other.y - y)
-        let distance = hypot(dx, dy)
-        
-        return MKMapPointDisplacement(direction: MKMapDirection(eX: dx/distance, eY: dy/distance), distance: distance)
     }
 }
 
@@ -90,7 +56,6 @@ extension CGVector {
         return dx * other.dx + dy * other.dy
     }
     
-    
     /**
      - parameter scale: how much to scale (e.g. 1.0, 1.5, 0.2, etc).
      - returns: a copy of this vector, rescaled by the amount given.
@@ -114,17 +79,6 @@ extension CGVector {
     }
 }
 
-extension CGPoint {
-    /**
-     - parameter a: point A.
-     - parameter b: point B.
-     - returns: The hypotenuse defined by the two.
-     */
-    static func hypotenuse(_ a: CGPoint, b: CGPoint) -> Double {
-        return Double(hypot(b.x - a.x, b.y - a.y))
-    }
-}
-
 extension MKMapRect {
     /**
      - returns: The point at the center of the rectangle.
@@ -132,19 +86,6 @@ extension MKMapRect {
      */
     func getCenter() -> MKMapPoint {
         return MKMapPointMake(MKMapRectGetMidX(self), MKMapRectGetMidY(self))
-    }
-    
-    /**
-     - parameter rect: a rectangle.
-     - returns: an MKMapRect converted to an MKPolygon.
-     */
-    func polygonFromMapRect() -> MKPolygon {
-        var corners =  [MKMapPointMake(MKMapRectGetMaxX(self),  MKMapRectGetMaxY(self)),
-                        MKMapPointMake(MKMapRectGetMinX(self),  MKMapRectGetMaxY(self)),
-                        MKMapPointMake(MKMapRectGetMinX(self),  MKMapRectGetMinY(self)),
-                        MKMapPointMake(MKMapRectGetMaxX(self),  MKMapRectGetMinY(self))]
-        
-        return MKPolygon(points: &corners, count: corners.count)
     }
 }
 

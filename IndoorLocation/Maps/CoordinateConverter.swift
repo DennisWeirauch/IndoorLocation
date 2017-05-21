@@ -135,7 +135,7 @@ class CoordinateConverter: NSObject {
          In the CG coordinate frame, clockwise rotation is NEGATIVE radians
          because in a PDF +x is rightward and +y is upward.
          */
-        oneMeterSouthwardVector = oneMeterEastwardVector.rotatedByRadians(-CGFloat.pi/2)
+        oneMeterSouthwardVector = oneMeterEastwardVector.rotatedByRadians(-.pi/2)
         
         /*
          We'll choose the midpoint between the two anchors to be our "tangent
@@ -249,11 +249,6 @@ class CoordinateConverter: NSObject {
         return resultOfDisplacementFromTangentPoint.translatedBy(x: -tangentPDFPoint.x, y: -tangentPDFPoint.y)
     }
     
-    /// - returns: the size in meters of 1.0 CGPoint distance
-    var unitSizeInMeters: CLLocationDistance {
-        return CLLocationDistance(1.0 / hypot(oneMeterEastwardVector.dx, oneMeterEastwardVector.dy))
-    }
-    
     /**
      Converts each corner of a PDF rectangle into an MKMapPoint (in MapKit
      space). The collection of MKMapPoints is returned as an MKPolygon
@@ -273,34 +268,6 @@ class CoordinateConverter: NSObject {
     }
     
     /**
-     - returns: the smallest MKMapRect that can show all rotations of the
-     given PDF rectangle.
-     */
-    func boundingMapRectIncludingRotations(_ rect: CGRect) -> MKMapRect {
-        // Start with the nominal rendering box for this rect is.
-        let nominalRenderingRect = polygonFromPDFRectCorners(rect).boundingMapRect
-        
-        /*
-         In order to account for all rotations, any bounding map rect must
-         have diameter equal to the longest distance inside the rectangle.
-         */
-        let boundsDiameter = hypot(nominalRenderingRect.size.width, nominalRenderingRect.size.height)
-        
-        let rectCenterPoints = CGPoint(x: rect.midX, y: rect.midY)
-        
-        let boundsCenter = MKMapPointFromPDFPoint(rectCenterPoints)
-        
-        /*
-         Return a square MKMapRect centered at boundsCenterMercator with edge
-         length diameterMercator
-         */
-        return MKMapRectMake(
-            boundsCenter.x - boundsDiameter / 2.0,
-            boundsCenter.y - boundsDiameter / 2.0,
-            boundsDiameter, boundsDiameter)
-    }
-    
-    /**
      - returns: the MKMapCamera heading required to display your PDF (user
      space) coordinate system upright so that PDF +x is rightward and
      PDF +y is upward.
@@ -311,7 +278,7 @@ class CoordinateConverter: NSObject {
          vector toward due east.
          */
         let resultRadians: CGFloat = atan2(oneMeterEastwardVector.dy, oneMeterEastwardVector.dx)
-        let result = resultRadians * 180.0 / CGFloat.pi
+        let result = resultRadians * 180.0 / .pi
         
         /*
          According to the CLLocationDirection documentation we must store a
