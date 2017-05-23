@@ -6,7 +6,7 @@
 //  Copyright © 2017 Hirschgaenger. All rights reserved.
 //
 
-import UIKit
+import Accelerate
 
 enum FilterType {
     case none
@@ -31,11 +31,16 @@ class IndoorLocationManager {
     
     var delegate: IndoorLocationManagerDelegate?
     
+    //TODO: Refactor anchors to be a [String : CGPoint] Dict
     var anchors: [CGPoint]?
     
-    var filter: BayesianFilter? = nil
+    var anchorIDs: [Int]?
+    
+    var filter: BayesianFilter?
     
     var filterSettings: FilterSettings
+    
+    var position: CGPoint?
     
     private init() {
         filterSettings = FilterSettings()
@@ -75,17 +80,31 @@ class IndoorLocationManager {
             guard let anchorDict = self.parseData(stringData) else { return }
 
             var anchors = [CGPoint]()
-            for i in 0..<anchorDict.count/2 {
-                guard let xCoordinate = anchorDict["xPos\(i)"], let yCoordinate = anchorDict["yPos\(i)"] else {
+            var anchorIDs = [Int]()
+            var distances = [Double]()
+            
+            // Iterate from 0 to anchorDict.count / 4 because there are 4 values for every anchor:
+            // ID, xPos, yPos, dist
+            for i in 0..<anchorDict.count / 4 {
+                guard let id = anchorDict["ID\(i)"],
+                    let xCoordinate = anchorDict["xPos\(i)"],
+                    let yCoordinate = anchorDict["yPos\(i)"],
+                    let distance = anchorDict["dist\(i)"] else {
                     print("Error retrieving data from anchorDict")
                     return
                 }
                 anchors.append(CGPoint(x: xCoordinate, y: yCoordinate))
+                anchorIDs.append(Int(id))
+                distances.append(distance)
             }
             
             self.anchors = anchors
+            self.anchorIDs = anchorIDs
             
             self.delegate?.updateAnnotationsFor(.anchor)
+            
+            // Least squares algorithm to get initial position
+            self.position = leastSquares(anchors: anchors, distances: distances)
         }
     }
     
@@ -125,7 +144,9 @@ class IndoorLocationManager {
         measurements.append(xAcc)
         measurements.append(yAcc)
         
-        filter?.update(measurements: measurements) {
+        filter?.update(measurements: measurements) { position in
+            self.position = position
+            
             delegate?.updateAnnotationsFor(.position)
             
             switch (filterSettings.filterType) {

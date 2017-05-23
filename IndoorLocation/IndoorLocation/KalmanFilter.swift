@@ -6,11 +6,11 @@
 //  Copyright © 2017 Hirschgaenger. All rights reserved.
 //
 
-import UIKit
 import Accelerate
 
 class KalmanFilter: BayesianFilter {
     
+    // State vector containing: [xPos, yPos, xVel, yVel, xAcc, yAcc]
     var state: [Double]
 
     // Matrices
@@ -19,7 +19,7 @@ class KalmanFilter: BayesianFilter {
     var R: [Double]
     var P: [Double]
     
-    init?(updateTime: Double, initX: [Double] = [0, 0, 0, 0]) {
+    init?(updateTime: Double) {
         
         let settings = IndoorLocationManager.shared.filterSettings
 
@@ -27,13 +27,14 @@ class KalmanFilter: BayesianFilter {
         let pos_sig = settings.distanceUncertainty
         var proc_fac = settings.processingUncertainty
         
-        guard let anchors = IndoorLocationManager.shared.anchors else {
-            print("No anchors found. Calibration has to be executed first!")
-            return nil
+        guard let anchors = IndoorLocationManager.shared.anchors,
+            let position = IndoorLocationManager.shared.position else {
+                print("No anchors found. Calibration has to be executed first!")
+                return nil
         }
         
         let dt = updateTime
-        state = initX + [0, 0]
+        state = [Double(position.x), Double(position.y), 0, 0, 0, 0]
         
         // Initialize matrices
         // F is a 6x6 matrix with '1's in main diagonal, 'dt's in second positive side diagonal and '(dt^2)/2's in fourth positive side diagonal
@@ -82,9 +83,9 @@ class KalmanFilter: BayesianFilter {
         R = [Double]()
         for i in 0..<anchors.count + 2 {
             for j in 0..<anchors.count + 2 {
-                if (i == j && i <= anchors.count) {
+                if (i == j && i < anchors.count) {
                     R.append(pos_sig)
-                } else if (i == j && i > anchors.count) {
+                } else if (i == j && i >= anchors.count) {
                     R.append(acc_sig)
                 } else {
                     R.append(0)
@@ -92,12 +93,12 @@ class KalmanFilter: BayesianFilter {
             }
         }
         
-        // P is a 6x6 identity matrix
+        // P is a 6x6 diagonal matrix with pos_sig entries
         P = [Double]()
         for i in 0..<6 {
             for j in 0..<6 {
                 if (i == j) {
-                    P.append(1)
+                    P.append(pos_sig)
                 } else {
                     P.append(0)
                 }
@@ -120,68 +121,75 @@ class KalmanFilter: BayesianFilter {
         vDSP_mmulD(F_P, 1, F_t, 1, &F_P_F_t, 1, 6, 6, 6)
         
         vDSP_vaddD(F_P_F_t, 1, Q, 1, &P, 1, vDSP_Length(Q.count))
-        
-        print("Pred pos: \(CGPoint(x: state[0], y: state[1]))")
     }
     
-    override func update(measurements: [Double], successCallback: () -> Void) {
+    override func update(measurements: [Double], successCallback: (CGPoint) -> Void) {
+        guard let anchors = IndoorLocationManager.shared.anchors else {
+            print("No anchors found!")
+            return
+        }
+        
         let H = H_j(state)
         
+        let numAnchPlus2 = vDSP_Length(anchors.count + 2)
         // Compute S from S = H * P * H_t + R
         var H_t = [Double](repeating: 0, count : H.count)
-        vDSP_mtransD(H, 1, &H_t, 1, 6, 5)
+        vDSP_mtransD(H, 1, &H_t, 1, 6, numAnchPlus2)
         
         var P_H_t = [Double](repeating: 0, count: H_t.count)
-        vDSP_mmulD(P, 1, H_t, 1, &P_H_t, 1, 6, 5, 6)
+        vDSP_mmulD(P, 1, H_t, 1, &P_H_t, 1, 6, numAnchPlus2, 6)
         
         var H_P_H_t = [Double](repeating: 0, count : 25)
-        vDSP_mmulD(H, 1, P_H_t, 1, &H_P_H_t, 1, 5, 5, 6)
+        vDSP_mmulD(H, 1, P_H_t, 1, &H_P_H_t, 1, numAnchPlus2, numAnchPlus2, 6)
         
         var S = [Double](repeating: 0, count : R.count)
         vDSP_vaddD(H_P_H_t, 1, R, 1, &S, 1, vDSP_Length(R.count))
         
         // Compute K from K = P * H_t * S_inv
-        var K = [Double](repeating: 0, count: 30)
-        vDSP_mmulD(P_H_t, 1, invertMatrix(S), 1, &K, 1, 6, 5, 5)
+        var K = [Double](repeating: 0, count: 6 * (anchors.count + 2))
+        vDSP_mmulD(P_H_t, 1, invertMatrix(S), 1, &K, 1, 6, numAnchPlus2, numAnchPlus2)
         
         // Compute new state = state + K * (measurements - h(state))
-        var diff = [Double](repeating: 0, count: 5)
-        vDSP_vsubD(measurements, 1, h(state), 1, &diff, 1, 5)
+        var diff = [Double](repeating: 0, count: anchors.count + 2)
+        vDSP_vsubD(h(state), 1, measurements, 1, &diff, 1, numAnchPlus2)
         
-        var update = [Double](repeating: 0, count: 5)
-        vDSP_mmulD(K, 1, diff, 1, &update, 1, 6, 1, 5)
+        var update = [Double](repeating: 0, count: 6)
+        vDSP_mmulD(K, 1, diff, 1, &update, 1, 6, 1, numAnchPlus2)
         
-        vDSP_vaddD(state, 1, update, 1, &state, 1, 5)
+        vDSP_vaddD(state, 1, update, 1, &state, 1, 6)
         
         // Compute new P from P = P - K * H * P
         var K_H = [Double](repeating: 0, count: 36)
-        vDSP_mmulD(K, 1, H, 1, &K_H, 1, 6, 6, 5)
+        vDSP_mmulD(K, 1, H, 1, &K_H, 1, 6, 6, numAnchPlus2)
         
         var K_H_P = [Double](repeating: 0, count: 36)
         vDSP_mmulD(K_H, 1, P, 1, &K_H_P, 1, 6, 6, 6)
         
-        vDSP_vsubD(P, 1, K_H_P, 1, &P, 1, 36)
+        vDSP_vsubD(K_H_P, 1, P, 1, &P, 1, 36)
         
-        position = CGPoint(x: state[0], y: state[1])
+        let position = CGPoint(x: state[0], y: state[1])
         
-        print("New pos:  \(position)")
-        
-        print("Covar. x: \(P[0])")
-        print("Covar. y: \(P[6])")
-        
-        successCallback()
+        successCallback(position)
     }
     
     //MARK: Private API
     private func h(_ state: [Double]) -> [Double] {
-        let anchors = IndoorLocationManager.shared.anchors!
+        guard let anchors = IndoorLocationManager.shared.anchors else {
+            print("No anchors found!")
+            return []
+        }
+        
+        let xPos = state[0]
+        let yPos = state[1]
+        let xAcc = state[4]
+        let yAcc = state[5]
         
         var h = [Double]()
         for i in 0..<anchors.count {
-            h.append(sqrt(pow(Double(anchors[i].x) - state[0], 2) + pow(Double(anchors[i].y) - state[1], 2)))
+            h.append(sqrt(pow(Double(anchors[i].x) - xPos, 2) + pow(Double(anchors[i].y) - yPos, 2)))
         }
-        h.append(state[4])
-        h.append(state[5])
+        h.append(xAcc)
+        h.append(yAcc)
         
         return h
     }
@@ -192,6 +200,8 @@ class KalmanFilter: BayesianFilter {
         var H_j = [Double]()
         for i in 0..<anchors.count {
             if (state[0] == Double(anchors[i].x) && state[1] == Double(anchors[i].y)) {
+                // If position is exactly the same as an anchor, we would divide by 0. Therefore this
+                // case is treated here separately and zeros are added.
                 H_j += [0, 0]
             } else {
                 H_j.append((state[0] - Double(anchors[i].x)) / sqrt(pow(Double(anchors[i].x) - state[0], 2) + pow(Double(anchors[i].y) - state[1], 2)))

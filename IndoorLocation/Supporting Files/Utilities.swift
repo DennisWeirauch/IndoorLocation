@@ -117,3 +117,28 @@ func invertMatrix(_ matrix: [Double]) -> [Double] {
     dgetri_(&N, &inMatrix, &N, &pivots, &workspace, &N, &error)
     return inMatrix
 }
+
+func leastSquares(anchors: [CGPoint], distances: [Double]) -> CGPoint {
+    var A = [Double]()
+    var b = [Double]()
+    
+    for i in 0..<anchors.count - 1 {
+        b.append(pow(distances[i], 2) - Double(pow(anchors[i].x, 2)) - Double(pow(anchors[i].y, 2))
+            - pow(distances.last!, 2) + Double(pow(anchors.last!.x, 2)) + Double(pow(anchors.last!.y, 2)))
+        A.append(-2 * Double(anchors[i].x - anchors.last!.x))
+        A.append(-2 * Double(anchors[i].y - anchors.last!.y))
+    }
+    
+    let A_inv = invertMatrix(A)
+    
+    var pos = [0.0, 0.0]
+    vDSP_mmulD(A_inv, 1, b, 1, &pos, 1, 2, 1, 2)
+    
+    return CGPoint(x: pos[0], y: pos[1])
+}
+
+func pprint(matrix: [Double], numRows: Int, numCols: Int) {
+    for i in 0..<numRows {
+        print(matrix[(i * numCols)..<((i + 1) * numCols)], separator: ", ")
+    }
+}

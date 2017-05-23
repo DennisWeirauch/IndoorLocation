@@ -6,7 +6,6 @@
 //  Copyright © 2017 Hirschgaenger. All rights reserved.
 //
 
-import UIKit
 import Embassy
 
 enum TaskType : String {

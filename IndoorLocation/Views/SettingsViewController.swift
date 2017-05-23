@@ -8,11 +8,11 @@
 
 import UIKit
 
-protocol FilterSettingsViewControllerDelegate {
+protocol SettingsViewControllerDelegate {
     func toggleFloorplanVisible(_ floorPlanVisible: Bool)
 }
 
-class FilterSettingsViewController: UIViewController {
+class SettingsViewController: UIViewController {
 
     //MARK: IBOutlets and private variables
     @IBOutlet weak var accelerationUncertaintyLabel: UILabel!
@@ -27,7 +27,7 @@ class FilterSettingsViewController: UIViewController {
     @IBOutlet weak var filterTypeSegmentedControl: UISegmentedControl!
         
     let filterSettings = IndoorLocationManager.shared.filterSettings
-    var delegate: FilterSettingsViewControllerDelegate?
+    var delegate: SettingsViewControllerDelegate?
     
     //MARK: ViewController lifecyle
     override func viewDidLoad() {
@@ -65,7 +65,7 @@ class FilterSettingsViewController: UIViewController {
         case .none:
             IndoorLocationManager.shared.filter = BayesianFilter()
         case .kalman:
-            IndoorLocationManager.shared.filter = KalmanFilter(updateTime: 0.5)
+            IndoorLocationManager.shared.filter = KalmanFilter(updateTime: 0.15)
         case .particle:
             IndoorLocationManager.shared.filter = ParticleFilter()
         }

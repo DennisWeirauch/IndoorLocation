@@ -6,8 +6,6 @@
 //  Copyright © 2017 Hirschgaenger. All rights reserved.
 //
 
-import UIKit
-
 class FilterSettings {
     
     var positioningModeIsRelative = true

@@ -6,7 +6,6 @@
 //  Copyright © 2017 Hirschgaenger. All rights reserved.
 //
 
-import UIKit
 import GameplayKit
 
 class Particle {
@@ -44,7 +43,7 @@ class ParticleFilter: BayesianFilter {
         print("Predict")
     }
     
-    override func update(measurements: [Double], successCallback: () -> Void) {
+    override func update(measurements: [Double], successCallback: (CGPoint) -> Void) {
         var totalX = 0.0
         var totalY = 0.0
         for i in 0..<particles.count {
@@ -54,8 +53,8 @@ class ParticleFilter: BayesianFilter {
         let meanX = totalX / Double(particles.count)
         let meanY = totalY / Double(particles.count)
         
-        position = CGPoint(x: meanX, y: meanY)
+        let position = CGPoint(x: meanX, y: meanY)
         
-        successCallback()
+        successCallback(position)
     }
 }
