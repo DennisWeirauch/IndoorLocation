@@ -19,13 +19,15 @@ class KalmanFilter: BayesianFilter {
     var R: [Double]
     var P: [Double]
     
-    init?(updateTime: Double) {
+    //TODO: Check how to remove updateTime here without getting a segmentation fault 11
+    init?(updateTime: Int? = nil) {
         
         let settings = IndoorLocationManager.shared.filterSettings
 
-        let acc_sig = settings.accelerationUncertainty
-        let pos_sig = settings.distanceUncertainty
-        var proc_fac = settings.processingUncertainty
+        let acc_sig = Double(settings.accelerationUncertainty)
+        let pos_sig = Double(settings.distanceUncertainty)
+        var proc_fac = Double(settings.processingUncertainty)
+        let dt = settings.updateTime
         
         guard let anchors = IndoorLocationManager.shared.anchors,
             let position = IndoorLocationManager.shared.position else {
@@ -33,7 +35,6 @@ class KalmanFilter: BayesianFilter {
                 return nil
         }
         
-        let dt = updateTime
         state = [Double(position.x), Double(position.y), 0, 0, 0, 0]
         
         // Initialize matrices

@@ -17,11 +17,13 @@ class FilterSettings {
     var filterType: FilterType = .none
     
     // Kalman filter parameters
-    var accelerationUncertainty: Double = 25
+    var accelerationUncertainty: Int = 25
     
-    var distanceUncertainty: Double = 50
+    var distanceUncertainty: Int = 50
     
-    var processingUncertainty: Double = 40
+    var processingUncertainty: Int = 40
+    
+    var updateTime = 0.15
     
     // Particle filter parameters
     var numberOfParticles: Int = 100

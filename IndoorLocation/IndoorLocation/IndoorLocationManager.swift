@@ -8,8 +8,8 @@
 
 import Accelerate
 
-enum FilterType {
-    case none
+enum FilterType: Int {
+    case none = 0
     case kalman
     case particle
 }

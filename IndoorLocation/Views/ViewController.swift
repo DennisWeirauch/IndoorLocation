@@ -9,7 +9,7 @@
 import Foundation
 import MapKit
 
-class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentationControllerDelegate, IndoorLocationManagerDelegate, SettingsViewControllerDelegate {
+class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentationControllerDelegate, IndoorLocationManagerDelegate, SettingsTableViewControllerDelegate {
     
     //MARK: IBOutlets and private variables
     @IBOutlet weak var mapView: MKMapView!
@@ -220,7 +220,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
         mapView.addAnnotations(annotations)
     }
     
-    //MARK: FilterSettingsViewControllerDelegate
+    //MARK: FilterSettingsTableViewControllerDelegate
     func toggleFloorplanVisible(_ floorPlanVisible: Bool) {
         if floorPlanVisible {
             mapView.add(floorplan)
@@ -231,13 +231,13 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
     
     //MARK: IBActions
     @IBAction func onSettingsButtonTapped(_ sender: Any) {
-        let settingsVC = SettingsViewController(nibName: "SettingsViewController", bundle: nil)
+        let settingsVC = SettingsTableViewController()
         
         settingsVC.modalPresentationStyle = .popover
         let frame = self.view.frame
         
         settingsVC.preferredContentSize = CGSize(width: 200, height: frame.height)
-        settingsVC.delegate = self
+        settingsVC.settingsDelegate = self
         
         let popoverVC = settingsVC.popoverPresentationController
         popoverVC?.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
