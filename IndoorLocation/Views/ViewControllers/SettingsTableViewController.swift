@@ -26,7 +26,7 @@ protocol SettingsTableViewControllerDelegate {
     func toggleFloorplanVisible(_ floorPlanVisible: Bool)
 }
 
-class SettingsTableViewController: UITableViewController, SegmentedControlTableViewCellDelegate, SliderTableViewCellDelegate, ButtonTableViewCellDelegate {
+class SettingsTableViewController: UITableViewController, SegmentedControlTableViewCellDelegate, SliderTableViewCellDelegate, ButtonTableViewCellDelegate, AnchorTableViewCellDelegate {
     
     let tableViewSections = [SettingsTableViewSection.positioningMode.rawValue,
                              SettingsTableViewSection.calibrationMode.rawValue,
@@ -46,13 +46,18 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
         headerView.addSubview(titleLabel)
         tableView.tableHeaderView = headerView
         
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "reuseIdentifier")
         tableView.register(SegmentedControlTableViewCell.self, forCellReuseIdentifier: String(describing: SegmentedControlTableViewCell.self))
         tableView.register(SliderTableViewCell.self, forCellReuseIdentifier: String(describing: SliderTableViewCell.self))
         tableView.register(ButtonTableViewCell.self, forCellReuseIdentifier: String(describing: ButtonTableViewCell.self))
+        tableView.register(AnchorTableViewCell.self, forCellReuseIdentifier: String(describing: AnchorTableViewCell.self))
         
         tableView.separatorStyle = .none
         tableView.allowsSelection = false
+        
+        // Tap gesture recognizer for dismissing keyboard when touching outside of UITextFields
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
+        tapGestureRecognizer.cancelsTouchesInView = false
+        self.view.addGestureRecognizer(tapGestureRecognizer)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -100,7 +105,6 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
             }
         }
     }
-
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: UITableViewCell
@@ -122,8 +126,7 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
                 if (indexPath.row == numCells - 1) {
                     cell = tableView.dequeueReusableCell(withIdentifier: String(describing: ButtonTableViewCell.self), for: indexPath)
                 } else {
-                    //TODO: Add anchor cells
-                    cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
+                    cell = tableView.dequeueReusableCell(withIdentifier: String(describing: AnchorTableViewCell.self), for: indexPath)
                 }
             }
         case .dataSink:
@@ -205,6 +208,16 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
         IndoorLocationManager.shared.calibrate()
     }
     
+    //MARK: AnchorTableViewCellDelegate
+    func onAddAnchorButtonTapped(_ sender: UIButton, id: Int, x: Int, y: Int) {
+        IndoorLocationManager.shared.addAnchorWithID(id, x: x, y: y)
+        tableView.reloadData()
+    }
+    
+    func onEditTextField(_ sender: UITextField) {
+        //TODO!
+    }
+    
     //MARK: Private API
     private func configureCell(_ cell: UITableViewCell, forIndexPath indexPath: IndexPath) {
         
@@ -226,6 +239,17 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
                 cell.setupWithSegments(["Automatic", "Manual"], selectedSegmentIndex: selectedSegmentIndex, delegate: self, tag: tableViewSection.rawValue)
             } else if let cell = cell as? ButtonTableViewCell {
                 cell.setupWithText("Calibrate!", delegate: self)
+            } else if let cell = cell as? AnchorTableViewCell {
+                if let anchors = IndoorLocationManager.shared.anchors, let anchorIDs = IndoorLocationManager.shared.anchorIDs {
+                    let index = indexPath.row - 1
+                    if index < anchors.count {
+                        cell.setupWithID(anchorIDs[index], x: Int(anchors[index].x), y: Int(anchors[index].y), delegate: self)
+                    } else {
+                        cell.setupWithDelegate(self)
+                    }
+                } else {
+                    cell.setupWithDelegate(self)
+                }
             }
         case .dataSink:
             if let cell = cell as? SegmentedControlTableViewCell {
@@ -259,5 +283,9 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
                 
             }
         }
+    }
+    
+    func dismissKeyboard() {
+        self.view.endEditing(true)
     }
 }

@@ -26,9 +26,7 @@ class ButtonTableViewCell: UITableViewCell {
         }
         
         self.delegate = delegate
-        
-        frame = CGRect(x: 0, y: 0, width: frame.width, height: 30)
-        
+                
         button = UIButton(frame: contentView.frame)
         guard let button = button else { return }
         ButtonHelper.setupButton(button, text: text)

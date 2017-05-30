@@ -52,7 +52,6 @@ class NetworkManager {
             // Start HTTP server to listen on the port
             try! server.start()
             
-            print("Server running")
             // Run event loop
             eventLoop.runForever()
         }

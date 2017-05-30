@@ -27,9 +27,7 @@ class SegmentedControlTableViewCell: UITableViewCell {
         }
         
         self.delegate = delegate
-        
-        frame = CGRect(x: 0, y: 0, width: frame.width, height: 40)
-        
+                
         segmentedControl = UISegmentedControl(items: segments)
         guard let segmentedControl = segmentedControl else { return }
         segmentedControl.frame = CGRect(x: 20, y: 5, width: contentView.frame.width - 40, height: 30)

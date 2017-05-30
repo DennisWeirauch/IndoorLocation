@@ -161,4 +161,14 @@ class IndoorLocationManager {
             }
         }
     }
+    
+    func addAnchorWithID(_ id: Int, x: Int, y: Int) {
+        if (anchors != nil) {
+            self.anchorIDs?.append(id)
+            self.anchors?.append(CGPoint(x: x, y: y))
+        } else {
+            anchorIDs = [id]
+            anchors = [CGPoint(x: x, y: y)]
+        }
+    }
 }

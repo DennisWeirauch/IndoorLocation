@@ -31,9 +31,7 @@ class SliderTableViewCell: UITableViewCell {
         self.delegate = delegate
         
         labelText = text
-        
-        frame = CGRect(x: 0, y: 0, width: frame.width, height: 55)
-        
+                
         label = UILabel(frame: CGRect(x: 20, y: 4, width: contentView.frame.width - 40, height: 16))
         guard let label = label else { return }
         LabelHelper.setupLabel(label, withText: text + " \(value)", fontSize: 13)

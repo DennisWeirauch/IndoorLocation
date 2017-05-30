@@ -16,6 +16,7 @@
 		950769701E8D419B00233FF8 /* room_10_blueprint.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9507696F1E8D419B00233FF8 /* room_10_blueprint.pdf */; };
 		952BDE061E92A114003DD94C /* AnchorSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952BDE041E92A114003DD94C /* AnchorSettingsViewController.swift */; };
 		952BDE071E92A114003DD94C /* AnchorSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 952BDE051E92A114003DD94C /* AnchorSettingsViewController.xib */; };
+		95570C781EDD7E7000F15E30 /* AnchorTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95570C771EDD7E7000F15E30 /* AnchorTableViewCell.swift */; };
 		955A85921EC5F99B00EA3105 /* CustomAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955A85911EC5F99B00EA3105 /* CustomAnnotation.swift */; };
 		956227CA1E965F2700288A1A /* ParticleFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956227C91E965F2700288A1A /* ParticleFilter.swift */; };
 		956227CC1E96A95600288A1A /* particle.png in Resources */ = {isa = PBXBuildFile; fileRef = 956227CB1E96A95600288A1A /* particle.png */; };
@@ -73,6 +74,7 @@
 		9507696F1E8D419B00233FF8 /* room_10_blueprint.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = room_10_blueprint.pdf; sourceTree = "<group>"; };
 		952BDE041E92A114003DD94C /* AnchorSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AnchorSettingsViewController.swift; path = ViewControllers/AnchorSettingsViewController.swift; sourceTree = "<group>"; };
 		952BDE051E92A114003DD94C /* AnchorSettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = AnchorSettingsViewController.xib; path = ViewControllers/AnchorSettingsViewController.xib; sourceTree = "<group>"; };
+		95570C771EDD7E7000F15E30 /* AnchorTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AnchorTableViewCell.swift; path = Cells/AnchorTableViewCell.swift; sourceTree = "<group>"; };
 		955A85911EC5F99B00EA3105 /* CustomAnnotation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAnnotation.swift; sourceTree = "<group>"; };
 		956227C91E965F2700288A1A /* ParticleFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParticleFilter.swift; sourceTree = "<group>"; };
 		956227CB1E96A95600288A1A /* particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle.png; sourceTree = "<group>"; };
@@ -177,9 +179,9 @@
 		95A19DF11ED6C733004BC415 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				95A19E001EDD7448004BC415 /* ButtonHelper.swift */,
 				95A19DEF1ED6C72A004BC415 /* LabelHelper.swift */,
 				95A19DF21ED6C998004BC415 /* SliderHelper.swift */,
-				95A19E001EDD7448004BC415 /* ButtonHelper.swift */,
 				95A19DF41ED6DAB7004BC415 /* TextFieldHelper.swift */,
 			);
 			name = Helpers;
@@ -188,9 +190,10 @@
 		95A19DFC1EDD6B9B004BC415 /* Cells */ = {
 			isa = PBXGroup;
 			children = (
+				95570C771EDD7E7000F15E30 /* AnchorTableViewCell.swift */,
+				95A19DFE1EDD724C004BC415 /* ButtonTableViewCell.swift */,
 				95A19DF81EDC4080004BC415 /* SegmentedControlTableViewCell.swift */,
 				95A19DFA1EDC4889004BC415 /* SliderTableViewCell.swift */,
-				95A19DFE1EDD724C004BC415 /* ButtonTableViewCell.swift */,
 			);
 			name = Cells;
 			sourceTree = "<group>";
@@ -516,6 +519,7 @@
 				952BDE061E92A114003DD94C /* AnchorSettingsViewController.swift in Sources */,
 				9507696A1E8D3FCA00233FF8 /* HideBackgroundOverlay.swift in Sources */,
 				956227CA1E965F2700288A1A /* ParticleFilter.swift in Sources */,
+				95570C781EDD7E7000F15E30 /* AnchorTableViewCell.swift in Sources */,
 				95C3C1AE1ECC3C5100704437 /* KalmanFilter.swift in Sources */,
 				95A19DF31ED6C998004BC415 /* SliderHelper.swift in Sources */,
 				95A19DF51ED6DAB7004BC415 /* TextFieldHelper.swift in Sources */,
