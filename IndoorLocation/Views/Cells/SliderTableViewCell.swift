@@ -11,6 +11,7 @@ import UIKit
 protocol SliderTableViewCellDelegate: class {
     func onSliderValueChanged(_ sender: UISlider)
 }
+
 class SliderTableViewCell: UITableViewCell {
 
     weak var delegate: SliderTableViewCellDelegate?
@@ -48,7 +49,7 @@ class SliderTableViewCell: UITableViewCell {
     }
     
     func onSliderValueChanged(_ sender: UISlider) {
-        label?.text = (labelText ?? "") + "\(Int(sender.value))"
+        label?.text = (labelText ?? "") + " \(Int(sender.value))"
         delegate?.onSliderValueChanged(sender)
     }
 }

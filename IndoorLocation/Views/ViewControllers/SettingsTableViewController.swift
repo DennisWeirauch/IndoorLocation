@@ -26,7 +26,7 @@ protocol SettingsTableViewControllerDelegate {
     func toggleFloorplanVisible(_ floorPlanVisible: Bool)
 }
 
-class SettingsTableViewController: UITableViewController, SegmentedControlTableViewCellDelegate, SliderTableViewCellDelegate {
+class SettingsTableViewController: UITableViewController, SegmentedControlTableViewCellDelegate, SliderTableViewCellDelegate, ButtonTableViewCellDelegate {
     
     let tableViewSections = [SettingsTableViewSection.positioningMode.rawValue,
                              SettingsTableViewSection.calibrationMode.rawValue,
@@ -49,8 +49,10 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "reuseIdentifier")
         tableView.register(SegmentedControlTableViewCell.self, forCellReuseIdentifier: String(describing: SegmentedControlTableViewCell.self))
         tableView.register(SliderTableViewCell.self, forCellReuseIdentifier: String(describing: SliderTableViewCell.self))
+        tableView.register(ButtonTableViewCell.self, forCellReuseIdentifier: String(describing: ButtonTableViewCell.self))
         
         tableView.separatorStyle = .none
+        tableView.allowsSelection = false
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -80,7 +82,11 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
         case .positioningMode:
             return 1
         case .calibrationMode:
-            return 1 + (IndoorLocationManager.shared.anchors?.count ?? 0)
+            if filterSettings.calibrationModeIsAutomatic {
+                return 2
+            } else {
+                return 3 + (IndoorLocationManager.shared.anchors?.count ?? 0) // 1 Segmented Control, 1 Button, 1 cell for each anchor found, 1 empty cell
+            }
         case .dataSink:
             return 1
         case .filterType:
@@ -103,14 +109,31 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
             fatalError("Could not retrieve section")
         }
         
-        if (indexPath.row == 0) {
+        switch tableViewSection {
+        case .positioningMode:
             cell = tableView.dequeueReusableCell(withIdentifier: String(describing: SegmentedControlTableViewCell.self), for: indexPath)
-//        } else if (tableViewSection == .calibrationMode) {
-//            //TODO: Add anchor cells
-        } else if (tableViewSection == .filterType) {
-            cell = tableView.dequeueReusableCell(withIdentifier: String(describing: SliderTableViewCell.self), for: indexPath)
-        } else {
-            cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
+        case .calibrationMode:
+            if (indexPath.row == 0) {
+                cell = tableView.dequeueReusableCell(withIdentifier: String(describing: SegmentedControlTableViewCell.self), for: indexPath)
+            } else if filterSettings.calibrationModeIsAutomatic {
+                cell = tableView.dequeueReusableCell(withIdentifier: String(describing: ButtonTableViewCell.self), for: indexPath)
+            } else {
+                let numCells = 3 + (IndoorLocationManager.shared.anchors?.count ?? 0)
+                if (indexPath.row == numCells - 1) {
+                    cell = tableView.dequeueReusableCell(withIdentifier: String(describing: ButtonTableViewCell.self), for: indexPath)
+                } else {
+                    //TODO: Add anchor cells
+                    cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
+                }
+            }
+        case .dataSink:
+            cell = tableView.dequeueReusableCell(withIdentifier: String(describing: SegmentedControlTableViewCell.self), for: indexPath)
+        case .filterType:
+            if (indexPath.row == 0) {
+                cell = tableView.dequeueReusableCell(withIdentifier: String(describing: SegmentedControlTableViewCell.self), for: indexPath)
+            } else {
+                cell = tableView.dequeueReusableCell(withIdentifier: String(describing: SliderTableViewCell.self), for: indexPath)
+            }
         }
         
         configureCell(cell, forIndexPath: indexPath)
@@ -177,6 +200,11 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
         }
     }
     
+    //MARK: ButtonTableViewCellDelegate
+    func onButtonTapped(_ sender: UIButton) {
+        IndoorLocationManager.shared.calibrate()
+    }
+    
     //MARK: Private API
     private func configureCell(_ cell: UITableViewCell, forIndexPath indexPath: IndexPath) {
         
@@ -196,6 +224,8 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
                 let selectedSegmentIndex = filterSettings.calibrationModeIsAutomatic ? 0 : 1
                 
                 cell.setupWithSegments(["Automatic", "Manual"], selectedSegmentIndex: selectedSegmentIndex, delegate: self, tag: tableViewSection.rawValue)
+            } else if let cell = cell as? ButtonTableViewCell {
+                cell.setupWithText("Calibrate!", delegate: self)
             }
         case .dataSink:
             if let cell = cell as? SegmentedControlTableViewCell {

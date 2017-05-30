@@ -21,14 +21,14 @@
 		956227CC1E96A95600288A1A /* particle.png in Resources */ = {isa = PBXBuildFile; fileRef = 956227CB1E96A95600288A1A /* particle.png */; };
 		956227CE1E96AD9000288A1A /* position.png in Resources */ = {isa = PBXBuildFile; fileRef = 956227CD1E96AD9000288A1A /* position.png */; };
 		956227D21E96BA7C00288A1A /* anchor.png in Resources */ = {isa = PBXBuildFile; fileRef = 956227D11E96BA7C00288A1A /* anchor.png */; };
-		959C84D41E97BB4700EB4AA4 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959C84D21E97BB4700EB4AA4 /* SettingsViewController.swift */; };
-		959C84D51E97BB4700EB4AA4 /* SettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 959C84D31E97BB4700EB4AA4 /* SettingsViewController.xib */; };
 		95A19DF01ED6C72A004BC415 /* LabelHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A19DEF1ED6C72A004BC415 /* LabelHelper.swift */; };
 		95A19DF31ED6C998004BC415 /* SliderHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A19DF21ED6C998004BC415 /* SliderHelper.swift */; };
 		95A19DF51ED6DAB7004BC415 /* TextFieldHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A19DF41ED6DAB7004BC415 /* TextFieldHelper.swift */; };
 		95A19DF71EDC3A81004BC415 /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A19DF61EDC3A81004BC415 /* SettingsTableViewController.swift */; };
 		95A19DF91EDC4080004BC415 /* SegmentedControlTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A19DF81EDC4080004BC415 /* SegmentedControlTableViewCell.swift */; };
 		95A19DFB1EDC4889004BC415 /* SliderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A19DFA1EDC4889004BC415 /* SliderTableViewCell.swift */; };
+		95A19DFF1EDD724C004BC415 /* ButtonTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A19DFE1EDD724C004BC415 /* ButtonTableViewCell.swift */; };
+		95A19E011EDD7448004BC415 /* ButtonHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A19E001EDD7448004BC415 /* ButtonHelper.swift */; };
 		95A1F61E1E8BB5C700D2CDD2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A1F61D1E8BB5C700D2CDD2 /* AppDelegate.swift */; };
 		95A1F6201E8BB5C700D2CDD2 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A1F61F1E8BB5C700D2CDD2 /* ViewController.swift */; };
 		95A1F6231E8BB5C700D2CDD2 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 95A1F6211E8BB5C700D2CDD2 /* Main.storyboard */; };
@@ -71,24 +71,24 @@
 		950769691E8D3FCA00233FF8 /* HideBackgroundOverlay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HideBackgroundOverlay.swift; sourceTree = "<group>"; };
 		9507696B1E8D400A00233FF8 /* FloorplanOverlayRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloorplanOverlayRenderer.swift; sourceTree = "<group>"; };
 		9507696F1E8D419B00233FF8 /* room_10_blueprint.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = room_10_blueprint.pdf; sourceTree = "<group>"; };
-		952BDE041E92A114003DD94C /* AnchorSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AnchorSettingsViewController.swift; sourceTree = "<group>"; };
-		952BDE051E92A114003DD94C /* AnchorSettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AnchorSettingsViewController.xib; sourceTree = "<group>"; };
+		952BDE041E92A114003DD94C /* AnchorSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AnchorSettingsViewController.swift; path = ViewControllers/AnchorSettingsViewController.swift; sourceTree = "<group>"; };
+		952BDE051E92A114003DD94C /* AnchorSettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = AnchorSettingsViewController.xib; path = ViewControllers/AnchorSettingsViewController.xib; sourceTree = "<group>"; };
 		955A85911EC5F99B00EA3105 /* CustomAnnotation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAnnotation.swift; sourceTree = "<group>"; };
 		956227C91E965F2700288A1A /* ParticleFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParticleFilter.swift; sourceTree = "<group>"; };
 		956227CB1E96A95600288A1A /* particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle.png; sourceTree = "<group>"; };
 		956227CD1E96AD9000288A1A /* position.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = position.png; sourceTree = "<group>"; };
 		956227D11E96BA7C00288A1A /* anchor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = anchor.png; sourceTree = "<group>"; };
-		959C84D21E97BB4700EB4AA4 /* SettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
-		959C84D31E97BB4700EB4AA4 /* SettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SettingsViewController.xib; sourceTree = "<group>"; };
 		95A19DEF1ED6C72A004BC415 /* LabelHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LabelHelper.swift; path = Helpers/LabelHelper.swift; sourceTree = "<group>"; };
 		95A19DF21ED6C998004BC415 /* SliderHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SliderHelper.swift; path = Helpers/SliderHelper.swift; sourceTree = "<group>"; };
 		95A19DF41ED6DAB7004BC415 /* TextFieldHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TextFieldHelper.swift; path = Helpers/TextFieldHelper.swift; sourceTree = "<group>"; };
-		95A19DF61EDC3A81004BC415 /* SettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingsTableViewController.swift; sourceTree = "<group>"; };
-		95A19DF81EDC4080004BC415 /* SegmentedControlTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegmentedControlTableViewCell.swift; sourceTree = "<group>"; };
-		95A19DFA1EDC4889004BC415 /* SliderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SliderTableViewCell.swift; sourceTree = "<group>"; };
+		95A19DF61EDC3A81004BC415 /* SettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SettingsTableViewController.swift; path = ViewControllers/SettingsTableViewController.swift; sourceTree = "<group>"; };
+		95A19DF81EDC4080004BC415 /* SegmentedControlTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SegmentedControlTableViewCell.swift; path = Cells/SegmentedControlTableViewCell.swift; sourceTree = "<group>"; };
+		95A19DFA1EDC4889004BC415 /* SliderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SliderTableViewCell.swift; path = Cells/SliderTableViewCell.swift; sourceTree = "<group>"; };
+		95A19DFE1EDD724C004BC415 /* ButtonTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ButtonTableViewCell.swift; path = Cells/ButtonTableViewCell.swift; sourceTree = "<group>"; };
+		95A19E001EDD7448004BC415 /* ButtonHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ButtonHelper.swift; path = Helpers/ButtonHelper.swift; sourceTree = "<group>"; };
 		95A1F61A1E8BB5C700D2CDD2 /* IndoorLocation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IndoorLocation.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		95A1F61D1E8BB5C700D2CDD2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		95A1F61F1E8BB5C700D2CDD2 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		95A1F61F1E8BB5C700D2CDD2 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ViewController.swift; path = ViewControllers/ViewController.swift; sourceTree = "<group>"; };
 		95A1F6221E8BB5C700D2CDD2 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		95A1F6241E8BB5C700D2CDD2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		95A1F6291E8BB5C700D2CDD2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -168,14 +168,8 @@
 		959C84D71E97BCC700EB4AA4 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				952BDE041E92A114003DD94C /* AnchorSettingsViewController.swift */,
-				952BDE051E92A114003DD94C /* AnchorSettingsViewController.xib */,
-				95A19DF81EDC4080004BC415 /* SegmentedControlTableViewCell.swift */,
-				95A19DF61EDC3A81004BC415 /* SettingsTableViewController.swift */,
-				959C84D21E97BB4700EB4AA4 /* SettingsViewController.swift */,
-				959C84D31E97BB4700EB4AA4 /* SettingsViewController.xib */,
-				95A19DFA1EDC4889004BC415 /* SliderTableViewCell.swift */,
-				95A1F61F1E8BB5C700D2CDD2 /* ViewController.swift */,
+				95A19DFC1EDD6B9B004BC415 /* Cells */,
+				95A19DFD1EDD6BAF004BC415 /* ViewControllers */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -185,9 +179,31 @@
 			children = (
 				95A19DEF1ED6C72A004BC415 /* LabelHelper.swift */,
 				95A19DF21ED6C998004BC415 /* SliderHelper.swift */,
+				95A19E001EDD7448004BC415 /* ButtonHelper.swift */,
 				95A19DF41ED6DAB7004BC415 /* TextFieldHelper.swift */,
 			);
 			name = Helpers;
+			sourceTree = "<group>";
+		};
+		95A19DFC1EDD6B9B004BC415 /* Cells */ = {
+			isa = PBXGroup;
+			children = (
+				95A19DF81EDC4080004BC415 /* SegmentedControlTableViewCell.swift */,
+				95A19DFA1EDC4889004BC415 /* SliderTableViewCell.swift */,
+				95A19DFE1EDD724C004BC415 /* ButtonTableViewCell.swift */,
+			);
+			name = Cells;
+			sourceTree = "<group>";
+		};
+		95A19DFD1EDD6BAF004BC415 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				952BDE041E92A114003DD94C /* AnchorSettingsViewController.swift */,
+				952BDE051E92A114003DD94C /* AnchorSettingsViewController.xib */,
+				95A19DF61EDC3A81004BC415 /* SettingsTableViewController.swift */,
+				95A1F61F1E8BB5C700D2CDD2 /* ViewController.swift */,
+			);
+			name = ViewControllers;
 			sourceTree = "<group>";
 		};
 		95A1F6111E8BB5C700D2CDD2 = {
@@ -415,7 +431,6 @@
 				956227CC1E96A95600288A1A /* particle.png in Resources */,
 				95E3DCBF1E9D3E9E006D6C08 /* settings.png in Resources */,
 				952BDE071E92A114003DD94C /* AnchorSettingsViewController.xib in Resources */,
-				959C84D51E97BB4700EB4AA4 /* SettingsViewController.xib in Resources */,
 				95A1F6251E8BB5C700D2CDD2 /* Assets.xcassets in Resources */,
 				950769701E8D419B00233FF8 /* room_10_blueprint.pdf in Resources */,
 				95A1F6231E8BB5C700D2CDD2 /* Main.storyboard in Resources */,
@@ -492,6 +507,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				950769621E8D3DFB00233FF8 /* CoordinateConverter.swift in Sources */,
+				95A19DFF1EDD724C004BC415 /* ButtonTableViewCell.swift in Sources */,
 				95A19DF01ED6C72A004BC415 /* LabelHelper.swift in Sources */,
 				955A85921EC5F99B00EA3105 /* CustomAnnotation.swift in Sources */,
 				95A1F6201E8BB5C700D2CDD2 /* ViewController.swift in Sources */,
@@ -504,10 +520,10 @@
 				95A19DF31ED6C998004BC415 /* SliderHelper.swift in Sources */,
 				95A19DF51ED6DAB7004BC415 /* TextFieldHelper.swift in Sources */,
 				950769601E8D3C0C00233FF8 /* FloorplanOverlay.swift in Sources */,
-				959C84D41E97BB4700EB4AA4 /* SettingsViewController.swift in Sources */,
 				950769641E8D3F0400233FF8 /* Utilities.swift in Sources */,
 				9507696C1E8D400A00233FF8 /* FloorplanOverlayRenderer.swift in Sources */,
 				95A19DF91EDC4080004BC415 /* SegmentedControlTableViewCell.swift in Sources */,
+				95A19E011EDD7448004BC415 /* ButtonHelper.swift in Sources */,
 				95A19DF71EDC3A81004BC415 /* SettingsTableViewController.swift in Sources */,
 				95E3DCC31EA0E014006D6C08 /* NetworkManager.swift in Sources */,
 				95A1F61E1E8BB5C700D2CDD2 /* AppDelegate.swift in Sources */,
