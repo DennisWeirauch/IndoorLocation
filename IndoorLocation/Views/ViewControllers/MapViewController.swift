@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  MapViewController.swift
 //  IndoorLocation
 //
 //  Created by Dennis Hirschgänger on 29/03/2017.
@@ -9,12 +9,12 @@
 import Foundation
 import MapKit
 
-class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentationControllerDelegate, IndoorLocationManagerDelegate, SettingsTableViewControllerDelegate {
+class MapViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentationControllerDelegate, IndoorLocationManagerDelegate, SettingsTableViewControllerDelegate {
     
-    //MARK: IBOutlets and private variables
-    @IBOutlet weak var mapView: MKMapView!
-    @IBOutlet weak var filterSettingsButton: UIButton!
-    @IBOutlet weak var startButton: UIButton!
+    //MARK: Private variables
+    var mapView: MKMapView!
+    var settingsButton: UIButton!
+    var startButton: UIButton!
     
     /// Store the data about our floorplan here.
     var floorplan: FloorplanOverlay!
@@ -45,8 +45,26 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Set up mapView
+        mapView = MKMapView(frame: view.frame)
+        mapView.showsCompass = false
+        mapView.showsPointsOfInterest = false
+        mapView.showsBuildings = false
+        
+        mapView.delegate = self
+        view.addSubview(mapView)
+        
+        // Set up settingsButton
+        settingsButton = UIButton(frame: CGRect(x: view.frame.width - 50, y: 30, width: 40, height: 40))
         let settingsButtonImage = UIImage(named: "settings.png")
-        filterSettingsButton.setImage(settingsButtonImage, for: .normal)
+        settingsButton.setImage(settingsButtonImage, for: .normal)
+        settingsButton.addTarget(self, action: #selector(onSettingsButtonTapped(_:)), for: .touchUpInside)
+        view.addSubview(settingsButton)
+        
+        // Set up startButton
+        startButton = UIButton(frame: CGRect(x: 10, y: 30, width: 40, height: 40))
+        startButton.addTarget(self, action: #selector(onStartButtonTapped(_:)), for: .touchUpInside)
+        view.addSubview(startButton)
 
         state = .idle
         
@@ -227,7 +245,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
     }
     
     //MARK: IBActions
-    @IBAction func onSettingsButtonTapped(_ sender: Any) {
+    func onSettingsButtonTapped(_ sender: Any) {
         let settingsVC = SettingsTableViewController()
         
         settingsVC.modalPresentationStyle = .popover
@@ -246,7 +264,7 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
         self.present(settingsVC, animated: true, completion: nil)
     }
     
-    @IBAction func onStartButtonTapped(_ sender: Any) {
+    func onStartButtonTapped(_ sender: Any) {
         switch state {
         case .idle:
             state = .positioning
