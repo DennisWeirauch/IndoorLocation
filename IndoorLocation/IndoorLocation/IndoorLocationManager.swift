@@ -31,11 +31,8 @@ class IndoorLocationManager {
     
     var delegate: IndoorLocationManagerDelegate?
     
-    //TODO: Refactor anchors to be a [String : CGPoint] Dict
-    var anchors: [CGPoint]?
-    
-    var anchorIDs: [Int]?
-    
+    var anchors: [Int : CGPoint]?
+        
     var filter: BayesianFilter?
     
     var filterSettings: FilterSettings
@@ -67,44 +64,60 @@ class IndoorLocationManager {
         return parsedData
     }
     
-    //MARK: Public API
-    func calibrate() {
-        NetworkManager.shared.pozyxTask(task: .calibrate) { data in
-            guard let data = data else {
-                print("No calibration data received!")
-                return
-            }
-            
-            let stringData = String(data: data, encoding: String.Encoding.utf8)!
-
-            guard let anchorDict = self.parseData(stringData) else { return }
-
-            var anchors = [CGPoint]()
-            var anchorIDs = [Int]()
-            var distances = [Double]()
-            
-            // Iterate from 0 to anchorDict.count / 4 because there are 4 values for every anchor:
-            // ID, xPos, yPos, dist
-            for i in 0..<anchorDict.count / 4 {
-                guard let id = anchorDict["ID\(i)"],
-                    let xCoordinate = anchorDict["xPos\(i)"],
-                    let yCoordinate = anchorDict["yPos\(i)"],
-                    let distance = anchorDict["dist\(i)"] else {
+    private func parseCalibrationData(data: Data?) {
+        guard let data = data else {
+            print("No calibration data received!")
+            return
+        }
+        
+        let stringData = String(data: data, encoding: String.Encoding.utf8)!
+        
+        guard let anchorDict = self.parseData(stringData) else { return }
+        
+        var anchors = [Int : CGPoint]()
+        var distances = [Double]()
+        
+        // Iterate from 0 to anchorDict.count / 4 because there are 4 values for every anchor:
+        // ID, xPos, yPos, dist
+        for i in 0..<anchorDict.count / 4 {
+            guard let id = anchorDict["ID\(i)"],
+                let xCoordinate = anchorDict["xPos\(i)"],
+                let yCoordinate = anchorDict["yPos\(i)"],
+                let distance = anchorDict["dist\(i)"] else {
                     print("Error retrieving data from anchorDict")
                     return
-                }
-                anchors.append(CGPoint(x: xCoordinate, y: yCoordinate))
-                anchorIDs.append(Int(id))
-                distances.append(distance)
             }
-            
-            self.anchors = anchors
-            self.anchorIDs = anchorIDs
-            
-            self.delegate?.updateAnnotationsFor(.anchor)
-            
-            // Least squares algorithm to get initial position
-            self.position = leastSquares(anchors: anchors, distances: distances)
+            anchors[Int(id)] = CGPoint(x: xCoordinate, y: yCoordinate)
+            distances.append(distance)
+        }
+        
+        self.anchors = anchors
+        
+        self.delegate?.updateAnnotationsFor(.anchor)
+        
+        // Least squares algorithm to get initial position
+        self.position = leastSquares(anchors: Array(anchors.values), distances: distances)
+    }
+    
+    //MARK: Public API
+    func calibrate(automatic: Bool) {
+        if automatic {
+            NetworkManager.shared.pozyxTask(task: .calibrate) { data in
+                self.parseCalibrationData(data: data)
+            }
+        } else {
+            guard let anchors = anchors else { return }
+            var anchorStringData = ""
+            let anchorIDs = Array(anchors.keys)
+            for (i, anchorID) in anchorIDs.enumerated() {
+                anchorStringData += "ID\(i)=\(anchorID)&xPos\(i)=\(Int((anchors[anchorID]?.x)!))&yPos\(i)=\(Int((anchors[anchorID]?.y)!))"
+                if (i != anchors.count - 1) {
+                    anchorStringData += "&"
+                }
+            }
+            NetworkManager.shared.pozyxTask(task: .setAnchors, data: anchorStringData) { data in
+                self.parseCalibrationData(data: data)
+            }
         }
     }
     
@@ -164,11 +177,10 @@ class IndoorLocationManager {
     
     func addAnchorWithID(_ id: Int, x: Int, y: Int) {
         if (anchors != nil) {
-            self.anchorIDs?.append(id)
-            self.anchors?.append(CGPoint(x: x, y: y))
+            anchors?[id] = CGPoint(x: x, y: y)
         } else {
-            anchorIDs = [id]
-            anchors = [CGPoint(x: x, y: y)]
+            anchors = [:]
+            anchors?[id] = CGPoint(x: x, y: y)
         }
     }
 }

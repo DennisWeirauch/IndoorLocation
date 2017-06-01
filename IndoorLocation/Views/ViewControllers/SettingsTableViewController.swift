@@ -205,7 +205,7 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
     
     //MARK: ButtonTableViewCellDelegate
     func onButtonTapped(_ sender: UIButton) {
-        IndoorLocationManager.shared.calibrate()
+        IndoorLocationManager.shared.calibrate(automatic: filterSettings.calibrationModeIsAutomatic)
     }
     
     //MARK: AnchorTableViewCellDelegate
@@ -240,10 +240,11 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
             } else if let cell = cell as? ButtonTableViewCell {
                 cell.setupWithText("Calibrate!", delegate: self)
             } else if let cell = cell as? AnchorTableViewCell {
-                if let anchors = IndoorLocationManager.shared.anchors, let anchorIDs = IndoorLocationManager.shared.anchorIDs {
+                if let anchors = IndoorLocationManager.shared.anchors {
                     let index = indexPath.row - 1
                     if index < anchors.count {
-                        cell.setupWithID(anchorIDs[index], x: Int(anchors[index].x), y: Int(anchors[index].y), delegate: self)
+                        let anchorArray = Array(anchors)
+                        cell.setupWithID(anchorArray[index].key, x: Int(anchorArray[index].value.x), y: Int(anchorArray[index].value.y), delegate: self)
                     } else {
                         cell.setupWithDelegate(self)
                     }

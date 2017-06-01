@@ -186,11 +186,10 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
         switch annotationType {
         case .anchor:
             if let anchors = IndoorLocationManager.shared.anchors {
-                for (index, anchor) in anchors.enumerated() {
+                for anchor in anchors {
                     let anchorAnnotation = CustomAnnotation(.anchor)
-                    anchorAnnotation.title = "Anchor \(index)"
-                    anchorAnnotation.subtitle = "Anchor"
-                    anchorAnnotation.coordinate = coordinateConverter.coordinateFromPDFPoint(anchor)
+                    anchorAnnotation.title = String(format:"Anchor %2X", anchor.key)
+                    anchorAnnotation.coordinate = coordinateConverter.coordinateFromPDFPoint(anchor.value)
                     annotations.append(anchorAnnotation)
                 }
             }
@@ -198,7 +197,6 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
             if let position = IndoorLocationManager.shared.position {
                 let positionAnnotation = CustomAnnotation(.position)
                 positionAnnotation.title = "Position"
-                positionAnnotation.subtitle = "Position"
                 positionAnnotation.coordinate = coordinateConverter.coordinateFromPDFPoint(position)
                 annotations.append(positionAnnotation)
             }
@@ -208,7 +206,6 @@ class ViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentation
             for i in 0..<particles.count {
                 let particleAnnotation = CustomAnnotation(.particle)
                 particleAnnotation.title = "Particle \(i)"
-                particleAnnotation.subtitle = "Particle"
                 particleAnnotation.coordinate = coordinateConverter.coordinateFromPDFPoint(CGPoint(x: CGFloat(particles[i].x), y: CGFloat(particles[i].y)))
                 annotations.append(particleAnnotation)
             }
