@@ -16,7 +16,7 @@ class FilterSettings {
     
     var filterType: FilterType = .none
     
-    // Kalman filter parameters
+    // Filter parameters
     var accelerationUncertainty: Int = 25
     
     var distanceUncertainty: Int = 50
@@ -25,6 +25,5 @@ class FilterSettings {
     
     var updateTime = 0.15
     
-    // Particle filter parameters
-    var numberOfParticles: Int = 100
+    var numberOfParticles: Int = 5
 }

@@ -224,7 +224,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentat
             for i in 0..<particles.count {
                 let particleAnnotation = CustomAnnotation(.particle)
                 particleAnnotation.title = "Particle \(i)"
-                particleAnnotation.coordinate = coordinateConverter.coordinateFromPDFPoint(CGPoint(x: CGFloat(particles[i].x), y: CGFloat(particles[i].y)))
+                particleAnnotation.coordinate = coordinateConverter.coordinateFromPDFPoint(CGPoint(x: CGFloat(particles[i].state[0]), y: CGFloat(particles[i].state[1])))
                 annotations.append(particleAnnotation)
             }
         case .covariance:

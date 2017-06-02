@@ -19,8 +19,7 @@ class KalmanFilter: BayesianFilter {
     var R: [Double]
     var P: [Double]
     
-    //TODO: Check how to remove updateTime here without getting a segmentation fault 11
-    init?(updateTime: Int? = nil) {
+    init?(position: CGPoint) {
         
         let settings = IndoorLocationManager.shared.filterSettings
 
@@ -29,8 +28,7 @@ class KalmanFilter: BayesianFilter {
         var proc_fac = Double(settings.processingUncertainty)
         let dt = settings.updateTime
         
-        guard let anchors = IndoorLocationManager.shared.anchors,
-            let position = IndoorLocationManager.shared.position else {
+        guard let anchors = IndoorLocationManager.shared.anchors else {
                 print("No anchors found. Calibration has to be executed first!")
                 return nil
         }
@@ -133,6 +131,7 @@ class KalmanFilter: BayesianFilter {
         let H = H_j(state)
         
         let numAnchPlus2 = vDSP_Length(anchors.count + 2)
+        
         // Compute S from S = H * P * H_t + R
         var H_t = [Double](repeating: 0, count : H.count)
         vDSP_mtransD(H, 1, &H_t, 1, 6, numAnchPlus2)
@@ -151,11 +150,11 @@ class KalmanFilter: BayesianFilter {
         vDSP_mmulD(P_H_t, 1, invertMatrix(S), 1, &K, 1, 6, numAnchPlus2, numAnchPlus2)
         
         // Compute new state = state + K * (measurements - h(state))
-        var diff = [Double](repeating: 0, count: anchors.count + 2)
-        vDSP_vsubD(h(state), 1, measurements, 1, &diff, 1, numAnchPlus2)
+        var innovation = [Double](repeating: 0, count: anchors.count + 2)
+        vDSP_vsubD(h(state), 1, measurements, 1, &innovation, 1, numAnchPlus2)
         
         var update = [Double](repeating: 0, count: 6)
-        vDSP_mmulD(K, 1, diff, 1, &update, 1, 6, 1, numAnchPlus2)
+        vDSP_mmulD(K, 1, innovation, 1, &update, 1, 6, 1, numAnchPlus2)
         
         vDSP_vaddD(state, 1, update, 1, &state, 1, 6)
         

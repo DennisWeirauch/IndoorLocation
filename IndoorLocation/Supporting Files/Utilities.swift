@@ -137,6 +137,30 @@ func leastSquares(anchors: [CGPoint], distances: [Double]) -> CGPoint {
     return CGPoint(x: pos[0], y: pos[1])
 }
 
+func computeNormalDistribution(x: [Double], m: [Double], forTriangularCovariance P: [Double]) -> Double {
+    // Compute the determinant by multiplying the diagonal elements. This is sufficient as we only deal with triangular matrices
+    let rank = Int(sqrt(Double(P.count)))
+    var determinant = 1.0
+    for i in 0..<rank {
+        determinant *= P[(rank + 1) * i]
+    }
+    let prefactor = 1 / sqrt(2 * Double.pi * determinant)
+    
+    // Compute the exponent = (-0.5 * (x-m)_T * P_inv * (x-m))
+    var diff = [Double](repeating: 0, count: x.count)
+    vDSP_vsubD(m, 1, x, 1, &diff, 1, vDSP_Length(x.count))
+    
+    var P_diff = [Double](repeating: 0, count: x.count)
+    vDSP_mmulD(invertMatrix(P), 1, diff, 1, &P_diff, 1, 5, 1, 5)
+    
+    var diff_P_diff = [0.0]
+    vDSP_mmulD(diff, 1, P_diff, 1, &diff_P_diff, 1, 1, 1, 5)
+    
+    let exponent = -0.5 * diff_P_diff[0]
+    
+    return prefactor * pow(M_E, exponent)
+}
+
 func pprint(matrix: [Double], numRows: Int, numCols: Int) {
     for i in 0..<numRows {
         print(matrix[(i * numCols)..<((i + 1) * numCols)], separator: ", ")
