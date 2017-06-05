@@ -179,7 +179,7 @@ class KalmanFilter: BayesianFilter {
             return []
         }
         
-        let anchorValues = Array(anchors.values)
+        let anchorCoordinates = anchors.map { $0.coordinates }
         
         let xPos = state[0]
         let yPos = state[1]
@@ -188,7 +188,7 @@ class KalmanFilter: BayesianFilter {
         
         var h = [Double]()
         for i in 0..<anchors.count {
-            h.append(sqrt(pow(Double(anchorValues[i].x) - xPos, 2) + pow(Double(anchorValues[i].y) - yPos, 2)))
+            h.append(sqrt(pow(Double(anchorCoordinates[i].x) - xPos, 2) + pow(Double(anchorCoordinates[i].y) - yPos, 2)))
         }
         h.append(xAcc)
         h.append(yAcc)
@@ -202,17 +202,17 @@ class KalmanFilter: BayesianFilter {
             return []
         }
         
-        let anchorValues = Array(anchors.values)
+        let anchorCoordinates = anchors.map { $0.coordinates }
 
         var H_j = [Double]()
         for i in 0..<anchors.count {
-            if (state[0] == Double(anchorValues[i].x) && state[1] == Double(anchorValues[i].y)) {
+            if (state[0] == Double(anchorCoordinates[i].x) && state[1] == Double(anchorCoordinates[i].y)) {
                 // If position is exactly the same as an anchor, we would divide by 0. Therefore this
                 // case is treated here separately and zeros are added.
                 H_j += [0, 0]
             } else {
-                H_j.append((state[0] - Double(anchorValues[i].x)) / sqrt(pow(Double(anchorValues[i].x) - state[0], 2) + pow(Double(anchorValues[i].y) - state[1], 2)))
-                H_j.append((state[1] - Double(anchorValues[i].y)) / sqrt(pow(Double(anchorValues[i].x) - state[0], 2) + pow(Double(anchorValues[i].y) - state[1], 2)))
+                H_j.append((state[0] - Double(anchorCoordinates[i].x)) / sqrt(pow(Double(anchorCoordinates[i].x) - state[0], 2) + pow(Double(anchorCoordinates[i].y) - state[1], 2)))
+                H_j.append((state[1] - Double(anchorCoordinates[i].y)) / sqrt(pow(Double(anchorCoordinates[i].x) - state[0], 2) + pow(Double(anchorCoordinates[i].y) - state[1], 2)))
             }
             H_j += [0, 0, 0, 0]
         }

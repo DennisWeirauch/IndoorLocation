@@ -45,6 +45,8 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
         LabelHelper.setupLabel(titleLabel, withText: "Settings", fontSize: 20, alignment: .center)
         headerView.addSubview(titleLabel)
         tableView.tableHeaderView = headerView
+        tableView.bounces = false
+        tableView.showsVerticalScrollIndicator = false
         
         tableView.register(SegmentedControlTableViewCell.self, forCellReuseIdentifier: String(describing: SegmentedControlTableViewCell.self))
         tableView.register(SliderTableViewCell.self, forCellReuseIdentifier: String(describing: SliderTableViewCell.self))
@@ -245,8 +247,7 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
                 if let anchors = IndoorLocationManager.shared.anchors {
                     let index = indexPath.row - 1
                     if index < anchors.count {
-                        let anchorArray = Array(anchors)
-                        cell.setupWithID(anchorArray[index].key, x: Int(anchorArray[index].value.x), y: Int(anchorArray[index].value.y), delegate: self)
+                        cell.setupWithID(anchors[index].id, x: Int(anchors[index].coordinates.x), y: Int(anchors[index].coordinates.y), delegate: self)
                     } else {
                         cell.setupWithDelegate(self)
                     }

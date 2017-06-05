@@ -206,8 +206,8 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentat
             if let anchors = IndoorLocationManager.shared.anchors {
                 for anchor in anchors {
                     let anchorAnnotation = CustomAnnotation(.anchor)
-                    anchorAnnotation.title = String(format:"Anchor %2X", anchor.key)
-                    anchorAnnotation.coordinate = coordinateConverter.coordinateFromPDFPoint(anchor.value)
+                    anchorAnnotation.title = String(format:"Anchor %2X", anchor.id)
+                    anchorAnnotation.coordinate = coordinateConverter.coordinateFromPDFPoint(anchor.coordinates)
                     annotations.append(anchorAnnotation)
                 }
             }

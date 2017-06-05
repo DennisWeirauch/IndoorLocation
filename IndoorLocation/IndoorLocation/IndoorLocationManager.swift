@@ -31,7 +31,7 @@ class IndoorLocationManager {
     
     var delegate: IndoorLocationManagerDelegate?
     
-    var anchors: [Int : CGPoint]?
+    var anchors: [(id: Int, coordinates: CGPoint)]?
         
     var filter: BayesianFilter?
     
@@ -74,7 +74,7 @@ class IndoorLocationManager {
         
         guard let anchorDict = self.parseData(stringData) else { return }
         
-        var anchors = [Int : CGPoint]()
+        var anchors = [(id: Int, coordinates: CGPoint)]()
         var distances = [Double]()
         
         // Iterate from 0 to anchorDict.count / 4 because there are 4 values for every anchor:
@@ -87,7 +87,7 @@ class IndoorLocationManager {
                     print("Error retrieving data from anchorDict")
                     return
             }
-            anchors[Int(id)] = CGPoint(x: xCoordinate, y: yCoordinate)
+            anchors.append((id: Int(id), coordinates: CGPoint(x: xCoordinate, y: yCoordinate)))
             distances.append(distance)
         }
         
@@ -96,7 +96,7 @@ class IndoorLocationManager {
         self.delegate?.updateAnnotationsFor(.anchor)
         
         // Least squares algorithm to get initial position
-        self.position = leastSquares(anchors: Array(anchors.values), distances: distances)
+        self.position = leastSquares(anchors: anchors.map { $0.coordinates }, distances: distances)
     }
     
     //MARK: Public API
@@ -108,9 +108,8 @@ class IndoorLocationManager {
         } else {
             guard let anchors = anchors else { return }
             var anchorStringData = ""
-            let anchorIDs = Array(anchors.keys)
-            for (i, anchorID) in anchorIDs.enumerated() {
-                anchorStringData += "ID\(i)=\(anchorID)&xPos\(i)=\(Int((anchors[anchorID]?.x)!))&yPos\(i)=\(Int((anchors[anchorID]?.y)!))"
+            for (i, anchor) in anchors.enumerated() {
+                anchorStringData += "ID\(i)=\(anchor.id)&xPos\(i)=\(Int((anchor.coordinates.x)))&yPos\(i)=\(Int((anchor.coordinates.y)))"
                 if (i != anchors.count - 1) {
                     anchorStringData += "&"
                 }
@@ -176,11 +175,9 @@ class IndoorLocationManager {
     }
     
     func addAnchorWithID(_ id: Int, x: Int, y: Int) {
-        if (anchors != nil) {
-            anchors?[id] = CGPoint(x: x, y: y)
-        } else {
-            anchors = [:]
-            anchors?[id] = CGPoint(x: x, y: y)
+        if (anchors == nil) {
+            anchors = []
         }
+        anchors?.append((id: id, coordinates: CGPoint(x: x, y: y)))
     }
 }

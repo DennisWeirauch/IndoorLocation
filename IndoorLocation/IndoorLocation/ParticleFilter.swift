@@ -127,7 +127,7 @@ class Particle {
             return []
         }
         
-        let anchorValues = Array(anchors.values)
+        let anchorCoordinates = anchors.map { $0.coordinates }
         
         let xPos = state[0]
         let yPos = state[1]
@@ -136,7 +136,7 @@ class Particle {
         
         var h = [Double]()
         for i in 0..<anchors.count {
-            h.append(sqrt(pow(Double(anchorValues[i].x) - xPos, 2) + pow(Double(anchorValues[i].y) - yPos, 2)))
+            h.append(sqrt(pow(Double(anchorCoordinates[i].x) - xPos, 2) + pow(Double(anchorCoordinates[i].y) - yPos, 2)))
         }
         h.append(xAcc)
         h.append(yAcc)
@@ -157,7 +157,7 @@ class ParticleFilter: BayesianFilter {
         particles = [Particle]()
         
         for _ in 0..<numberOfParticles {
-            guard let particle = Particle(state: [Double(position.x), Double(position.y), 0, 0, 0, 0], weight: 1/Double(numberOfParticles)) else { return }
+            guard let particle = Particle(state: [Double(position.x), Double(position.y), 0, 0, 0, 0], weight: 1 / Double(numberOfParticles)) else { return }
             particles.append(particle)
         }
     }
@@ -176,17 +176,22 @@ class ParticleFilter: BayesianFilter {
             totalWeight += particle.weight
         }
         
-        // Normalize weights of all particles and determine current position
-        var totalX = 0.0
-        var totalY = 0.0
-        for particle in particles {
-            particle.weight = particle.weight / totalWeight
-            totalX += particle.state[0] * particle.weight
-            totalY += particle.state[1] * particle.weight
+        if (totalWeight == 0) {
+            // All weights are 0. Reset weights to 1 / numberOfParticles
+            for particle in particles {
+                particle.weight = 1 / Double(numberOfParticles)
+            }
+            totalWeight = 1
         }
         
-        let meanX = totalX / totalWeight
-        let meanY = totalY / totalWeight
+        // Normalize weights of all particles and determine current position
+        var meanX = 0.0
+        var meanY = 0.0
+        for particle in particles {
+            particle.weight = particle.weight / totalWeight
+            meanX += particle.state[0] * particle.weight
+            meanY += particle.state[1] * particle.weight
+        }
                 
         successCallback(CGPoint(x: meanX, y: meanY))
     }
