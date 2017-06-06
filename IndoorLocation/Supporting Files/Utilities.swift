@@ -9,6 +9,7 @@
 import Foundation
 import MapKit
 import Accelerate
+import GameplayKit
 
 extension MKMapPoint {
     /**
@@ -159,6 +160,34 @@ func computeNormalDistribution(x: [Double], m: [Double], forTriangularCovariance
     let exponent = -0.5 * diff_P_diff[0]
     
     return prefactor * pow(M_E, exponent)
+}
+
+private func randomDouble() -> Double {
+    return Double(arc4random()) / Double(UINT32_MAX)
+}
+
+public func randomDouble(upperBound: Double) -> Double {
+    return upperBound * randomDouble()
+}
+
+// Generate a random gaussian distributed vector with specified mean and matrix A where A*A_T = Covariance matrix.
+public func randomGaussianVector(mean: [Double], A: [Double]) -> [Double] {
+    // Box Muller transform to generate 2 independent normal distributed random variables z1, z2
+    let u1 = randomDouble()
+    let u2 = randomDouble()
+    
+    let z1 = sqrt(-2.0 * log(u1)) * cos(2.0 * Double.pi * u2)
+    let z2 = sqrt(-2.0 * log(u1)) * sin(2.0 * Double.pi * u2)
+    
+    let z = [z1, z2]
+    
+    var mult = [Double](repeating: 0, count: mean.count)
+    vDSP_mmulD(A, 1, z, 1, &mult, 1, 6, 1, 2)
+    
+    var result = [Double](repeating: 0, count: mean.count)
+    vDSP_vaddD(mean, 1, mult, 1, &result, 1, vDSP_Length(mean.count))
+    
+    return result
 }
 
 func pprint(matrix: [Double], numRows: Int, numCols: Int) {

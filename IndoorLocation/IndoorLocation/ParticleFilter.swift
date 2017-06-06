@@ -7,7 +7,6 @@
 //
 
 import Accelerate
-import GameplayKit
 
 class Particle {
     
@@ -17,7 +16,7 @@ class Particle {
     
     // Matrices
     var F: [Double]
-    var Q: [Double]
+    var G: [Double]
     var R: [Double]
     
     init?(state: [Double], weight: Double) {
@@ -26,7 +25,7 @@ class Particle {
         
         let acc_sig = Double(settings.accelerationUncertainty)
         let pos_sig = Double(settings.distanceUncertainty)
-        var proc_fac = Double(settings.processingUncertainty)
+        var proc_fac = sqrt(Double(settings.processingUncertainty))
         let dt = settings.updateTime
         
         guard let anchors = IndoorLocationManager.shared.anchors else {
@@ -55,7 +54,7 @@ class Particle {
         }
         
         // G is a 6x2 matrix with '(dt^2)/2's in main diagonal, 'dt's in second negative side diagonal and '1's in fourth negative side diagonal
-        var G = [Double]()
+        G = [Double]()
         for i in 0..<6 {
             for j in 0..<2 {
                 if (i == j) {
@@ -70,15 +69,8 @@ class Particle {
             }
         }
         
-        // Compute Q from Q = G * G_t * proc_fac. Q is a 6x6 matrix
-        var G_t = [Double](repeating: 0, count : G.count)
-        vDSP_mtransD(G, 1, &G_t, 1, 2, 6)
-        
-        var G_G_t = [Double](repeating: 0, count: 36)
-        vDSP_mmulD(G, 1, G_t, 1, &G_G_t, 1, 6, 6, 2)
-        
-        Q = [Double](repeating: 0, count: 36)
-        vDSP_vsmulD(G_G_t, 1, &proc_fac, &Q, 1, 36)
+        // Multiply G with the square root of processing factor
+        vDSP_vsmulD(G, 1, &proc_fac, &G, 1, vDSP_Length(G.count))
         
         // R is a (numAnchors + 2)x(numAnchors + 2) diagonal matrix with 'pos_sig's in first numAnchors entries and 'acc_sig's in the remaining entries
         R = [Double]()
@@ -103,15 +95,7 @@ class Particle {
         var mean = [Double](repeating: 0, count: 6)
         vDSP_mmulD(F, 1, state, 1, &mean, 1, 6, 1, 6)
         
-        var sample = [Double]()
-        for i in 0..<mean.count {
-            // Create gaussian random number generator for each component with from array and deviation from diagonal entries in covariance matrix Q
-            let randomGenerator = GKGaussianDistribution(randomSource: GKRandomSource(), mean: Float(mean[i]), deviation: Float(sqrt(Q[(mean.count + 1) * i])))
-            
-            sample.append(Double(randomGenerator.nextInt()))
-        }
-        
-        state = sample
+        state = randomGaussianVector(mean: mean, A: G)
     }
     
     func updateWeight(measurements: [Double]) {
@@ -177,6 +161,7 @@ class ParticleFilter: BayesianFilter {
         }
         
         if (totalWeight == 0) {
+            //TODO: Remove this if-clause
             // All weights are 0. Reset weights to 1 / numberOfParticles
             for particle in particles {
                 particle.weight = 1 / Double(numberOfParticles)
@@ -184,15 +169,58 @@ class ParticleFilter: BayesianFilter {
             totalWeight = 1
         }
         
-        // Normalize weights of all particles and determine current position
+        var N_eff_inv = 0.0
+        // Normalize weights of all particles
+        for particle in particles {
+            particle.weight = particle.weight / totalWeight
+            N_eff_inv += pow(particle.weight, 2)
+        }
+        
+        //TODO: Move this to filterSettings
+        let N_thr = Double(numberOfParticles) / 2
+        
+        // Resample if N_eff is below N_thr
+        if (1 / Double(N_eff_inv) < N_thr) {
+            resample()
+        }
+        
+        // Determine current position
         var meanX = 0.0
         var meanY = 0.0
         for particle in particles {
-            particle.weight = particle.weight / totalWeight
             meanX += particle.state[0] * particle.weight
             meanY += particle.state[1] * particle.weight
         }
-                
+        
         successCallback(CGPoint(x: meanX, y: meanY))
+    }
+    
+    private func resample() {
+        var resampledParticles = [Particle]()
+        
+        // Construct cumulative sum of weights (CSW) c
+        var c = [particles[0].weight]
+        for i in 1..<particles.count {
+            c.append(c.last! + particles[i].weight)
+        }
+        var i = 0
+        
+        // Draw a starting point u_0 from uniform distribution U[0, 1/numberOfParticles]
+        let u_0 = randomDouble(upperBound: 1 / (Double(numberOfParticles)))
+        var u = [Double]()
+        
+        for j in 0..<numberOfParticles {
+            // Move along the CSW
+            u.append(u_0 + (1 / Double(numberOfParticles)) * Double(j))
+            
+            while (u[j] > c[i]) {
+                i += 1
+            }
+            // Assign new sample and update weight
+            particles[i].weight = 1 / Double(numberOfParticles)
+            resampledParticles.append(particles[i])
+        }
+        
+        particles = resampledParticles
     }
 }

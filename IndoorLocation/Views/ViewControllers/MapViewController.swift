@@ -219,7 +219,7 @@ class MapViewController: UIViewController, MKMapViewDelegate, UIPopoverPresentat
                 annotations.append(positionAnnotation)
             }
         case .particle:
-            let filter = IndoorLocationManager.shared.filter as! ParticleFilter
+            guard let filter = IndoorLocationManager.shared.filter as? ParticleFilter else { return }
             let particles = filter.particles
             for i in 0..<particles.count {
                 let particleAnnotation = CustomAnnotation(.particle)
