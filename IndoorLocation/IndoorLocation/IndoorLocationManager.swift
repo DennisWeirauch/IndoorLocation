@@ -21,6 +21,8 @@ enum AnnotationType {
     case covariance
 }
 
+typealias Anchor = (id: Int, coordinates: CGPoint)
+
 protocol IndoorLocationManagerDelegate {
     func updateAnnotationsFor(_ annotationType: AnnotationType)
 }
@@ -31,7 +33,7 @@ class IndoorLocationManager {
     
     var delegate: IndoorLocationManagerDelegate?
     
-    var anchors: [(id: Int, coordinates: CGPoint)]?
+    var anchors: [Anchor]?
         
     var filter: BayesianFilter?
     
@@ -74,7 +76,7 @@ class IndoorLocationManager {
         
         guard let anchorDict = self.parseData(stringData) else { return }
         
-        var anchors = [(id: Int, coordinates: CGPoint)]()
+        var anchors = [Anchor]()
         var distances = [Double]()
         
         // Iterate from 0 to anchorDict.count / 4 because there are 4 values for every anchor:
@@ -87,7 +89,7 @@ class IndoorLocationManager {
                     print("Error retrieving data from anchorDict")
                     return
             }
-            anchors.append((id: Int(id), coordinates: CGPoint(x: xCoordinate, y: yCoordinate)))
+            anchors.append(Anchor(id: Int(id), coordinates: CGPoint(x: xCoordinate, y: yCoordinate)))
             distances.append(distance)
         }
         
@@ -122,7 +124,6 @@ class IndoorLocationManager {
     
     func beginPositioning() {
         print("Begin positioning!")
-        filter?.predict()
         NetworkManager.shared.pozyxTask(task: .beginRanging) { _ in }
     }
     
@@ -156,7 +157,7 @@ class IndoorLocationManager {
         measurements.append(xAcc)
         measurements.append(yAcc)
         
-        filter?.update(measurements: measurements) { position in
+        filter?.computeAlgorithm(measurements: measurements) { position in
             self.position = position
             
             delegate?.updateAnnotationsFor(.position)
@@ -164,9 +165,7 @@ class IndoorLocationManager {
             switch (filterSettings.filterType) {
             case .kalman:
                 delegate?.updateAnnotationsFor(.covariance)
-                filter?.predict()
             case .particle:
-                filter?.predict()
                 delegate?.updateAnnotationsFor(.particle)
             default:
                 break
@@ -178,6 +177,6 @@ class IndoorLocationManager {
         if (anchors == nil) {
             anchors = []
         }
-        anchors?.append((id: id, coordinates: CGPoint(x: x, y: y)))
+        anchors?.append(Anchor(id: id, coordinates: CGPoint(x: x, y: y)))
     }
 }

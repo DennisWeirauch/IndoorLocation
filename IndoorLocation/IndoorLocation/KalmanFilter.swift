@@ -105,7 +105,14 @@ class KalmanFilter: BayesianFilter {
         }
     }
     
-    override func predict() {
+    override func computeAlgorithm(measurements: [Double], successCallback: (CGPoint) -> Void) {
+        predict()
+        
+        update(measurements: measurements, successCallback: successCallback)
+    }
+    
+    //MARK: Private API
+    private func predict() {
         // Compute new state from state = F * state
         vDSP_mmulD(F, 1, state, 1, &state, 1, 6, 1, 6)
         
@@ -122,7 +129,7 @@ class KalmanFilter: BayesianFilter {
         vDSP_vaddD(F_P_F_t, 1, Q, 1, &P, 1, vDSP_Length(Q.count))
     }
     
-    override func update(measurements: [Double], successCallback: (CGPoint) -> Void) {
+    private func update(measurements: [Double], successCallback: (CGPoint) -> Void) {
         guard let anchors = IndoorLocationManager.shared.anchors else {
             print("No anchors found!")
             return
@@ -172,7 +179,6 @@ class KalmanFilter: BayesianFilter {
         successCallback(position)
     }
     
-    //MARK: Private API
     private func h(_ state: [Double]) -> [Double] {
         guard let anchors = IndoorLocationManager.shared.anchors else {
             print("No anchors found!")

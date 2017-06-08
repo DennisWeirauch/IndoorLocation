@@ -105,7 +105,7 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
             case .kalman:
                 return 4
             case .particle:
-                return 2
+                return 5
             }
         }
     }
@@ -280,11 +280,22 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
                         break
                     }
                 case .particle:
-                    cell.setupWithValue(filterSettings.numberOfParticles, minValue: 0, maxValue: 1000, text: "Particles:", delegate: self, tag: SliderType.numberOfParticles.rawValue)
+                    switch indexPath.row {
+                    case 1:
+                        cell.setupWithValue(filterSettings.accelerationUncertainty, minValue: 0, maxValue: 100, text: "Acc. uncertainty:", delegate: self, tag: SliderType.accelerationUncertainty.rawValue)
+                    case 2:
+                        cell.setupWithValue(filterSettings.distanceUncertainty, minValue: 0, maxValue: 100, text: "Dist. uncertainty:", delegate: self, tag: SliderType.distanceUncertainty.rawValue)
+                    case 3:
+                        cell.setupWithValue(filterSettings.processingUncertainty, minValue: 0, maxValue: 100, text: "Proc. uncertainty:", delegate: self, tag: SliderType.processingUncertainty.rawValue)
+                    case 4:
+                        cell.setupWithValue(filterSettings.numberOfParticles, minValue: 0, maxValue: 500, text: "Particles:", delegate: self, tag: SliderType.numberOfParticles.rawValue)
+                    default:
+                        break
+                        
+                    }
                 default:
                     break
                 }
-                
             }
         }
     }

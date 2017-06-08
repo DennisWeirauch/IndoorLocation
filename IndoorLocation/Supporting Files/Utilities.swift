@@ -140,12 +140,11 @@ func leastSquares(anchors: [CGPoint], distances: [Double]) -> CGPoint {
 
 func computeNormalDistribution(x: [Double], m: [Double], forTriangularCovariance P: [Double]) -> Double {
     // Compute the determinant by multiplying the diagonal elements. This is sufficient as we only deal with triangular matrices
-    let rank = Int(sqrt(Double(P.count)))
     var determinant = 1.0
-    for i in 0..<rank {
-        determinant *= P[(rank + 1) * i]
+    for i in 0..<m.count {
+        determinant *= P[(m.count + 1) * i]
     }
-    let prefactor = 1 / sqrt(2 * Double.pi * determinant)
+    let prefactor = 1 / sqrt(pow(2 * Double.pi, Double(m.count)) * determinant)
     
     // Compute the exponent = (-0.5 * (x-m)_T * P_inv * (x-m))
     var diff = [Double](repeating: 0, count: x.count)

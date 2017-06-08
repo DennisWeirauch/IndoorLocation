@@ -14,12 +14,75 @@ class Particle {
     var state: [Double]
     var weight: Double
     
+    var filter: ParticleFilter
+    
+    init(state: [Double], weight: Double, filter: ParticleFilter) {
+        self.state = state
+        self.weight = weight
+        self.filter = filter
+    }
+    
+    init(fromParticle particle: Particle) {
+        self.state = particle.state
+        self.weight = particle.weight
+        self.filter = particle.filter
+    }
+    
+    //MARK: Public API
+    // Update state by drawing a value from the importance density of this particle
+    func updateState() {
+        
+        // Compute mean = F * state
+        var mean = [Double](repeating: 0, count: 6)
+        vDSP_mmulD(filter.F, 1, state, 1, &mean, 1, 6, 1, 6)
+        
+        state = randomGaussianVector(mean: mean, A: filter.G)
+    }
+    
+    func updateWeight(measurements: [Double]) {
+        
+        // Compute new weight = weight * p(z|x), where p(z|x) = N(z; h(x), R)
+        let normalDist = computeNormalDistribution(x: measurements, m: h(state), forTriangularCovariance: filter.R)
+        weight = weight * normalDist
+    }
+    
+    //MARK: Private API
+    private func h(_ state: [Double]) -> [Double] {
+        guard let anchors = IndoorLocationManager.shared.anchors else {
+            print("No anchors found!")
+            return []
+        }
+        
+        let anchorCoordinates = anchors.map { $0.coordinates }
+        
+        let xPos = state[0]
+        let yPos = state[1]
+        let xAcc = state[4]
+        let yAcc = state[5]
+        
+        var h = [Double]()
+        for i in 0..<anchors.count {
+            h.append(sqrt(pow(Double(anchorCoordinates[i].x) - xPos, 2) + pow(Double(anchorCoordinates[i].y) - yPos, 2)))
+        }
+        h.append(xAcc)
+        h.append(yAcc)
+        
+        return h
+    }
+}
+
+class ParticleFilter: BayesianFilter {
+    
+    let numberOfParticles: Int
+    
+    var particles: [Particle]
+    
     // Matrices
     var F: [Double]
     var G: [Double]
     var R: [Double]
     
-    init?(state: [Double], weight: Double) {
+    init?(position: CGPoint) {
         
         let settings = IndoorLocationManager.shared.filterSettings
         
@@ -27,14 +90,12 @@ class Particle {
         let pos_sig = Double(settings.distanceUncertainty)
         var proc_fac = sqrt(Double(settings.processingUncertainty))
         let dt = settings.updateTime
+        numberOfParticles = settings.numberOfParticles
         
         guard let anchors = IndoorLocationManager.shared.anchors else {
             print("No anchors found. Calibration has to be executed first!")
             return nil
         }
-        
-        self.state = state
-        self.weight = weight
         
         // Initialize matrices
         // F is a 6x6 matrix with '1's in main diagonal, 'dt's in second positive side diagonal and '(dt^2)/2's in fourth positive side diagonal
@@ -85,104 +146,41 @@ class Particle {
                 }
             }
         }
-    }
-    
-    //MARK: Public API
-    // Update state by drawing a value from the importance density of this particle
-    func updateState() {
-        
-        // Compute mean = F * state
-        var mean = [Double](repeating: 0, count: 6)
-        vDSP_mmulD(F, 1, state, 1, &mean, 1, 6, 1, 6)
-        
-        state = randomGaussianVector(mean: mean, A: G)
-    }
-    
-    func updateWeight(measurements: [Double]) {
-        
-        // Compute new weight = weight * p(z|x), where p(z|x) = N(z; h(x), R)
-        weight = weight * computeNormalDistribution(x: measurements, m: h(state), forTriangularCovariance: R)
-    }
-    
-    //MARK: Private API
-    private func h(_ state: [Double]) -> [Double] {
-        guard let anchors = IndoorLocationManager.shared.anchors else {
-            print("No anchors found!")
-            return []
-        }
-        
-        let anchorCoordinates = anchors.map { $0.coordinates }
-        
-        let xPos = state[0]
-        let yPos = state[1]
-        let xAcc = state[4]
-        let yAcc = state[5]
-        
-        var h = [Double]()
-        for i in 0..<anchors.count {
-            h.append(sqrt(pow(Double(anchorCoordinates[i].x) - xPos, 2) + pow(Double(anchorCoordinates[i].y) - yPos, 2)))
-        }
-        h.append(xAcc)
-        h.append(yAcc)
-        
-        return h
-    }
-}
-
-class ParticleFilter: BayesianFilter {
-    
-    let numberOfParticles: Int
-    
-    var particles: [Particle]
-    
-    init?(position: CGPoint) {
-        numberOfParticles = IndoorLocationManager.shared.filterSettings.numberOfParticles
         
         particles = [Particle]()
         
+        super.init()
+        
         for _ in 0..<numberOfParticles {
-            guard let particle = Particle(state: [Double(position.x), Double(position.y), 0, 0, 0, 0], weight: 1 / Double(numberOfParticles)) else { return }
+            let particle = Particle(state: [Double(position.x), Double(position.y), 0, 0, 0, 0], weight: 1 / Double(numberOfParticles), filter: self)
             particles.append(particle)
         }
     }
     
-    override func predict() {
-        for particle in particles {
-            particle.updateState()
-        }
-    }
-    
-    override func update(measurements: [Double], successCallback: (CGPoint) -> Void) {
-        // Evaluate the importance weight up to a normalizing constant of all particles
+    override func computeAlgorithm(measurements: [Double], successCallback: (CGPoint) -> Void) {
+        /*
+        * TODO: TIPPS VON RICO:
+        * Try to increase deviations for distance and acceleration. Gaussian distribution is then flatter and should return larger values for points farther away from mean.
+        * Check which terms in exponent of Gaussian distribution cause large influence. Try to avoid these
+        * Examine a few particles more intensively
+        * Maybe put weight in a logarithmic scale. Smaller values can be expressed better.
+        */
+        
         var totalWeight = 0.0
         for particle in particles {
+            // Draw new state from importance density
+            particle.updateState()
+            
+            // Evaluate the importance weight up to a normalizing constant
             particle.updateWeight(measurements: measurements)
             totalWeight += particle.weight
         }
         
-        if (totalWeight == 0) {
-            //TODO: Remove this if-clause
-            // All weights are 0. Reset weights to 1 / numberOfParticles
-            for particle in particles {
-                particle.weight = 1 / Double(numberOfParticles)
-            }
-            totalWeight = 1
-        }
-        
-        var N_eff_inv = 0.0
         // Normalize weights of all particles
-        for particle in particles {
-            particle.weight = particle.weight / totalWeight
-            N_eff_inv += pow(particle.weight, 2)
-        }
+        particles.forEach { $0.weight = $0.weight / totalWeight }
         
-        //TODO: Move this to filterSettings
-        let N_thr = Double(numberOfParticles) / 2
-        
-        // Resample if N_eff is below N_thr
-        if (1 / Double(N_eff_inv) < N_thr) {
-            resample()
-        }
+        // Execute resampling algorithm
+        resample()
         
         // Determine current position
         var meanX = 0.0
@@ -195,6 +193,7 @@ class ParticleFilter: BayesianFilter {
         successCallback(CGPoint(x: meanX, y: meanY))
     }
     
+    //MARK: Private API
     private func resample() {
         var resampledParticles = [Particle]()
         
@@ -218,7 +217,7 @@ class ParticleFilter: BayesianFilter {
             }
             // Assign new sample and update weight
             particles[i].weight = 1 / Double(numberOfParticles)
-            resampledParticles.append(particles[i])
+            resampledParticles.append(Particle(fromParticle: particles[i]))
         }
         
         particles = resampledParticles
