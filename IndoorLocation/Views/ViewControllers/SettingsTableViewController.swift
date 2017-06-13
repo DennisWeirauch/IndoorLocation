@@ -288,7 +288,7 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
                     case 3:
                         cell.setupWithValue(filterSettings.processingUncertainty, minValue: 0, maxValue: 100, text: "Proc. uncertainty:", delegate: self, tag: SliderType.processingUncertainty.rawValue)
                     case 4:
-                        cell.setupWithValue(filterSettings.numberOfParticles, minValue: 0, maxValue: 500, text: "Particles:", delegate: self, tag: SliderType.numberOfParticles.rawValue)
+                        cell.setupWithValue(filterSettings.numberOfParticles, minValue: 0, maxValue: 1000, text: "Particles:", delegate: self, tag: SliderType.numberOfParticles.rawValue)
                     default:
                         break
                         

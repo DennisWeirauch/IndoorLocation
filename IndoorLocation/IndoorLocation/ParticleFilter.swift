@@ -42,7 +42,7 @@ class Particle {
     func updateWeight(measurements: [Double]) {
         
         // Compute new weight = weight * p(z|x), where p(z|x) = N(z; h(x), R)
-        let normalDist = computeNormalDistribution(x: measurements, m: h(state), forTriangularCovariance: filter.R)
+        let normalDist = computeNormalDistribution(x: measurements, m: h(state), forTriangularCovariance: filter.R, withInverse: filter.R_inv)
         weight = weight * normalDist
     }
     
@@ -81,6 +81,7 @@ class ParticleFilter: BayesianFilter {
     var F: [Double]
     var G: [Double]
     var R: [Double]
+    var R_inv: [Double]
     
     init?(position: CGPoint) {
         
@@ -147,6 +148,9 @@ class ParticleFilter: BayesianFilter {
             }
         }
         
+        // Store inverse of matrix R as well to avoid computing it in every step for every particle.
+        R_inv = invertMatrix(R)
+        
         particles = [Particle]()
         
         super.init()
@@ -168,12 +172,14 @@ class ParticleFilter: BayesianFilter {
         
         var totalWeight = 0.0
         for particle in particles {
-            // Draw new state from importance density
-            particle.updateState()
-            
-            // Evaluate the importance weight up to a normalizing constant
-            particle.updateWeight(measurements: measurements)
-            totalWeight += particle.weight
+            DispatchQueue.global().async {
+                // Draw new state from importance density
+                particle.updateState()
+                
+                // Evaluate the importance weight up to a normalizing constant
+                particle.updateWeight(measurements: measurements)
+                totalWeight += particle.weight
+            }
         }
         
         // Normalize weights of all particles

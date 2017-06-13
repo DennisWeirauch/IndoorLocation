@@ -25,5 +25,5 @@ class FilterSettings {
     
     var updateTime = 0.15
     
-    var numberOfParticles: Int = 5
+    var numberOfParticles: Int = 500
 }

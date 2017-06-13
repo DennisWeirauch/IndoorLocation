@@ -122,13 +122,11 @@ class IndoorLocationManager {
         }
     }
     
-    func beginPositioning() {
-        print("Begin positioning!")
+    func beginRanging() {
         NetworkManager.shared.pozyxTask(task: .beginRanging) { _ in }
     }
     
-    func stopPositioning() {
-        print("Stop positioning!")
+    func stopRanging() {
         NetworkManager.shared.pozyxTask(task: .stopRanging) { _ in }
     }
     
