@@ -21,7 +21,7 @@ class BayesianFilter {
         let distances = Array(measurements.dropLast(2))
         
         // Compute least squares algorithm
-        let position = leastSquares(anchors: anchors.map { $0.coordinates }, distances: distances)
+        let position = leastSquares(anchors: anchors.map { $0.position }, distances: distances)
         
         successCallback(position)
     }

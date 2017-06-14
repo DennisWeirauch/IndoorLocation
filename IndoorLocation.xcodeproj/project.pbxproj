@@ -8,17 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		2ECE5A137F6ADE0660D36EAB /* Pods_IndoorLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3460003184CBBC145DB92FF5 /* Pods_IndoorLocation.framework */; };
-		950769601E8D3C0C00233FF8 /* FloorplanOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9507695F1E8D3C0C00233FF8 /* FloorplanOverlay.swift */; };
-		950769621E8D3DFB00233FF8 /* CoordinateConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950769611E8D3DFB00233FF8 /* CoordinateConverter.swift */; };
 		950769641E8D3F0400233FF8 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950769631E8D3F0400233FF8 /* Utilities.swift */; };
-		9507696A1E8D3FCA00233FF8 /* HideBackgroundOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950769691E8D3FCA00233FF8 /* HideBackgroundOverlay.swift */; };
-		9507696C1E8D400A00233FF8 /* FloorplanOverlayRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9507696B1E8D400A00233FF8 /* FloorplanOverlayRenderer.swift */; };
 		950769701E8D419B00233FF8 /* room_10_blueprint.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9507696F1E8D419B00233FF8 /* room_10_blueprint.pdf */; };
-		952BDE061E92A114003DD94C /* AnchorSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952BDE041E92A114003DD94C /* AnchorSettingsViewController.swift */; };
-		952BDE071E92A114003DD94C /* AnchorSettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 952BDE051E92A114003DD94C /* AnchorSettingsViewController.xib */; };
 		954B55F11EF0251C00AE923F /* IndoorMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954B55F01EF0251C00AE923F /* IndoorMapView.swift */; };
 		95570C781EDD7E7000F15E30 /* AnchorTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95570C771EDD7E7000F15E30 /* AnchorTableViewCell.swift */; };
-		955A85921EC5F99B00EA3105 /* CustomAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 955A85911EC5F99B00EA3105 /* CustomAnnotation.swift */; };
 		956227CA1E965F2700288A1A /* ParticleFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956227C91E965F2700288A1A /* ParticleFilter.swift */; };
 		956227CC1E96A95600288A1A /* particle.png in Resources */ = {isa = PBXBuildFile; fileRef = 956227CB1E96A95600288A1A /* particle.png */; };
 		956227CE1E96AD9000288A1A /* position.png in Resources */ = {isa = PBXBuildFile; fileRef = 956227CD1E96AD9000288A1A /* position.png */; };
@@ -66,17 +59,10 @@
 /* Begin PBXFileReference section */
 		3460003184CBBC145DB92FF5 /* Pods_IndoorLocation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_IndoorLocation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		43D0588909E4EB6D4B2293BA /* Pods-IndoorLocation.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IndoorLocation.debug.xcconfig"; path = "Pods/Target Support Files/Pods-IndoorLocation/Pods-IndoorLocation.debug.xcconfig"; sourceTree = "<group>"; };
-		9507695F1E8D3C0C00233FF8 /* FloorplanOverlay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloorplanOverlay.swift; sourceTree = "<group>"; };
-		950769611E8D3DFB00233FF8 /* CoordinateConverter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoordinateConverter.swift; sourceTree = "<group>"; };
 		950769631E8D3F0400233FF8 /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
-		950769691E8D3FCA00233FF8 /* HideBackgroundOverlay.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HideBackgroundOverlay.swift; sourceTree = "<group>"; };
-		9507696B1E8D400A00233FF8 /* FloorplanOverlayRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FloorplanOverlayRenderer.swift; sourceTree = "<group>"; };
 		9507696F1E8D419B00233FF8 /* room_10_blueprint.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = room_10_blueprint.pdf; sourceTree = "<group>"; };
-		952BDE041E92A114003DD94C /* AnchorSettingsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AnchorSettingsViewController.swift; path = ViewControllers/AnchorSettingsViewController.swift; sourceTree = "<group>"; };
-		952BDE051E92A114003DD94C /* AnchorSettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = AnchorSettingsViewController.xib; path = ViewControllers/AnchorSettingsViewController.xib; sourceTree = "<group>"; };
-		954B55F01EF0251C00AE923F /* IndoorMapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = IndoorMapView.swift; path = IndoorLocation/Maps/IndoorMapView.swift; sourceTree = SOURCE_ROOT; };
+		954B55F01EF0251C00AE923F /* IndoorMapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = IndoorMapView.swift; path = IndoorLocation/Views/IndoorMapView.swift; sourceTree = SOURCE_ROOT; };
 		95570C771EDD7E7000F15E30 /* AnchorTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AnchorTableViewCell.swift; path = Cells/AnchorTableViewCell.swift; sourceTree = "<group>"; };
-		955A85911EC5F99B00EA3105 /* CustomAnnotation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomAnnotation.swift; sourceTree = "<group>"; };
 		956227C91E965F2700288A1A /* ParticleFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParticleFilter.swift; sourceTree = "<group>"; };
 		956227CB1E96A95600288A1A /* particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle.png; sourceTree = "<group>"; };
 		956227CD1E96AD9000288A1A /* position.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = position.png; sourceTree = "<group>"; };
@@ -163,6 +149,7 @@
 			isa = PBXGroup;
 			children = (
 				95A19DFC1EDD6B9B004BC415 /* Cells */,
+				954B55F01EF0251C00AE923F /* IndoorMapView.swift */,
 				95A19DFD1EDD6BAF004BC415 /* ViewControllers */,
 			);
 			path = Views;
@@ -193,8 +180,6 @@
 		95A19DFD1EDD6BAF004BC415 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				952BDE041E92A114003DD94C /* AnchorSettingsViewController.swift */,
-				952BDE051E92A114003DD94C /* AnchorSettingsViewController.xib */,
 				95A1F61F1E8BB5C700D2CDD2 /* MapViewController.swift */,
 				95A19DF61EDC3A81004BC415 /* SettingsTableViewController.swift */,
 			);
@@ -230,7 +215,6 @@
 				95A1F6241E8BB5C700D2CDD2 /* Assets.xcassets */,
 				95A19DF11ED6C733004BC415 /* Helpers */,
 				95E3DCCB1EA22244006D6C08 /* IndoorLocation */,
-				95E3DCC41EA100D3006D6C08 /* Maps */,
 				95E3DCC61EA10315006D6C08 /* Network */,
 				95AEABB91EBC796F005249FC /* Supporting Files */,
 				959C84D71E97BCC700EB4AA4 /* Views */,
@@ -264,19 +248,6 @@
 				950769631E8D3F0400233FF8 /* Utilities.swift */,
 			);
 			path = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		95E3DCC41EA100D3006D6C08 /* Maps */ = {
-			isa = PBXGroup;
-			children = (
-				950769611E8D3DFB00233FF8 /* CoordinateConverter.swift */,
-				955A85911EC5F99B00EA3105 /* CustomAnnotation.swift */,
-				9507695F1E8D3C0C00233FF8 /* FloorplanOverlay.swift */,
-				9507696B1E8D400A00233FF8 /* FloorplanOverlayRenderer.swift */,
-				950769691E8D3FCA00233FF8 /* HideBackgroundOverlay.swift */,
-				954B55F01EF0251C00AE923F /* IndoorMapView.swift */,
-			);
-			path = Maps;
 			sourceTree = "<group>";
 		};
 		95E3DCC61EA10315006D6C08 /* Network */ = {
@@ -425,7 +396,6 @@
 				95E3DCCD1EAE0235006D6C08 /* start.png in Resources */,
 				956227CC1E96A95600288A1A /* particle.png in Resources */,
 				95E3DCBF1E9D3E9E006D6C08 /* settings.png in Resources */,
-				952BDE071E92A114003DD94C /* AnchorSettingsViewController.xib in Resources */,
 				95A1F6251E8BB5C700D2CDD2 /* Assets.xcassets in Resources */,
 				950769701E8D419B00233FF8 /* room_10_blueprint.pdf in Resources */,
 			);
@@ -500,24 +470,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				950769621E8D3DFB00233FF8 /* CoordinateConverter.swift in Sources */,
 				95A19DFF1EDD724C004BC415 /* ButtonTableViewCell.swift in Sources */,
 				95A19DF01ED6C72A004BC415 /* LabelHelper.swift in Sources */,
-				955A85921EC5F99B00EA3105 /* CustomAnnotation.swift in Sources */,
 				95A1F6201E8BB5C700D2CDD2 /* MapViewController.swift in Sources */,
 				95E3DCBB1E9D2F0E006D6C08 /* FilterSettings.swift in Sources */,
 				95E3DCC81EA103A5006D6C08 /* IndoorLocationManager.swift in Sources */,
-				952BDE061E92A114003DD94C /* AnchorSettingsViewController.swift in Sources */,
-				9507696A1E8D3FCA00233FF8 /* HideBackgroundOverlay.swift in Sources */,
 				956227CA1E965F2700288A1A /* ParticleFilter.swift in Sources */,
 				95570C781EDD7E7000F15E30 /* AnchorTableViewCell.swift in Sources */,
 				95C3C1AE1ECC3C5100704437 /* KalmanFilter.swift in Sources */,
 				95A19DF31ED6C998004BC415 /* SliderHelper.swift in Sources */,
 				95A19DF51ED6DAB7004BC415 /* TextFieldHelper.swift in Sources */,
-				950769601E8D3C0C00233FF8 /* FloorplanOverlay.swift in Sources */,
 				954B55F11EF0251C00AE923F /* IndoorMapView.swift in Sources */,
 				950769641E8D3F0400233FF8 /* Utilities.swift in Sources */,
-				9507696C1E8D400A00233FF8 /* FloorplanOverlayRenderer.swift in Sources */,
 				95A19DF91EDC4080004BC415 /* SegmentedControlTableViewCell.swift in Sources */,
 				95A19E011EDD7448004BC415 /* ButtonHelper.swift in Sources */,
 				95A19DF71EDC3A81004BC415 /* SettingsTableViewController.swift in Sources */,

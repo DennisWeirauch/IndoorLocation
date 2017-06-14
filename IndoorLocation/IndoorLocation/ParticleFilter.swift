@@ -11,8 +11,12 @@ import Accelerate
 class Particle {
     
     // State vector containing: [xPos, yPos, xVel, yVel, xAcc, yAcc]
-    var state: [Double]
+    private var state: [Double]
     var weight: Double
+    
+    var position: CGPoint {
+        return CGPoint(x: state[0], y: state[1])
+    }
     
     var filter: ParticleFilter
     
@@ -53,7 +57,7 @@ class Particle {
             return []
         }
         
-        let anchorCoordinates = anchors.map { $0.coordinates }
+        let anchorCoordinates = anchors.map { $0.position }
         
         let xPos = state[0]
         let yPos = state[1]
@@ -75,13 +79,13 @@ class ParticleFilter: BayesianFilter {
     
     let numberOfParticles: Int
     
-    var particles: [Particle]
+    private(set) var particles: [Particle]
     
     // Matrices
-    var F: [Double]
-    var G: [Double]
-    var R: [Double]
-    var R_inv: [Double]
+    private(set) var F: [Double]
+    private(set) var G: [Double]
+    private(set) var R: [Double]
+    private(set) var R_inv: [Double]
     
     init?(position: CGPoint) {
         
@@ -192,8 +196,8 @@ class ParticleFilter: BayesianFilter {
         var meanX = 0.0
         var meanY = 0.0
         for particle in particles {
-            meanX += particle.state[0] * particle.weight
-            meanY += particle.state[1] * particle.weight
+            meanX += Double(particle.position.x) * particle.weight
+            meanY += Double(particle.position.y) * particle.weight
         }
         
         successCallback(CGPoint(x: meanX, y: meanY))

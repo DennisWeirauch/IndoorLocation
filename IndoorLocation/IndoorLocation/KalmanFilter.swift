@@ -11,13 +11,13 @@ import Accelerate
 class KalmanFilter: BayesianFilter {
     
     // State vector containing: [xPos, yPos, xVel, yVel, xAcc, yAcc]
-    var state: [Double]
+    private var state: [Double]
 
     // Matrices
-    var F: [Double]
-    var Q: [Double]
-    var R: [Double]
-    var P: [Double]
+    private var F: [Double]
+    private var Q: [Double]
+    private var R: [Double]
+    private(set) var P: [Double]
     
     init?(position: CGPoint) {
         
@@ -185,7 +185,7 @@ class KalmanFilter: BayesianFilter {
             return []
         }
         
-        let anchorCoordinates = anchors.map { $0.coordinates }
+        let anchorCoordinates = anchors.map { $0.position }
         
         let xPos = state[0]
         let yPos = state[1]
@@ -208,7 +208,7 @@ class KalmanFilter: BayesianFilter {
             return []
         }
         
-        let anchorCoordinates = anchors.map { $0.coordinates }
+        let anchorCoordinates = anchors.map { $0.position }
 
         var H_j = [Double]()
         for i in 0..<anchors.count {

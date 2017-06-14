@@ -24,6 +24,7 @@ enum SliderType: Int {
 
 protocol SettingsTableViewControllerDelegate {
     func toggleFloorplanVisible(_ floorPlanVisible: Bool)
+    func changeFilterType(_ filterType: FilterType)
 }
 
 class SettingsTableViewController: UITableViewController, SegmentedControlTableViewCellDelegate, SliderTableViewCellDelegate, ButtonTableViewCellDelegate, AnchorTableViewCellDelegate {
@@ -185,6 +186,7 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
         case .filterType:
             filterSettings.filterType = FilterType(rawValue: sender.selectedSegmentIndex) ?? .none
             tableView.reloadData()
+            settingsDelegate?.changeFilterType(filterSettings.filterType)
         }
     }
     
@@ -247,7 +249,7 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
                 if let anchors = IndoorLocationManager.shared.anchors {
                     let index = indexPath.row - 1
                     if index < anchors.count {
-                        cell.setupWithID(anchors[index].id, x: Int(anchors[index].coordinates.x), y: Int(anchors[index].coordinates.y), delegate: self)
+                        cell.setupWithID(anchors[index].id, x: Int(anchors[index].position.x), y: Int(anchors[index].position.y), delegate: self)
                     } else {
                         cell.setupWithDelegate(self)
                     }

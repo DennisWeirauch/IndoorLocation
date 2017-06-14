@@ -14,17 +14,13 @@ enum FilterType: Int {
     case particle
 }
 
-enum AnnotationType {
-    case position
-    case anchor
-    case particle
-    case covariance
-}
-
-typealias Anchor = (id: Int, coordinates: CGPoint)
+typealias Anchor = (id: Int, position: CGPoint)
 
 protocol IndoorLocationManagerDelegate {
-    func updateAnnotationsFor(_ annotationType: AnnotationType)
+    func updatePosition(_ position: CGPoint)
+    func updateAnchors(_ anchors: [Anchor])
+    func updateCovariance(covX: Double, covY: Double)
+    func updateParticles(_ particles: [Particle])
 }
 
 class IndoorLocationManager {
@@ -89,16 +85,16 @@ class IndoorLocationManager {
                     print("Error retrieving data from anchorDict")
                     return
             }
-            anchors.append(Anchor(id: Int(id), coordinates: CGPoint(x: xCoordinate, y: yCoordinate)))
+            anchors.append(Anchor(id: Int(id), position: CGPoint(x: xCoordinate, y: yCoordinate)))
             distances.append(distance)
         }
         
         self.anchors = anchors
         
-        self.delegate?.updateAnnotationsFor(.anchor)
+        self.delegate?.updateAnchors(anchors)
         
         // Least squares algorithm to get initial position
-        self.position = leastSquares(anchors: anchors.map { $0.coordinates }, distances: distances)
+        self.position = leastSquares(anchors: anchors.map { $0.position }, distances: distances)
     }
     
     //MARK: Public API
@@ -111,7 +107,7 @@ class IndoorLocationManager {
             guard let anchors = anchors else { return }
             var anchorStringData = ""
             for (i, anchor) in anchors.enumerated() {
-                anchorStringData += "ID\(i)=\(anchor.id)&xPos\(i)=\(Int((anchor.coordinates.x)))&yPos\(i)=\(Int((anchor.coordinates.y)))"
+                anchorStringData += "ID\(i)=\(anchor.id)&xPos\(i)=\(Int((anchor.position.x)))&yPos\(i)=\(Int((anchor.position.y)))"
                 if (i != anchors.count - 1) {
                     anchorStringData += "&"
                 }
@@ -158,13 +154,15 @@ class IndoorLocationManager {
         filter?.computeAlgorithm(measurements: measurements) { position in
             self.position = position
             
-            delegate?.updateAnnotationsFor(.position)
+            delegate?.updatePosition(position)
             
             switch (filterSettings.filterType) {
             case .kalman:
-                delegate?.updateAnnotationsFor(.covariance)
+                guard let filter = filter as? KalmanFilter else { return }
+                delegate?.updateCovariance(covX: filter.P[0], covY: filter.P[7])
             case .particle:
-                delegate?.updateAnnotationsFor(.particle)
+                guard let filter = filter as? ParticleFilter else { return }
+                delegate?.updateParticles(filter.particles)
             default:
                 break
             }
@@ -175,6 +173,6 @@ class IndoorLocationManager {
         if (anchors == nil) {
             anchors = []
         }
-        anchors?.append(Anchor(id: id, coordinates: CGPoint(x: x, y: y)))
+        anchors?.append(Anchor(id: id, position: CGPoint(x: x, y: y)))
     }
 }
