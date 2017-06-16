@@ -37,7 +37,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     
     var position = CGPoint.zero {
         didSet {
-            if lastPositions.count > 20 {
+            if lastPositions.count >= 20 {
                 lastPositions.removeFirst()
             }
             lastPositions.append(oldValue)
@@ -179,6 +179,21 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     private func updatePosition() {
         UIGraphicsGetCurrentContext()
         
+        // Update trajectory
+        trajectoryLayer.removeFromSuperlayer()
+        
+        let trajectory = UIBezierPath()
+        trajectory.move(to: position)
+        lastPositions.reversed().forEach { trajectory.addLine(to: $0) }
+        
+        trajectoryLayer = CAShapeLayer()
+        trajectoryLayer.path = trajectory.cgPath
+        trajectoryLayer.fillColor = UIColor.clear.cgColor
+        trajectoryLayer.strokeColor = UIColor.black.cgColor
+        trajectoryLayer.lineWidth = 15
+        
+        mapView.layer.addSublayer(trajectoryLayer)
+        
         // Update point
         positionLayer.removeFromSuperlayer()
         
@@ -190,20 +205,6 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         positionLayer.fillColor = UIColor.green.cgColor
         
         mapView.layer.addSublayer(positionLayer)
-        
-        //TODO: Get trajectory working
-        // Update trajectory
-        trajectoryLayer.removeFromSuperlayer()
-        
-        let trajectory = UIBezierPath()
-        trajectory.move(to: position)
-        lastPositions.forEach { trajectory.addLine(to: $0) }
-        trajectory.close()
-        
-//        trajectoryLayer = CAShapeLayer()
-//        trajectoryLayer.path = positionPath.cgPath
-//        
-//        mapView.layer.addSublayer(trajectoryLayer)
     }
     
     private func updateAnchors() {
