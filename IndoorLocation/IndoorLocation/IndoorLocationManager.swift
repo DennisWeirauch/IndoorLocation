@@ -21,6 +21,8 @@ protocol IndoorLocationManagerDelegate {
     func updateAnchors(_ anchors: [Anchor])
     func updateCovariance(covX: Double, covY: Double)
     func updateParticles(_ particles: [Particle])
+    
+    func showAlertWithMessage(message: String)
 }
 
 class IndoorLocationManager {
@@ -44,22 +46,27 @@ class IndoorLocationManager {
     //MARK: Private API
     private func parseData(_ stringData: String) -> [String : Double]? {
         
-        // Check that returned data is of expected format
-        if (stringData.range(of: "([A-Za-z]+-?[0-9-]*=-?[0-9.]+&)*([A-Za-z]+-?[0-9.]*=-?[0-9.]+)\\r?\\n?", options: .regularExpression) != stringData.startIndex..<stringData.endIndex) {
-            print("Wrong format of calibration data! Received: \(String(describing: stringData))")
-            return nil
+        // Remove carriage return
+        if let inlineStringData = stringData.components(separatedBy: "\r").first {
+            // Check that returned data is of expected format
+            if (inlineStringData.range(of: "([A-Za-z]+-?[0-9-]*=-?[0-9.]+&)*([A-Za-z]+-?[0-9.]*=-?[0-9.]+)", options: .regularExpression) != inlineStringData.startIndex..<inlineStringData.endIndex) {
+                delegate?.showAlertWithMessage(message: String(describing: inlineStringData))
+                return nil
+            }
+            
+            // Split string at "&" characters
+            let splitData = inlineStringData.components(separatedBy: "&")
+            
+            var parsedData = [String : Double]()
+            for component in splitData {
+                let key = component.components(separatedBy: "=")[0]
+                let value = Double(component.components(separatedBy: "=")[1])
+                parsedData[key] = value!
+            }
+            return parsedData
         }
-        
-        // Remove carriage return and split string at "&" characters
-        let splitData = stringData.components(separatedBy: "\r").first?.components(separatedBy: "&")
-        
-        var parsedData = [String : Double]()
-        for component in splitData! {
-            let key = component.components(separatedBy: "=")[0]
-            let value = Double(component.components(separatedBy: "=")[1])
-            parsedData[key] = value!
-        }
-        return parsedData
+        delegate?.showAlertWithMessage(message: "Received unexpected format from Arduino!")
+        return nil
     }
     
     private func parseCalibrationData(data: Data?) {
@@ -100,8 +107,15 @@ class IndoorLocationManager {
     //MARK: Public API
     func calibrate(automatic: Bool) {
         if automatic {
-            NetworkManager.shared.pozyxTask(task: .calibrate) { data in
-                self.parseCalibrationData(data: data)
+            NetworkManager.shared.pozyxTask(task: .calibrate) { result in
+                switch result {
+                case .success(let data):
+                    self.parseCalibrationData(data: data)
+                    break
+                case .failure(let error):
+                    self.delegate?.showAlertWithMessage(message: error.localizedDescription)
+                    break
+                }
             }
         } else {
             guard let anchors = anchors else { return }
@@ -112,8 +126,15 @@ class IndoorLocationManager {
                     anchorStringData += "&"
                 }
             }
-            NetworkManager.shared.pozyxTask(task: .setAnchors, data: anchorStringData) { data in
-                self.parseCalibrationData(data: data)
+            NetworkManager.shared.pozyxTask(task: .setAnchors, data: anchorStringData) { result in
+                switch result {
+                case .success(let data):
+                    self.parseCalibrationData(data: data)
+                    break
+                case .failure(let error):
+                    self.delegate?.showAlertWithMessage(message: error.localizedDescription)
+                    break
+                }
             }
         }
     }
@@ -154,15 +175,15 @@ class IndoorLocationManager {
         filter?.computeAlgorithm(measurements: measurements) { position in
             self.position = position
             
-            delegate?.updatePosition(position)
+            self.delegate?.updatePosition(position)
             
-            switch (filterSettings.filterType) {
+            switch (self.filterSettings.filterType) {
             case .kalman:
-                guard let filter = filter as? KalmanFilter else { return }
-                delegate?.updateCovariance(covX: filter.P[0], covY: filter.P[7])
+                guard let filter = self.filter as? KalmanFilter else { return }
+                self.delegate?.updateCovariance(covX: filter.P[0], covY: filter.P[7])
             case .particle:
-                guard let filter = filter as? ParticleFilter else { return }
-                delegate?.updateParticles(filter.particles)
+                guard let filter = self.filter as? ParticleFilter else { return }
+                self.delegate?.updateParticles(filter.particles)
             default:
                 break
             }

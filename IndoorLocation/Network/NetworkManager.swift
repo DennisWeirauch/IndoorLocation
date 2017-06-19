@@ -15,6 +15,11 @@ enum TaskType : String {
     case setAnchors = "a"
 }
 
+enum NetworkResult {
+    case success(Data?)
+    case failure(Error)
+}
+
 class NetworkManager {
     
     static let shared = NetworkManager()
@@ -23,8 +28,14 @@ class NetworkManager {
     let hostIP = "172.20.10.1"
     // TODO: Check if hardcoding IP is a good solution here
     let arduinoIP = "172.20.10.4"
+    let session: URLSession
 
     private init() {
+        // Set timeout for requests to Arduino to 5 s
+        let config = URLSessionConfiguration.default
+        config.timeoutIntervalForRequest = 5
+        session = URLSession(configuration: config)
+        
         setupServer()
     }
     
@@ -62,7 +73,7 @@ class NetworkManager {
     }
 
     //MARK: Public API
-    func pozyxTask(task: TaskType, data: String = "", resultCallback: @escaping (Data?) -> Void) {
+    func pozyxTask(task: TaskType, data: String = "", resultCallback: @escaping (NetworkResult) -> Void) {
         let urlString = "http://\(arduinoIP):\(port)/arduino/"
         
         var txData = data
@@ -71,13 +82,13 @@ class NetworkManager {
         }
         
         let url = URL(string: urlString + task.rawValue + "/" + txData)
-        let task = URLSession.shared.dataTask(with: url!) { data, response, error in
-            guard error == nil else {
-                print(error!)
-                return
-            }
+        let task = session.dataTask(with: url!) { data, response, error in
             DispatchQueue.main.async {
-                resultCallback(data)
+                if let error = error {
+                    resultCallback(.failure(error))
+                } else {
+                    resultCallback(.success(data))
+                }
             }
         }
         task.resume()

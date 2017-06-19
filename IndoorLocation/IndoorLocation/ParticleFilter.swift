@@ -165,7 +165,7 @@ class ParticleFilter: BayesianFilter {
         }
     }
     
-    override func computeAlgorithm(measurements: [Double], successCallback: (CGPoint) -> Void) {
+    override func computeAlgorithm(measurements: [Double], successCallback: @escaping (CGPoint) -> Void) {
         /*
         * TODO: TIPPS VON RICO:
         * Try to increase deviations for distance and acceleration. Gaussian distribution is then flatter and should return larger values for points farther away from mean.
@@ -175,8 +175,9 @@ class ParticleFilter: BayesianFilter {
         */
         
         var totalWeight = 0.0
+        let dispatchGroup = DispatchGroup()
         for particle in particles {
-            DispatchQueue.global().async {
+            DispatchQueue.global().async(group: dispatchGroup) {
                 // Draw new state from importance density
                 particle.updateState()
                 
@@ -186,21 +187,25 @@ class ParticleFilter: BayesianFilter {
             }
         }
         
-        // Normalize weights of all particles
-        particles.forEach { $0.weight = $0.weight / totalWeight }
-        
-        // Execute resampling algorithm
-        resample()
-        
-        // Determine current position
-        var meanX = 0.0
-        var meanY = 0.0
-        for particle in particles {
-            meanX += Double(particle.position.x) * particle.weight
-            meanY += Double(particle.position.y) * particle.weight
+        dispatchGroup.notify(queue: DispatchQueue.global()) {
+            // Normalize weights of all particles
+            self.particles.forEach { $0.weight = $0.weight / totalWeight }
+            
+            // Execute resampling algorithm
+            self.resample()
+            
+            // Determine current position
+            var meanX = 0.0
+            var meanY = 0.0
+            for particle in self.particles {
+                meanX += Double(particle.position.x) * particle.weight
+                meanY += Double(particle.position.y) * particle.weight
+            }
+            
+            DispatchQueue.main.async(){
+                successCallback(CGPoint(x: meanX, y: meanY))
+            }
         }
-        
-        successCallback(CGPoint(x: meanX, y: meanY))
     }
     
     //MARK: Private API

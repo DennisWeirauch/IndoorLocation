@@ -66,6 +66,19 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
         indoorMapView.filterType = filterType
     }
     
+    func showAlertWithMessage(message: String) {
+        let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: "OK", style: .default)
+        alert.addAction(action)
+
+        if let presentedViewController = presentedViewController {
+            presentedViewController.present(alert, animated: true)
+        } else {
+            self.present(alert, animated: true)
+        }
+    }
+
+    
     //MARK: Public API
     func onSettingsButtonTapped(_ sender: Any) {
         let settingsVC = SettingsTableViewController()

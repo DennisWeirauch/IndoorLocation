@@ -105,7 +105,7 @@ class KalmanFilter: BayesianFilter {
         }
     }
     
-    override func computeAlgorithm(measurements: [Double], successCallback: (CGPoint) -> Void) {
+    override func computeAlgorithm(measurements: [Double], successCallback: @escaping (CGPoint) -> Void) {
         predict()
         
         update(measurements: measurements, successCallback: successCallback)

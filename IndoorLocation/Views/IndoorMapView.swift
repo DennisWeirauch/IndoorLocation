@@ -35,29 +35,31 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
 
     var lastPositions = [CGPoint]()
     
-    var position = CGPoint.zero {
+    var position: CGPoint? {
         didSet {
             if lastPositions.count >= 20 {
                 lastPositions.removeFirst()
             }
-            lastPositions.append(oldValue)
+            if let oldValue = oldValue {
+                lastPositions.append(oldValue)
+            }
             updatePosition()
         }
     }
     
-    var anchors = [Anchor]() {
+    var anchors: [Anchor]? {
         didSet {
             updateAnchors()
         }
     }
     
-    var covariance = (x: 0.0, y: 0.0) {
+    var covariance: (x: Double, y: Double)? {
         didSet {
             updateCovariance()
         }
     }
     
-    var particles = [Particle]() {
+    var particles: [Particle]? {
         didSet {
             updateParticles()
         }
@@ -177,6 +179,8 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     }
     
     private func updatePosition() {
+        guard let position = position else { return }
+        
         UIGraphicsGetCurrentContext()
         
         // Update trajectory
@@ -208,6 +212,8 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     }
     
     private func updateAnchors() {
+        guard let anchors = anchors else { return }
+        
         UIGraphicsGetCurrentContext()
         
         anchorLayers.forEach { $0.removeFromSuperlayer() }
@@ -227,6 +233,8 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     }
     
     private func updateCovariance() {
+        guard let position = position, let covariance = covariance else { return }
+        
         UIGraphicsGetCurrentContext()
         
         covarianceLayer.removeFromSuperlayer()
@@ -245,6 +253,8 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     }
     
     private func updateParticles() {
+        guard let particles = particles else { return }
+        
         UIGraphicsGetCurrentContext()
         
         particleLayers.forEach { $0.removeFromSuperlayer() }

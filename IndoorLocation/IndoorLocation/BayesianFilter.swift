@@ -10,7 +10,7 @@ import Accelerate
 
 class BayesianFilter {
     
-    func computeAlgorithm(measurements: [Double], successCallback: (CGPoint) -> Void) {
+    func computeAlgorithm(measurements: [Double], successCallback: @escaping (CGPoint) -> Void) {
         // Least squares algorithm:
         guard let anchors = IndoorLocationManager.shared.anchors else {
             print("Not yet calibrated")
