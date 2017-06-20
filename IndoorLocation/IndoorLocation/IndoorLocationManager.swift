@@ -22,7 +22,7 @@ protocol IndoorLocationManagerDelegate {
     func updateCovariance(covX: Double, covY: Double)
     func updateParticles(_ particles: [Particle])
     
-    func showAlertWithMessage(message: String)
+    func showAlertWithTitle(_ title: String, message: String)
 }
 
 class IndoorLocationManager {
@@ -50,7 +50,7 @@ class IndoorLocationManager {
         if let inlineStringData = stringData.components(separatedBy: "\r").first {
             // Check that returned data is of expected format
             if (inlineStringData.range(of: "([A-Za-z]+-?[0-9-]*=-?[0-9.]+&)*([A-Za-z]+-?[0-9.]*=-?[0-9.]+)", options: .regularExpression) != inlineStringData.startIndex..<inlineStringData.endIndex) {
-                delegate?.showAlertWithMessage(message: String(describing: inlineStringData))
+                delegate?.showAlertWithTitle("Error", message: String(describing: inlineStringData))
                 return nil
             }
             
@@ -65,13 +65,13 @@ class IndoorLocationManager {
             }
             return parsedData
         }
-        delegate?.showAlertWithMessage(message: "Received unexpected format from Arduino!")
+        delegate?.showAlertWithTitle("Error", message: "Received unexpected format from Arduino!")
         return nil
     }
     
     private func parseCalibrationData(data: Data?) {
         guard let data = data else {
-            print("No calibration data received!")
+            delegate?.showAlertWithTitle("Error", message: "No calibration data received!")
             return
         }
         
@@ -89,8 +89,7 @@ class IndoorLocationManager {
                 let xCoordinate = anchorDict["xPos\(i)"],
                 let yCoordinate = anchorDict["yPos\(i)"],
                 let distance = anchorDict["dist\(i)"] else {
-                    print("Error retrieving data from anchorDict")
-                    return
+                    fatalError("Error retrieving data from anchorDict")
             }
             anchors.append(Anchor(id: Int(id), position: CGPoint(x: xCoordinate, y: yCoordinate)))
             distances.append(distance)
@@ -104,18 +103,21 @@ class IndoorLocationManager {
         self.position = leastSquares(anchors: anchors.map { $0.position }, distances: distances)
     }
     
+    private func receivedCalibrationResult(_ result: NetworkResult) {
+        switch result {
+        case .success(let data):
+            self.parseCalibrationData(data: data)
+            self.delegate?.showAlertWithTitle("Success", message: "Calibration Successful!")
+        case .failure(let error):
+            self.delegate?.showAlertWithTitle("Error", message: error.localizedDescription)
+        }
+    }
+    
     //MARK: Public API
     func calibrate(automatic: Bool) {
         if automatic {
             NetworkManager.shared.pozyxTask(task: .calibrate) { result in
-                switch result {
-                case .success(let data):
-                    self.parseCalibrationData(data: data)
-                    break
-                case .failure(let error):
-                    self.delegate?.showAlertWithMessage(message: error.localizedDescription)
-                    break
-                }
+                self.receivedCalibrationResult(result)
             }
         } else {
             guard let anchors = anchors else { return }
@@ -127,14 +129,7 @@ class IndoorLocationManager {
                 }
             }
             NetworkManager.shared.pozyxTask(task: .setAnchors, data: anchorStringData) { result in
-                switch result {
-                case .success(let data):
-                    self.parseCalibrationData(data: data)
-                    break
-                case .failure(let error):
-                    self.delegate?.showAlertWithMessage(message: error.localizedDescription)
-                    break
-                }
+                self.receivedCalibrationResult(result)
             }
         }
     }
@@ -149,25 +144,27 @@ class IndoorLocationManager {
     
     func newData(_ data: String?) {
         guard let data = data else {
-            print("No ranging data received!")
+            delegate?.showAlertWithTitle("Error", message: "No ranging data received!")
             return
         }
 
         guard let measurementDict = parseData(data) else { return }
         
-        guard let anchors = anchors else { return }
+        guard let anchors = anchors else {
+            delegate?.showAlertWithTitle("Error", message: "No Anchors found. Calibration has to be executed first!")
+            return
+        }
+        
         var measurements = [Double]()
         for i in 0..<anchors.count {
             guard let distance = measurementDict["dist\(i)"] else {
-                print("Error retrieving data from measurementDict")
-                return
+                fatalError("Error retrieving data from measurementDict")
             }
             measurements.append(distance)
         }
         
         guard let xAcc = measurementDict["xAcc"], let yAcc = measurementDict["yAcc"] else {
-            print("Error retrieving data from measurementDict")
-            return
+            fatalError("Error retrieving data from measurementDict")
         }
         measurements.append(xAcc)
         measurements.append(yAcc)

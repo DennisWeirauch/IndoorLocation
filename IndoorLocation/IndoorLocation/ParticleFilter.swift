@@ -53,8 +53,7 @@ class Particle {
     //MARK: Private API
     private func h(_ state: [Double]) -> [Double] {
         guard let anchors = IndoorLocationManager.shared.anchors else {
-            print("No anchors found!")
-            return []
+            fatalError("No anchors found!")
         }
         
         let anchorCoordinates = anchors.map { $0.position }
@@ -87,7 +86,7 @@ class ParticleFilter: BayesianFilter {
     private(set) var R: [Double]
     private(set) var R_inv: [Double]
     
-    init?(position: CGPoint) {
+    init(position: CGPoint) {
         
         let settings = IndoorLocationManager.shared.filterSettings
         
@@ -98,8 +97,7 @@ class ParticleFilter: BayesianFilter {
         numberOfParticles = settings.numberOfParticles
         
         guard let anchors = IndoorLocationManager.shared.anchors else {
-            print("No anchors found. Calibration has to be executed first!")
-            return nil
+            fatalError("No anchors found!")
         }
         
         // Initialize matrices
@@ -119,21 +117,8 @@ class ParticleFilter: BayesianFilter {
             }
         }
         
-        // G is a 6x2 matrix with '(dt^2)/2's in main diagonal, 'dt's in second negative side diagonal and '1's in fourth negative side diagonal
-        G = [Double]()
-        for i in 0..<6 {
-            for j in 0..<2 {
-                if (i == j) {
-                    G.append(pow(dt, 2)/2)
-                } else if (i == j + 2) {
-                    G.append(dt)
-                } else if (i == j + 4) {
-                    G.append(1)
-                } else {
-                    G.append(0)
-                }
-            }
-        }
+        // G is a 6x1 vector with '(dt^2)/2's in the first 2 entries, 'dt's in second two entries and '1's in the last two entries
+        G = [pow(dt, 2)/2, pow(dt, 2)/2, dt, dt, 1, 1]
         
         // Multiply G with the square root of processing factor
         vDSP_vsmulD(G, 1, &proc_fac, &G, 1, vDSP_Length(G.count))
@@ -211,27 +196,27 @@ class ParticleFilter: BayesianFilter {
     //MARK: Private API
     private func resample() {
         var resampledParticles = [Particle]()
-        
+        let N_inv = 1 / Double(numberOfParticles)
+
         // Construct cumulative sum of weights (CSW) c
         var c = [particles[0].weight]
         for i in 1..<particles.count {
             c.append(c.last! + particles[i].weight)
         }
         var i = 0
-        
         // Draw a starting point u_0 from uniform distribution U[0, 1/numberOfParticles]
-        let u_0 = randomDouble(upperBound: 1 / (Double(numberOfParticles)))
+        let u_0 = randomDouble(upperBound: N_inv)
         var u = [Double]()
         
         for j in 0..<numberOfParticles {
             // Move along the CSW
-            u.append(u_0 + (1 / Double(numberOfParticles)) * Double(j))
+            u.append(u_0 + (N_inv) * Double(j))
             
             while (u[j] > c[i]) {
                 i += 1
             }
             // Assign new sample and update weight
-            particles[i].weight = 1 / Double(numberOfParticles)
+            particles[i].weight = N_inv
             resampledParticles.append(Particle(fromParticle: particles[i]))
         }
         

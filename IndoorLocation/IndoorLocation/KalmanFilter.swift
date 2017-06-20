@@ -19,7 +19,7 @@ class KalmanFilter: BayesianFilter {
     private var R: [Double]
     private(set) var P: [Double]
     
-    init?(position: CGPoint) {
+    init(position: CGPoint) {
         
         let settings = IndoorLocationManager.shared.filterSettings
 
@@ -29,8 +29,7 @@ class KalmanFilter: BayesianFilter {
         let dt = settings.updateTime
         
         guard let anchors = IndoorLocationManager.shared.anchors else {
-                print("No anchors found. Calibration has to be executed first!")
-                return nil
+            fatalError("No anchors found!")
         }
         
         state = [Double(position.x), Double(position.y), 0, 0, 0, 0]
@@ -52,28 +51,12 @@ class KalmanFilter: BayesianFilter {
             }
         }
         
-        // G is a 6x2 matrix with '(dt^2)/2's in main diagonal, 'dt's in second negative side diagonal and '1's in fourth negative side diagonal
-        var G = [Double]()
-        for i in 0..<6 {
-            for j in 0..<2 {
-                if (i == j) {
-                    G.append(pow(dt, 2)/2)
-                } else if (i == j + 2) {
-                    G.append(dt)
-                } else if (i == j + 4) {
-                    G.append(1)
-                } else {
-                    G.append(0)
-                }
-            }
-        }
+        // G is a 6x1 vector with '(dt^2)/2's in the first 2 entries, 'dt's in second two entries and '1's in the last two entries
+        let G = [pow(dt, 2)/2, pow(dt, 2)/2, dt, dt, 1, 1]
         
         // Compute Q from Q = G * G_t * proc_fac. Q is a 6x6 matrix
-        var G_t = [Double](repeating: 0, count : G.count)
-        vDSP_mtransD(G, 1, &G_t, 1, 2, 6)
-        
         var G_G_t = [Double](repeating: 0, count: 36)
-        vDSP_mmulD(G, 1, G_t, 1, &G_G_t, 1, 6, 6, 2)
+        vDSP_mmulD(G, 1, G, 1, &G_G_t, 1, 6, 6, 1)
         
         Q = [Double](repeating: 0, count: 36)
         vDSP_vsmulD(G_G_t, 1, &proc_fac, &Q, 1, 36)
@@ -131,8 +114,7 @@ class KalmanFilter: BayesianFilter {
     
     private func update(measurements: [Double], successCallback: (CGPoint) -> Void) {
         guard let anchors = IndoorLocationManager.shared.anchors else {
-            print("No anchors found!")
-            return
+            fatalError("No anchors found!")
         }
         
         let H = H_j(state)
@@ -181,8 +163,7 @@ class KalmanFilter: BayesianFilter {
     
     private func h(_ state: [Double]) -> [Double] {
         guard let anchors = IndoorLocationManager.shared.anchors else {
-            print("No anchors found!")
-            return []
+            fatalError("No anchors found!")
         }
         
         let anchorCoordinates = anchors.map { $0.position }
@@ -204,8 +185,7 @@ class KalmanFilter: BayesianFilter {
     
     private func H_j(_ state: [Double]) -> [Double] {
         guard let anchors = IndoorLocationManager.shared.anchors else {
-            print("No anchors found!")
-            return []
+            fatalError("No anchors found!")
         }
         
         let anchorCoordinates = anchors.map { $0.position }
