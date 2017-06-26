@@ -11,7 +11,6 @@ import UIKit
 enum SettingsTableViewSection: Int {
     case positioningMode = 0
     case calibrationMode
-    case dataSink
     case filterType
 }
 
@@ -23,7 +22,7 @@ enum SliderType: Int {
 }
 
 protocol SettingsTableViewControllerDelegate {
-    func toggleFloorplanVisible(_ floorPlanVisible: Bool)
+    func toggleFloorplanVisible(_ isFloorPlanVisible: Bool)
     func changeFilterType(_ filterType: FilterType)
 }
 
@@ -31,7 +30,6 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
     
     let tableViewSections = [SettingsTableViewSection.positioningMode.rawValue,
                              SettingsTableViewSection.calibrationMode.rawValue,
-                             SettingsTableViewSection.dataSink.rawValue,
                              SettingsTableViewSection.filterType.rawValue]
     
     let filterSettings = IndoorLocationManager.shared.filterSettings
@@ -97,8 +95,6 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
             } else {
                 return 3 + (IndoorLocationManager.shared.anchors?.count ?? 0) // 1 Segmented Control, 1 Button, 1 cell for each anchor found, 1 empty cell
             }
-        case .dataSink:
-            return 1
         case .filterType:
             switch filterSettings.filterType {
             case .none:
@@ -134,8 +130,6 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
                     cell = tableView.dequeueReusableCell(withIdentifier: String(describing: AnchorTableViewCell.self), for: indexPath)
                 }
             }
-        case .dataSink:
-            cell = tableView.dequeueReusableCell(withIdentifier: String(describing: SegmentedControlTableViewCell.self), for: indexPath)
         case .filterType:
             if (indexPath.row == 0) {
                 cell = tableView.dequeueReusableCell(withIdentifier: String(describing: SegmentedControlTableViewCell.self), for: indexPath)
@@ -160,8 +154,6 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
             return "Positioning mode"
         case .calibrationMode:
             return "Calibration mode"
-        case .dataSink:
-            return "Data Sink"
         case .filterType:
             return "Filter Type"
         }
@@ -181,8 +173,6 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
         case .calibrationMode:
             filterSettings.calibrationModeIsAutomatic = sender.selectedSegmentIndex == 0
             tableView.reloadData()
-        case .dataSink:
-            filterSettings.dataSinkIsLocal = sender.selectedSegmentIndex == 0
         case .filterType:
             filterSettings.filterType = FilterType(rawValue: sender.selectedSegmentIndex) ?? .none
             tableView.reloadData()
@@ -257,12 +247,6 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
                     cell.setupWithDelegate(self)
                 }
             }
-        case .dataSink:
-            if let cell = cell as? SegmentedControlTableViewCell {
-                let selectedSegmentIndex = filterSettings.dataSinkIsLocal ? 0 : 1
-                
-                cell.setupWithSegments(["Local", "Remote"], selectedSegmentIndex: selectedSegmentIndex, delegate: self, tag: tableViewSection.rawValue)
-            }
         case .filterType:
             if let cell = cell as? SegmentedControlTableViewCell {
                 let selectedSegmentIndex = filterSettings.filterType.rawValue
@@ -273,9 +257,9 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
                 case .kalman:
                     switch indexPath.row {
                     case 1:
-                        cell.setupWithValue(filterSettings.accelerationUncertainty, minValue: 0, maxValue: 100, text: "Acc. uncertainty:", delegate: self, tag: SliderType.accelerationUncertainty.rawValue)
+                        cell.setupWithValue(filterSettings.accelerationUncertainty, minValue: 1, maxValue: 100, text: "Acc. uncertainty:", delegate: self, tag: SliderType.accelerationUncertainty.rawValue)
                     case 2:
-                        cell.setupWithValue(filterSettings.distanceUncertainty, minValue: 0, maxValue: 100, text: "Dist. uncertainty:", delegate: self, tag: SliderType.distanceUncertainty.rawValue)
+                        cell.setupWithValue(filterSettings.distanceUncertainty, minValue: 1, maxValue: 100, text: "Dist. uncertainty:", delegate: self, tag: SliderType.distanceUncertainty.rawValue)
                     case 3:
                         cell.setupWithValue(filterSettings.processingUncertainty, minValue: 0, maxValue: 100, text: "Proc. uncertainty:", delegate: self, tag: SliderType.processingUncertainty.rawValue)
                     default:
@@ -284,13 +268,13 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
                 case .particle:
                     switch indexPath.row {
                     case 1:
-                        cell.setupWithValue(filterSettings.accelerationUncertainty, minValue: 0, maxValue: 100, text: "Acc. uncertainty:", delegate: self, tag: SliderType.accelerationUncertainty.rawValue)
+                        cell.setupWithValue(filterSettings.accelerationUncertainty, minValue: 1, maxValue: 100, text: "Acc. uncertainty:", delegate: self, tag: SliderType.accelerationUncertainty.rawValue)
                     case 2:
-                        cell.setupWithValue(filterSettings.distanceUncertainty, minValue: 0, maxValue: 100, text: "Dist. uncertainty:", delegate: self, tag: SliderType.distanceUncertainty.rawValue)
+                        cell.setupWithValue(filterSettings.distanceUncertainty, minValue: 1, maxValue: 100, text: "Dist. uncertainty:", delegate: self, tag: SliderType.distanceUncertainty.rawValue)
                     case 3:
                         cell.setupWithValue(filterSettings.processingUncertainty, minValue: 0, maxValue: 100, text: "Proc. uncertainty:", delegate: self, tag: SliderType.processingUncertainty.rawValue)
                     case 4:
-                        cell.setupWithValue(filterSettings.numberOfParticles, minValue: 0, maxValue: 1000, text: "Particles:", delegate: self, tag: SliderType.numberOfParticles.rawValue)
+                        cell.setupWithValue(filterSettings.numberOfParticles, minValue: 1, maxValue: 1000, text: "Particles:", delegate: self, tag: SliderType.numberOfParticles.rawValue)
                     default:
                         break
                         

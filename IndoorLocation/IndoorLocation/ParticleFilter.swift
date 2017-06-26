@@ -40,7 +40,7 @@ class Particle {
         var mean = [Double](repeating: 0, count: 6)
         vDSP_mmulD(filter.F, 1, state, 1, &mean, 1, 6, 1, 6)
         
-        state = randomGaussianVector(mean: mean, A: filter.G)
+        state = [Double].randomGaussianVector(mean: mean, A: filter.G)
     }
     
     func updateWeight(measurements: [Double]) {
@@ -92,7 +92,7 @@ class ParticleFilter: BayesianFilter {
         
         let acc_sig = Double(settings.accelerationUncertainty)
         let pos_sig = Double(settings.distanceUncertainty)
-        var proc_fac = sqrt(Double(settings.processingUncertainty))
+        let proc_fac = sqrt(Double(settings.processingUncertainty))
         let dt = settings.updateTime
         numberOfParticles = settings.numberOfParticles
         
@@ -117,11 +117,19 @@ class ParticleFilter: BayesianFilter {
             }
         }
         
-        // G is a 6x1 vector with '(dt^2)/2's in the first 2 entries, 'dt's in second two entries and '1's in the last two entries
-        G = [pow(dt, 2)/2, pow(dt, 2)/2, dt, dt, 1, 1]
-        
-        // Multiply G with the square root of processing factor
-        vDSP_vsmulD(G, 1, &proc_fac, &G, 1, vDSP_Length(G.count))
+        // G is a 6x2 matrix with '(dt^2)/2's in main diagonal and '1's in second and fourth negative side diagonal
+        G = [Double]()
+        for i in 0..<6 {
+            for j in 0..<2 {
+                if (i == j) {
+                    G.append(proc_fac)
+                } else if (i == j + 2 || i == j + 4) {
+                    G.append(1)
+                } else {
+                    G.append(0)
+                }
+            }
+        }
         
         // R is a (numAnchors + 2)x(numAnchors + 2) diagonal matrix with 'pos_sig's in first numAnchors entries and 'acc_sig's in the remaining entries
         R = [Double]()
@@ -138,7 +146,7 @@ class ParticleFilter: BayesianFilter {
         }
         
         // Store inverse of matrix R as well to avoid computing it in every step for every particle.
-        R_inv = invertMatrix(R)
+        R_inv = R.invert()
         
         particles = [Particle]()
         
@@ -151,14 +159,6 @@ class ParticleFilter: BayesianFilter {
     }
     
     override func computeAlgorithm(measurements: [Double], successCallback: @escaping (CGPoint) -> Void) {
-        /*
-        * TODO: TIPPS VON RICO:
-        * Try to increase deviations for distance and acceleration. Gaussian distribution is then flatter and should return larger values for points farther away from mean.
-        * Check which terms in exponent of Gaussian distribution cause large influence. Try to avoid these
-        * Examine a few particles more intensively
-        * Maybe put weight in a logarithmic scale. Smaller values can be expressed better.
-        */
-        
         var totalWeight = 0.0
         let dispatchGroup = DispatchGroup()
         for particle in particles {
@@ -205,7 +205,7 @@ class ParticleFilter: BayesianFilter {
         }
         var i = 0
         // Draw a starting point u_0 from uniform distribution U[0, 1/numberOfParticles]
-        let u_0 = randomDouble(upperBound: N_inv)
+        let u_0 = Double.random(upperBound: N_inv)
         var u = [Double]()
         
         for j in 0..<numberOfParticles {

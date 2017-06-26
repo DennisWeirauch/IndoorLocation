@@ -16,16 +16,6 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
     var startButton: UIButton!
     var indoorMapView: IndoorMapView!
     
-    private var isRunning = false {
-        didSet {
-            if isRunning {
-                startButton.setImage(UIImage(named: "stop.png"), for: .normal)
-            } else {
-                startButton.setImage(UIImage(named: "start.png"), for: .normal)
-            }
-        }
-    }
-
     //MARK: ViewController lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -69,9 +59,9 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
         }
     }
     
-    //MARK: FilterSettingsTableViewControllerDelegate
-    func toggleFloorplanVisible(_ floorPlanVisible: Bool) {
-        //TODO: Implement this
+    //MARK: SettingsTableViewControllerDelegate
+    func toggleFloorplanVisible(_ isFloorPlanVisible: Bool) {
+        indoorMapView.isFloorPlanVisible = isFloorPlanVisible
     }
     
     func changeFilterType(_ filterType: FilterType) {
@@ -98,12 +88,16 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
     }
     
     func onStartButtonTapped(_ sender: Any) {
-        if isRunning {
+        if IndoorLocationManager.shared.isRanging {
             IndoorLocationManager.shared.stopRanging()
+            startButton.setImage(UIImage(named: "start.png"), for: .normal)
         } else {
-            IndoorLocationManager.shared.beginRanging()
+            if IndoorLocationManager.shared.beginRanging() {
+                startButton.setImage(UIImage(named: "stop.png"), for: .normal)
+            } else {
+                return
+            }
         }
-        isRunning = !isRunning
     }
     
     //MARK: Private API

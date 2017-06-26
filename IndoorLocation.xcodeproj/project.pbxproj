@@ -13,9 +13,6 @@
 		954B55F11EF0251C00AE923F /* IndoorMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954B55F01EF0251C00AE923F /* IndoorMapView.swift */; };
 		95570C781EDD7E7000F15E30 /* AnchorTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95570C771EDD7E7000F15E30 /* AnchorTableViewCell.swift */; };
 		956227CA1E965F2700288A1A /* ParticleFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956227C91E965F2700288A1A /* ParticleFilter.swift */; };
-		956227CC1E96A95600288A1A /* particle.png in Resources */ = {isa = PBXBuildFile; fileRef = 956227CB1E96A95600288A1A /* particle.png */; };
-		956227CE1E96AD9000288A1A /* position.png in Resources */ = {isa = PBXBuildFile; fileRef = 956227CD1E96AD9000288A1A /* position.png */; };
-		956227D21E96BA7C00288A1A /* anchor.png in Resources */ = {isa = PBXBuildFile; fileRef = 956227D11E96BA7C00288A1A /* anchor.png */; };
 		95A19DF01ED6C72A004BC415 /* LabelHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A19DEF1ED6C72A004BC415 /* LabelHelper.swift */; };
 		95A19DF31ED6C998004BC415 /* SliderHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A19DF21ED6C998004BC415 /* SliderHelper.swift */; };
 		95A19DF51ED6DAB7004BC415 /* TextFieldHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A19DF41ED6DAB7004BC415 /* TextFieldHelper.swift */; };
@@ -64,9 +61,6 @@
 		954B55F01EF0251C00AE923F /* IndoorMapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = IndoorMapView.swift; path = IndoorLocation/Views/IndoorMapView.swift; sourceTree = SOURCE_ROOT; };
 		95570C771EDD7E7000F15E30 /* AnchorTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AnchorTableViewCell.swift; path = Cells/AnchorTableViewCell.swift; sourceTree = "<group>"; };
 		956227C91E965F2700288A1A /* ParticleFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParticleFilter.swift; sourceTree = "<group>"; };
-		956227CB1E96A95600288A1A /* particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle.png; sourceTree = "<group>"; };
-		956227CD1E96AD9000288A1A /* position.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = position.png; sourceTree = "<group>"; };
-		956227D11E96BA7C00288A1A /* anchor.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = anchor.png; sourceTree = "<group>"; };
 		95A19DEF1ED6C72A004BC415 /* LabelHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LabelHelper.swift; path = Helpers/LabelHelper.swift; sourceTree = "<group>"; };
 		95A19DF21ED6C998004BC415 /* SliderHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SliderHelper.swift; path = Helpers/SliderHelper.swift; sourceTree = "<group>"; };
 		95A19DF41ED6DAB7004BC415 /* TextFieldHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TextFieldHelper.swift; path = Helpers/TextFieldHelper.swift; sourceTree = "<group>"; };
@@ -134,9 +128,6 @@
 		959C84D61E97BCAA00EB4AA4 /* Images */ = {
 			isa = PBXGroup;
 			children = (
-				956227D11E96BA7C00288A1A /* anchor.png */,
-				956227CB1E96A95600288A1A /* particle.png */,
-				956227CD1E96AD9000288A1A /* position.png */,
 				9507696F1E8D419B00233FF8 /* room_10_blueprint.pdf */,
 				95E3DCBE1E9D3E9E006D6C08 /* settings.png */,
 				95E3DCCC1EAE0235006D6C08 /* start.png */,
@@ -390,11 +381,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				956227CE1E96AD9000288A1A /* position.png in Resources */,
-				956227D21E96BA7C00288A1A /* anchor.png in Resources */,
 				95E3DCCF1EAE0375006D6C08 /* stop.png in Resources */,
 				95E3DCCD1EAE0235006D6C08 /* start.png in Resources */,
-				956227CC1E96A95600288A1A /* particle.png in Resources */,
 				95E3DCBF1E9D3E9E006D6C08 /* settings.png in Resources */,
 				95A1F6251E8BB5C700D2CDD2 /* Assets.xcassets in Resources */,
 				950769701E8D419B00233FF8 /* room_10_blueprint.pdf in Resources */,

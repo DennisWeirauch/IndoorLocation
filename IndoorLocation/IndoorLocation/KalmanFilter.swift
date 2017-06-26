@@ -136,7 +136,7 @@ class KalmanFilter: BayesianFilter {
         
         // Compute K from K = P * H_t * S_inv
         var K = [Double](repeating: 0, count: 6 * (anchors.count + 2))
-        vDSP_mmulD(P_H_t, 1, invertMatrix(S), 1, &K, 1, 6, numAnchPlus2, numAnchPlus2)
+        vDSP_mmulD(P_H_t, 1, S.invert(), 1, &K, 1, 6, numAnchPlus2, numAnchPlus2)
         
         // Compute new state = state + K * (measurements - h(state))
         var innovation = [Double](repeating: 0, count: anchors.count + 2)

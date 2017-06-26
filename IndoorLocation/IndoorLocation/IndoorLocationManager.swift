@@ -32,16 +32,15 @@ class IndoorLocationManager {
     var delegate: IndoorLocationManagerDelegate?
     
     var anchors: [Anchor]?
-        
     var filter: BayesianFilter?
-    
-    var filterSettings: FilterSettings
+    var filterSettings = FilterSettings()
     
     var position: CGPoint?
     
-    private init() {
-        filterSettings = FilterSettings()
-    }
+    var isCalibrated = false
+    var isRanging = false
+    
+    private init() {}
     
     //MARK: Private API
     private func parseData(_ stringData: String) -> [String : Double]? {
@@ -69,15 +68,15 @@ class IndoorLocationManager {
         return nil
     }
     
-    private func parseCalibrationData(data: Data?) {
+    private func parseCalibrationData(data: Data?) -> Bool {
         guard let data = data else {
             delegate?.showAlertWithTitle("Error", message: "No calibration data received!")
-            return
+            return false
         }
         
         let stringData = String(data: data, encoding: String.Encoding.utf8)!
         
-        guard let anchorDict = self.parseData(stringData) else { return }
+        guard let anchorDict = self.parseData(stringData) else { return false }
         
         var anchors = [Anchor]()
         var distances = [Double]()
@@ -91,8 +90,8 @@ class IndoorLocationManager {
                 let distance = anchorDict["dist\(i)"] else {
                     fatalError("Error retrieving data from anchorDict")
             }
-            anchors.append(Anchor(id: Int(id), position: CGPoint(x: xCoordinate, y: yCoordinate)))
-            distances.append(distance)
+            anchors.append(Anchor(id: Int(id), position: CGPoint(x: xCoordinate / 10, y: yCoordinate / 10)))
+            distances.append(distance / 10)
         }
         
         self.anchors = anchors
@@ -101,13 +100,17 @@ class IndoorLocationManager {
         
         // Least squares algorithm to get initial position
         self.position = leastSquares(anchors: anchors.map { $0.position }, distances: distances)
+        
+        return true
     }
     
     private func receivedCalibrationResult(_ result: NetworkResult) {
         switch result {
         case .success(let data):
-            self.parseCalibrationData(data: data)
-            self.delegate?.showAlertWithTitle("Success", message: "Calibration Successful!")
+            if self.parseCalibrationData(data: data) {
+                isCalibrated = true
+                self.delegate?.showAlertWithTitle("Success", message: "Calibration Successful!")
+            }
         case .failure(let error):
             self.delegate?.showAlertWithTitle("Error", message: error.localizedDescription)
         }
@@ -120,10 +123,16 @@ class IndoorLocationManager {
                 self.receivedCalibrationResult(result)
             }
         } else {
+//            // Fake manual calibration response for testing purposes.
+//            let data = ("ID0=\(Int("666D", radix: 16)!)&xPos0=0&yPos0=0&dist0=500" +
+//                        "&ID1=\(Int("6F21", radix: 16)!)&xPos1=1100&yPos1=3350&dist1=500" +
+//                        "&ID2=\(Int("6F59", radix: 16)!)&xPos2=4050&yPos2=1300&dist2=500").data(using: .utf8)
+//            let result = NetworkResult.success(data)
+//            receivedCalibrationResult(result)
             guard let anchors = anchors else { return }
             var anchorStringData = ""
             for (i, anchor) in anchors.enumerated() {
-                anchorStringData += "ID\(i)=\(anchor.id)&xPos\(i)=\(Int((anchor.position.x)))&yPos\(i)=\(Int((anchor.position.y)))"
+                anchorStringData += "ID\(i)=\(anchor.id)&xPos\(i)=\(Int((anchor.position.x) * 10))&yPos\(i)=\(Int((anchor.position.y) * 10))"
                 if (i != anchors.count - 1) {
                     anchorStringData += "&"
                 }
@@ -134,15 +143,28 @@ class IndoorLocationManager {
         }
     }
     
-    func beginRanging() {
-        NetworkManager.shared.pozyxTask(task: .beginRanging) { _ in }
+    func beginRanging() -> Bool {
+        if isCalibrated {
+            NetworkManager.shared.pozyxTask(task: .beginRanging) { _ in }
+            isRanging = true
+            return true
+        } else {
+            delegate?.showAlertWithTitle("Error", message: "Calibration has to be executed first!")
+            return false
+        }
     }
     
     func stopRanging() {
         NetworkManager.shared.pozyxTask(task: .stopRanging) { _ in }
+        isRanging = false
     }
     
     func newData(_ data: String?) {
+        guard isRanging else {
+            stopRanging()
+            return
+        }
+        
         guard let data = data else {
             delegate?.showAlertWithTitle("Error", message: "No ranging data received!")
             return
@@ -151,8 +173,7 @@ class IndoorLocationManager {
         guard let measurementDict = parseData(data) else { return }
         
         guard let anchors = anchors else {
-            delegate?.showAlertWithTitle("Error", message: "No Anchors found. Calibration has to be executed first!")
-            return
+            fatalError("No Anchors found")
         }
         
         var measurements = [Double]()
@@ -160,14 +181,14 @@ class IndoorLocationManager {
             guard let distance = measurementDict["dist\(i)"] else {
                 fatalError("Error retrieving data from measurementDict")
             }
-            measurements.append(distance)
+            measurements.append(distance / 10)
         }
         
         guard let xAcc = measurementDict["xAcc"], let yAcc = measurementDict["yAcc"] else {
             fatalError("Error retrieving data from measurementDict")
         }
-        measurements.append(xAcc)
-        measurements.append(yAcc)
+        measurements.append(xAcc / 10)
+        measurements.append(yAcc / 10)
         
         filter?.computeAlgorithm(measurements: measurements) { position in
             self.position = position

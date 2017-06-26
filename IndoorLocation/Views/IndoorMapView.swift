@@ -19,6 +19,14 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
 
     var mapView: UIView!
     
+    var isFloorPlanVisible = false {
+        didSet {
+            floorplanView?.isHidden = !isFloorPlanVisible
+        }
+    }
+    
+    var floorplanView: UIImageView?
+    
     var filterType = FilterType.none {
         didSet {
             switch filterType {
@@ -67,6 +75,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     
     var positionLayer = CAShapeLayer()
     var anchorLayers = [CAShapeLayer]()
+    var anchorLabels = [UILabel]()
     var covarianceLayer = CAShapeLayer()
     var particleLayers = [CAShapeLayer]()
     var trajectoryLayer = CAShapeLayer()
@@ -80,13 +89,12 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     var initAngle: CGFloat = 0.0
     
     override init(frame: CGRect) {
-        
         super.init(frame: frame)
         
         backgroundColor = .white
         
         setupMapView()
-        
+        setupFloorplan()
         setupGestureRecognizers()
     }
     
@@ -109,6 +117,27 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     private func setupMapView() {
         mapView = UIView(frame: CGRect(x: 0, y: 0, width: 1000, height: 1000))
         addSubview(mapView)
+    }
+    
+    private func setupFloorplan() {
+        // Initialize floorplanView
+        guard let url = Bundle.main.url(forResource: "room_10_blueprint", withExtension: "pdf") else { return }
+        guard let pdfPage = CGPDFDocument(url as CFURL)?.page(at: 1) else { return }
+        
+        let pageRect = pdfPage.getBoxRect(.trimBox)
+        let renderer = UIGraphicsImageRenderer(size: pageRect.size)
+        let floorplan = renderer.image { ctx in
+            UIColor.white.set()
+            ctx.fill(pageRect)
+            
+            ctx.cgContext.translateBy(x: 0.0, y: pageRect.size.height);
+            ctx.cgContext.scaleBy(x: 1.0, y: -1.0);
+            
+            ctx.cgContext.drawPDFPage(pdfPage);
+        }
+        floorplanView = UIImageView(image: floorplan)
+        floorplanView?.isHidden = true
+        mapView.addSubview(floorplanView!)
     }
     
     private func setupGestureRecognizers() {
@@ -154,13 +183,13 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     private func adjustedSizeForType(_ pointType: PointType) -> CGFloat {
         switch pointType {
         case .position:
-            return min(50 / scale, 250)
+            return min(10 / scale, 50)
         case .anchor:
-            return min(50 / scale, 250)
+            return min(10 / scale, 50)
         case .covariance:
-            return min(30 / scale, 150)
+            return min(5 / scale, 25)
         case .particle:
-            return min(30 / scale, 150)
+            return min(5 / scale, 25)
         }
     }
     
@@ -180,9 +209,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     
     private func updatePosition() {
         guard let position = position else { return }
-        
-        UIGraphicsGetCurrentContext()
-        
+                
         // Update trajectory
         trajectoryLayer.removeFromSuperlayer()
         
@@ -194,7 +221,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         trajectoryLayer.path = trajectory.cgPath
         trajectoryLayer.fillColor = UIColor.clear.cgColor
         trajectoryLayer.strokeColor = UIColor.black.cgColor
-        trajectoryLayer.lineWidth = 15
+        trajectoryLayer.lineWidth = 1
         
         mapView.layer.addSublayer(trajectoryLayer)
         
@@ -214,10 +241,11 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     private func updateAnchors() {
         guard let anchors = anchors else { return }
         
-        UIGraphicsGetCurrentContext()
-        
         anchorLayers.forEach { $0.removeFromSuperlayer() }
         anchorLayers.removeAll()
+        
+        anchorLabels.forEach { $0.removeFromSuperview() }
+        anchorLabels.removeAll()
         
         for anchor in anchors {
             let pointSize = adjustedSizeForType(.anchor)
@@ -229,13 +257,17 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
             
             mapView.layer.addSublayer(anchorLayer)
             anchorLayers.append(anchorLayer)
+            
+            // Label
+            let idLabel = UILabel(frame: CGRect(x: anchor.position.x + pointSize / 2, y: anchor.position.y - pointSize / 2, width: 30, height: 20))
+            LabelHelper.setupLabel(idLabel, withText: String(format: "%2X", anchor.id), fontSize: 13, textColor: .red, alignment: .left)
+            mapView.addSubview(idLabel)
+            anchorLabels.append(idLabel)
         }
     }
     
     private func updateCovariance() {
         guard let position = position, let covariance = covariance else { return }
-        
-        UIGraphicsGetCurrentContext()
         
         covarianceLayer.removeFromSuperlayer()
         
@@ -247,15 +279,13 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         covarianceLayer.path = covariancePath.cgPath
         covarianceLayer.strokeColor = UIColor.yellow.cgColor
         covarianceLayer.fillColor = UIColor.clear.cgColor
-        covarianceLayer.lineWidth = 15
+        covarianceLayer.lineWidth = 2
         
         mapView.layer.addSublayer(covarianceLayer)
     }
     
     private func updateParticles() {
         guard let particles = particles else { return }
-        
-        UIGraphicsGetCurrentContext()
         
         particleLayers.forEach { $0.removeFromSuperlayer() }
         particleLayers.removeAll()

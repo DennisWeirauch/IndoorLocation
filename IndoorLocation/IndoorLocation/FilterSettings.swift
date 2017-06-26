@@ -11,9 +11,7 @@ class FilterSettings {
     var positioningModeIsRelative = true
     
     var calibrationModeIsAutomatic = true
-    
-    var dataSinkIsLocal = true
-    
+        
     var filterType: FilterType = .none
     
     // Filter parameters
