@@ -27,13 +27,13 @@ class NetworkManager {
     let port = 8080
     let hostIP = "172.20.10.1"
     // TODO: Check if hardcoding IP is a good solution here
-    let arduinoIP = "172.20.10.4"
+    let arduinoIP = "172.20.10.5"
     let session: URLSession
 
     private init() {
-        // Set timeout for requests to Arduino to 5 s
+        // Set timeout for requests to Arduino to 10 s
         let config = URLSessionConfiguration.default
-        config.timeoutIntervalForRequest = 5
+        config.timeoutIntervalForRequest = 10
         session = URLSession(configuration: config)
         
         setupServer()
@@ -69,7 +69,7 @@ class NetworkManager {
     }
     
     private func receivedData(_ data: String?) {
-        IndoorLocationManager.shared.newData(data)
+        IndoorLocationManager.shared.newRangingData(data)
     }
 
     //MARK: Public API

@@ -50,9 +50,22 @@ class KalmanFilter: BayesianFilter {
                 }
             }
         }
-        
-        // G is a 6x1 vector with '(dt^2)/2's in the first 2 entries, 'dt's in second two entries and '1's in the last two entries
-        let G = [pow(dt, 2)/2, pow(dt, 2)/2, dt, dt, 1, 1]
+
+        // G is a 6x2 matrix with '(dt^2)/2's in main diagonal, 'dt's in second negative side diagonal and '1's in fourth negative side diagonal
+        var G = [Double]()
+        for i in 0..<6 {
+            for j in 0..<2 {
+                if (i == j) {
+                    G.append(pow(dt, 2)/2)
+                } else if (i == j + 2) {
+                    G.append(dt)
+                } else if (i == j + 4) {
+                    G.append(1)
+                } else {
+                    G.append(0)
+                }
+            }
+        }
         
         // Compute Q from Q = G * G_t * proc_fac. Q is a 6x6 matrix
         var G_G_t = [Double](repeating: 0, count: 36)

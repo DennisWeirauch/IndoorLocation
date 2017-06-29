@@ -89,13 +89,12 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
     
     func onStartButtonTapped(_ sender: Any) {
         if IndoorLocationManager.shared.isRanging {
-            IndoorLocationManager.shared.stopRanging()
-            startButton.setImage(UIImage(named: "start.png"), for: .normal)
+            IndoorLocationManager.shared.stopRanging() {
+                self.startButton.setImage(UIImage(named: "start.png"), for: .normal)
+            }
         } else {
-            if IndoorLocationManager.shared.beginRanging() {
-                startButton.setImage(UIImage(named: "stop.png"), for: .normal)
-            } else {
-                return
+            IndoorLocationManager.shared.beginRanging() {
+                self.startButton.setImage(UIImage(named: "stop.png"), for: .normal)
             }
         }
     }

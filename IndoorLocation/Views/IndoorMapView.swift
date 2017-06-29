@@ -8,13 +8,6 @@
 
 import UIKit
 
-enum PointType {
-    case position
-    case anchor
-    case covariance
-    case particle
-}
-
 class IndoorMapView: UIView, UIGestureRecognizerDelegate {
 
     var mapView: UIView!
@@ -31,12 +24,12 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         didSet {
             switch filterType {
             case .none:
-                covarianceLayer.removeFromSuperlayer()
-                particleLayers.forEach { $0.removeFromSuperlayer() }
+                covarianceView?.removeFromSuperview()
+                particleViews?.forEach { $0.removeFromSuperview() }
             case .kalman:
-                particleLayers.forEach { $0.removeFromSuperlayer() }
+                particleViews?.forEach { $0.removeFromSuperview() }
             case .particle:
-                covarianceLayer.removeFromSuperlayer()
+                covarianceView?.removeFromSuperview()
             }
         }
     }
@@ -48,8 +41,8 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
             if lastPositions.count >= 20 {
                 lastPositions.removeFirst()
             }
-            if let oldValue = oldValue {
-                lastPositions.append(oldValue)
+            if let position = position {
+                lastPositions.append(position)
             }
             updatePosition()
         }
@@ -57,7 +50,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     
     var anchors: [Anchor]? {
         didSet {
-            updateAnchors()
+            setAnchors()
         }
     }
     
@@ -73,12 +66,11 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         }
     }
     
-    var positionLayer = CAShapeLayer()
-    var anchorLayers = [CAShapeLayer]()
-    var anchorLabels = [UILabel]()
-    var covarianceLayer = CAShapeLayer()
-    var particleLayers = [CAShapeLayer]()
-    var trajectoryLayer = CAShapeLayer()
+    var positionView: PointView?
+    var anchorViews: [PointView]?
+    var particleViews: [PointView]?
+    var covarianceView: CovarianceView?
+    var trajectoryView: TrajectoryView?
 
     // Variables used for zooming, rotating and panning the mapView
     var tx: CGFloat = 0.0
@@ -180,126 +172,71 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         }
     }
     
-    private func adjustedSizeForType(_ pointType: PointType) -> CGFloat {
-        switch pointType {
-        case .position:
-            return min(10 / scale, 50)
-        case .anchor:
-            return min(10 / scale, 50)
-        case .covariance:
-            return min(5 / scale, 25)
-        case .particle:
-            return min(5 / scale, 25)
-        }
-    }
-    
-    private func updatePoints() {
-        updatePosition()
-        updateAnchors()
+    private func setAnchors() {
+        guard let anchors = anchors else { return }
         
-        switch filterType {
-        case .kalman:
-            updateCovariance()
-        case .particle:
-            updateParticles()
-        default:
-            break
+        if let anchorViews = anchorViews {
+            anchorViews.forEach { $0.removeFromSuperview() }
+        }
+        
+        anchorViews = [PointView]()
+        
+        for anchor in anchors {
+            let anchorView = PointView(pointType: .anchor(anchor))
+            mapView.addSubview(anchorView)
+            anchorViews?.append(anchorView)
         }
     }
     
     private func updatePosition() {
         guard let position = position else { return }
-                
+        
+        if let positionView = positionView {
+            positionView.updatePoint(withPointType: .position(position))
+        } else {
+            positionView = PointView(pointType: .position(position))
+            mapView.addSubview(positionView!)
+        }
+        
+        mapView.bringSubview(toFront: positionView!)
+        
         // Update trajectory
-        trajectoryLayer.removeFromSuperlayer()
-        
-        let trajectory = UIBezierPath()
-        trajectory.move(to: position)
-        lastPositions.reversed().forEach { trajectory.addLine(to: $0) }
-        
-        trajectoryLayer = CAShapeLayer()
-        trajectoryLayer.path = trajectory.cgPath
-        trajectoryLayer.fillColor = UIColor.clear.cgColor
-        trajectoryLayer.strokeColor = UIColor.black.cgColor
-        trajectoryLayer.lineWidth = 1
-        
-        mapView.layer.addSublayer(trajectoryLayer)
-        
-        // Update point
-        positionLayer.removeFromSuperlayer()
-        
-        let pointSize = adjustedSizeForType(.position)
-        let positionPath = UIBezierPath(ovalIn: CGRect(x: position.x - pointSize / 2, y: position.y - pointSize / 2, width: pointSize, height: pointSize))
-        
-        positionLayer = CAShapeLayer()
-        positionLayer.path = positionPath.cgPath
-        positionLayer.fillColor = UIColor.green.cgColor
-        
-        mapView.layer.addSublayer(positionLayer)
-    }
-    
-    private func updateAnchors() {
-        guard let anchors = anchors else { return }
-        
-        anchorLayers.forEach { $0.removeFromSuperlayer() }
-        anchorLayers.removeAll()
-        
-        anchorLabels.forEach { $0.removeFromSuperview() }
-        anchorLabels.removeAll()
-        
-        for anchor in anchors {
-            let pointSize = adjustedSizeForType(.anchor)
-            let anchorPath = UIBezierPath(ovalIn: CGRect(x: anchor.position.x - pointSize / 2, y: anchor.position.y - pointSize / 2, width: pointSize, height: pointSize))
-            
-            let anchorLayer = CAShapeLayer()
-            anchorLayer.path = anchorPath.cgPath
-            anchorLayer.fillColor = UIColor.red.cgColor
-            
-            mapView.layer.addSublayer(anchorLayer)
-            anchorLayers.append(anchorLayer)
-            
-            // Label
-            let idLabel = UILabel(frame: CGRect(x: anchor.position.x + pointSize / 2, y: anchor.position.y - pointSize / 2, width: 30, height: 20))
-            LabelHelper.setupLabel(idLabel, withText: String(format: "%2X", anchor.id), fontSize: 13, textColor: .red, alignment: .left)
-            mapView.addSubview(idLabel)
-            anchorLabels.append(idLabel)
+        if let trajectoryView = trajectoryView {
+            trajectoryView.updateTrajectory(lastPositions.reversed())
+        } else {
+            trajectoryView = TrajectoryView(trajectory: lastPositions.reversed())
+            mapView.addSubview(trajectoryView!)
         }
     }
     
     private func updateCovariance() {
         guard let position = position, let covariance = covariance else { return }
         
-        covarianceLayer.removeFromSuperlayer()
-        
-        let width = adjustedSizeForType(.covariance) * CGFloat(covariance.x)
-        let height = adjustedSizeForType(.covariance) * CGFloat(covariance.y)
-        let covariancePath = UIBezierPath(ovalIn: CGRect(x: position.x - width / 2, y: position.y - height / 2, width: width, height: height))
-        
-        covarianceLayer = CAShapeLayer()
-        covarianceLayer.path = covariancePath.cgPath
-        covarianceLayer.strokeColor = UIColor.yellow.cgColor
-        covarianceLayer.fillColor = UIColor.clear.cgColor
-        covarianceLayer.lineWidth = 2
-        
-        mapView.layer.addSublayer(covarianceLayer)
+        if let covarianceView = covarianceView {
+            covarianceView.updateCovariance(position: position, covariance: covariance)
+        } else {
+            covarianceView = CovarianceView(position: position, covariance: covariance)
+            mapView.addSubview(covarianceView!)
+        }
     }
     
     private func updateParticles() {
         guard let particles = particles else { return }
         
-        particleLayers.forEach { $0.removeFromSuperlayer() }
-        particleLayers.removeAll()
-        
-        for particle in particles {
-            let pointSize: CGFloat = adjustedSizeForType(.particle)
-            let particlePath = UIBezierPath(ovalIn: CGRect(x: particle.position.x - pointSize / 2, y: particle.position.y - pointSize / 2, width: pointSize, height: pointSize))
+        if particles.count == particleViews?.count {
+            for i in 0..<particles.count {
+                particleViews?[i].updatePoint(withPointType: .particle(particles[i]))
+            }
+        } else {
+            particleViews?.forEach { $0.removeFromSuperview() }
+            particleViews = [PointView]()
             
-            let particleLayer = CAShapeLayer()
-            particleLayer.path = particlePath.cgPath
-            particleLayer.fillColor = UIColor.blue.cgColor
-            
-            mapView.layer.addSublayer(particleLayer)
-            particleLayers.append(particleLayer)
+            for particle in particles {
+                let particleView = PointView(pointType: .particle(particle))
+                mapView.addSubview(particleView)
+                mapView.sendSubview(toBack: particleView)
+                particleViews?.append(particleView)
+            }
         }
     }
     
@@ -320,7 +257,6 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         scale = initScale * recognizer.scale
         adjustAnchorPointForGestureRecognizer(recognizer)
         updateTransformWithOffset(CGPoint.zero)
-        updatePoints()
     }
     
     func handlePan(_ recognizer: UIPanGestureRecognizer) {

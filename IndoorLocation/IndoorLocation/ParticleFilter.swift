@@ -50,6 +50,10 @@ class Particle {
         weight = weight * normalDist
     }
     
+    func regularize(D: [Double]) {
+        state = [Double].randomGaussianVector(mean: state, A: D)
+    }
+    
     //MARK: Private API
     private func h(_ state: [Double]) -> [Double] {
         guard let anchors = IndoorLocationManager.shared.anchors else {
@@ -92,7 +96,7 @@ class ParticleFilter: BayesianFilter {
         
         let acc_sig = Double(settings.accelerationUncertainty)
         let pos_sig = Double(settings.distanceUncertainty)
-        let proc_fac = sqrt(Double(settings.processingUncertainty))
+        var proc_fac = sqrt(Double(settings.processingUncertainty))
         let dt = settings.updateTime
         numberOfParticles = settings.numberOfParticles
         
@@ -117,19 +121,24 @@ class ParticleFilter: BayesianFilter {
             }
         }
         
-        // G is a 6x2 matrix with '(dt^2)/2's in main diagonal and '1's in second and fourth negative side diagonal
+        // G is a 6x2 matrix with '(dt^2)/2's in main diagonal, 'dt's in second negative side diagonal and '1's in fourth negative side diagonal
         G = [Double]()
         for i in 0..<6 {
             for j in 0..<2 {
                 if (i == j) {
-                    G.append(proc_fac)
-                } else if (i == j + 2 || i == j + 4) {
+                    G.append(pow(dt, 2)/2)
+                } else if (i == j + 2) {
+                    G.append(dt)
+                } else if (i == j + 4) {
                     G.append(1)
                 } else {
                     G.append(0)
                 }
             }
         }
+        
+        // Multiply G with the square root of processing factor
+        vDSP_vsmulD(G, 1, &proc_fac, &G, 1, vDSP_Length(G.count))
         
         // R is a (numAnchors + 2)x(numAnchors + 2) diagonal matrix with 'pos_sig's in first numAnchors entries and 'acc_sig's in the remaining entries
         R = [Double]()
@@ -152,14 +161,16 @@ class ParticleFilter: BayesianFilter {
         
         super.init()
         
+        let uncertainty = 50.0
         for _ in 0..<numberOfParticles {
-            let particle = Particle(state: [Double(position.x), Double(position.y), 0, 0, 0, 0], weight: 1 / Double(numberOfParticles), filter: self)
+            let (r1, r2) = Double.randomGaussian()
+            let randomizedState = [Double(position.x) + uncertainty * r1, Double(position.y) + uncertainty * r2, 0, 0, 0, 0]
+            let particle = Particle(state: randomizedState, weight: 1 / Double(numberOfParticles), filter: self)
             particles.append(particle)
         }
     }
     
     override func computeAlgorithm(measurements: [Double], successCallback: @escaping (CGPoint) -> Void) {
-        var totalWeight = 0.0
         let dispatchGroup = DispatchGroup()
         for particle in particles {
             DispatchQueue.global().async(group: dispatchGroup) {
@@ -168,16 +179,20 @@ class ParticleFilter: BayesianFilter {
                 
                 // Evaluate the importance weight up to a normalizing constant
                 particle.updateWeight(measurements: measurements)
-                totalWeight += particle.weight
             }
         }
         
         dispatchGroup.notify(queue: DispatchQueue.global()) {
             // Normalize weights of all particles
+            let totalWeight = self.particles.reduce(0, { $0 + $1.weight })
             self.particles.forEach { $0.weight = $0.weight / totalWeight }
             
             // Execute resampling algorithm
             self.resample()
+            
+            // Regularize
+            let D: [Double] = [10, 0, 0, 10, 10, 0, 0, 10, 10, 0, 0, 10]
+            self.particles.forEach { $0.regularize(D: D) }
             
             // Determine current position
             var meanX = 0.0

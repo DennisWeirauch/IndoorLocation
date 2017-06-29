@@ -40,6 +40,8 @@ class IndoorLocationManager {
     var isCalibrated = false
     var isRanging = false
     
+    private var cachedMeasurement: [String : Double]?
+    
     private init() {}
     
     //MARK: Private API
@@ -129,6 +131,12 @@ class IndoorLocationManager {
 //                        "&ID2=\(Int("6F59", radix: 16)!)&xPos2=4050&yPos2=1300&dist2=500").data(using: .utf8)
 //            let result = NetworkResult.success(data)
 //            receivedCalibrationResult(result)
+            
+            // Faking anchors as I'm too lazy to enter coordinates every time.
+            addAnchorWithID(Int("666D", radix: 16)!, x: 0, y: 0)
+            addAnchorWithID(Int("6F21", radix: 16)!, x: 110, y: 335)
+            addAnchorWithID(Int("6F59", radix: 16)!, x: 405, y: 130)
+            
             guard let anchors = anchors else { return }
             var anchorStringData = ""
             for (i, anchor) in anchors.enumerated() {
@@ -143,25 +151,37 @@ class IndoorLocationManager {
         }
     }
     
-    func beginRanging() -> Bool {
+    func beginRanging(successCallback: @escaping () -> ()) {
         if isCalibrated {
-            NetworkManager.shared.pozyxTask(task: .beginRanging) { _ in }
-            isRanging = true
-            return true
+            NetworkManager.shared.pozyxTask(task: .beginRanging) { result in
+                switch result {
+                case .failure(let error):
+                    print(error)
+                case .success(_):
+                    self.isRanging = true
+                    successCallback()
+                }
+            }
         } else {
             delegate?.showAlertWithTitle("Error", message: "Calibration has to be executed first!")
-            return false
         }
     }
     
-    func stopRanging() {
-        NetworkManager.shared.pozyxTask(task: .stopRanging) { _ in }
-        isRanging = false
+    func stopRanging(successCallback: @escaping () -> ()) {
+        NetworkManager.shared.pozyxTask(task: .stopRanging) { result in
+            switch result {
+            case .failure(let error):
+                print(error)
+            case .success(_):
+                self.isRanging = false
+                successCallback()
+            }
+        }
     }
     
-    func newData(_ data: String?) {
+    func newRangingData(_ data: String?) {
         guard isRanging else {
-            stopRanging()
+            stopRanging() { _ in }
             return
         }
         
@@ -170,8 +190,16 @@ class IndoorLocationManager {
             return
         }
 
-        guard let measurementDict = parseData(data) else { return }
+        guard var measurementDict = parseData(data) else { return }
         
+        // If one component of the measurement is 0, use the last measurement again. This might sometimes happen as Pozyx is not that stable
+        if measurementDict.values.contains(0) {
+            guard let cachedMeasurement = cachedMeasurement else { return }
+            measurementDict = cachedMeasurement
+        } else {
+            cachedMeasurement = measurementDict
+        }
+                
         guard let anchors = anchors else {
             fatalError("No Anchors found")
         }
