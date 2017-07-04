@@ -156,7 +156,7 @@ class IndoorLocationManager {
             NetworkManager.shared.pozyxTask(task: .beginRanging) { result in
                 switch result {
                 case .failure(let error):
-                    print(error)
+                    self.delegate?.showAlertWithTitle("Error", message: error.localizedDescription)
                 case .success(_):
                     self.isRanging = true
                     successCallback()
@@ -171,7 +171,7 @@ class IndoorLocationManager {
         NetworkManager.shared.pozyxTask(task: .stopRanging) { result in
             switch result {
             case .failure(let error):
-                print(error)
+                self.delegate?.showAlertWithTitle("Error", message: error.localizedDescription)
             case .success(_):
                 self.isRanging = false
                 successCallback()

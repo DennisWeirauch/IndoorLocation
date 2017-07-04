@@ -14,6 +14,7 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
     //MARK: Private variables
     var settingsButton: UIButton!
     var startButton: UIButton!
+    var activityIndicatorView: UIActivityIndicatorView!
     var indoorMapView: IndoorMapView!
     
     //MARK: ViewController lifecycle
@@ -88,13 +89,18 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
     }
     
     func onStartButtonTapped(_ sender: Any) {
+        activityIndicatorView.startAnimating()
+        view.bringSubview(toFront: activityIndicatorView)
+
         if IndoorLocationManager.shared.isRanging {
             IndoorLocationManager.shared.stopRanging() {
                 self.startButton.setImage(UIImage(named: "start.png"), for: .normal)
+                self.activityIndicatorView.stopAnimating()
             }
         } else {
             IndoorLocationManager.shared.beginRanging() {
                 self.startButton.setImage(UIImage(named: "stop.png"), for: .normal)
+                self.activityIndicatorView.stopAnimating()
             }
         }
     }
@@ -116,5 +122,11 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
         startButton.setImage(UIImage(named: "start.png"), for: .normal)
         startButton.addTarget(self, action: #selector(onStartButtonTapped(_:)), for: .touchUpInside)
         view.addSubview(startButton)
+        
+        // Set up activityIndicatorView
+        activityIndicatorView = UIActivityIndicatorView(frame: startButton.frame)
+        activityIndicatorView.hidesWhenStopped = true
+        activityIndicatorView.color = .black
+        view.addSubview(activityIndicatorView)
     }
 }

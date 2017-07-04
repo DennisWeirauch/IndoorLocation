@@ -11,7 +11,7 @@ import Accelerate
 class Particle {
     
     // State vector containing: [xPos, yPos, xVel, yVel, xAcc, yAcc]
-    private var state: [Double]
+    private(set) var state: [Double]
     var weight: Double
     
     var position: CGPoint {
@@ -37,21 +37,25 @@ class Particle {
     func updateState() {
         
         // Compute mean = F * state
-        var mean = [Double](repeating: 0, count: 6)
-        vDSP_mmulD(filter.F, 1, state, 1, &mean, 1, 6, 1, 6)
+        var mean = [Double](repeating: 0, count: state.count)
+        vDSP_mmulD(filter.F, 1, state, 1, &mean, 1, vDSP_Length(state.count), 1, vDSP_Length(state.count))
         
         state = [Double].randomGaussianVector(mean: mean, A: filter.G)
     }
     
     func updateWeight(measurements: [Double]) {
         
-        // Compute new weight = weight * p(z|x), where p(z|x) = N(z; h(x), R)
+        // Compute new weight = weight * p(z|x), where is the transitional prior p(z|x) = N(z; h(x), R)
         let normalDist = computeNormalDistribution(x: measurements, m: h(state), forTriangularCovariance: filter.R, withInverse: filter.R_inv)
         weight = weight * normalDist
     }
     
     func regularize(D: [Double]) {
-        state = [Double].randomGaussianVector(mean: state, A: D)
+        var regularizationNoise = [Double].randomGaussianVector(dim: state.count)
+        vDSP_mmulD(D, 1, regularizationNoise, 1, &regularizationNoise, 1, vDSP_Length(state.count), 1, vDSP_Length(state.count))
+        var h_opt = filter.h_opt
+        vDSP_vsmulD(regularizationNoise, 1, &h_opt, &regularizationNoise, 1, vDSP_Length(regularizationNoise.count))
+        vDSP_vaddD(state, 1, regularizationNoise, 1, &state, 1, vDSP_Length(state.count))
     }
     
     //MARK: Private API
@@ -87,8 +91,16 @@ class ParticleFilter: BayesianFilter {
     // Matrices
     private(set) var F: [Double]
     private(set) var G: [Double]
+    private(set) var Q: [Double]
     private(set) var R: [Double]
     private(set) var R_inv: [Double]
+    
+    var h_opt: Double {
+        return pow(0.5, 0.1) * pow(Double(numberOfParticles), -0.1)
+    }
+    
+    // Using a semaphore to make sure that only one thread can execute the algorithm at each time instance
+    let semaphore = DispatchSemaphore(value: 1)
     
     init(position: CGPoint) {
         
@@ -140,6 +152,10 @@ class ParticleFilter: BayesianFilter {
         // Multiply G with the square root of processing factor
         vDSP_vsmulD(G, 1, &proc_fac, &G, 1, vDSP_Length(G.count))
         
+        // Compute Q from Q = G * G_t. Q is a 6x6 matrix
+        Q = [Double](repeating: 0, count: 36)
+        vDSP_mmulD(G, 1, G, 1, &Q, 1, 6, 6, 1)
+        
         // R is a (numAnchors + 2)x(numAnchors + 2) diagonal matrix with 'pos_sig's in first numAnchors entries and 'acc_sig's in the remaining entries
         R = [Double]()
         for i in 0..<anchors.count + 2 {
@@ -154,25 +170,31 @@ class ParticleFilter: BayesianFilter {
             }
         }
         
-        // Store inverse of matrix R as well to avoid computing it in every step for every particle.
-        R_inv = R.invert()
+        // Store inverse of matrix R as well to avoid computing it in every step for every particle
+        R_inv = R.inverse()
         
         particles = [Particle]()
         
         super.init()
         
-        let uncertainty = 50.0
+        // Initialize particles with randomized positions
         for _ in 0..<numberOfParticles {
             let (r1, r2) = Double.randomGaussian()
-            let randomizedState = [Double(position.x) + uncertainty * r1, Double(position.y) + uncertainty * r2, 0, 0, 0, 0]
+            let randomizedState = [Double(position.x) + pos_sig * r1, Double(position.y) + pos_sig * r2, 0, 0, 0, 0]
             let particle = Particle(state: randomizedState, weight: 1 / Double(numberOfParticles), filter: self)
             particles.append(particle)
         }
     }
     
     override func computeAlgorithm(measurements: [Double], successCallback: @escaping (CGPoint) -> Void) {
+        
+        // Request semaphore. Wait in case the algorithm is still in execution
+        semaphore.wait()
+        
+        // Using a DispatchGroup to continue execution of algorithm only after the functions on each particle were executed
         let dispatchGroup = DispatchGroup()
         for particle in particles {
+            // Execute functions on particles concurrently
             DispatchQueue.global().async(group: dispatchGroup) {
                 // Draw new state from importance density
                 particle.updateState()
@@ -187,11 +209,30 @@ class ParticleFilter: BayesianFilter {
             let totalWeight = self.particles.reduce(0, { $0 + $1.weight })
             self.particles.forEach { $0.weight = $0.weight / totalWeight }
             
+            // Determine mean state
+            var meanState: [Double] = [Double](repeating: 0, count: 6)
+            for particle in self.particles {
+                var weightedState: [Double] = [Double](repeating: 0, count: particle.state.count)
+                vDSP_vsmulD(particle.state, 1, &particle.weight, &weightedState, 1, vDSP_Length(meanState.count))
+                vDSP_vaddD(meanState, 1, weightedState, 1, &meanState, 1, vDSP_Length(meanState.count))
+            }
+            
+            // Determine empirical covariance matrix S
+            var S = [Double]()
+            let sumOfSquaredWeights = self.particles.reduce(0, { $0 + pow($1.weight, 2) })
+            for j in 0..<meanState.count {
+                for k in 0..<meanState.count {
+                    let s_jk = (1 / 1 - sumOfSquaredWeights) * self.particles.reduce(0, { $0 + $1.weight * ($1.state[j] - meanState[j]) * ($1.state[k] - meanState[k]) })
+                    S.append(s_jk)
+                }
+            }
+            
+            let D = S.computeCholeskyDecomposition()
+            
             // Execute resampling algorithm
             self.resample()
             
             // Regularize
-            let D: [Double] = [10, 0, 0, 10, 10, 0, 0, 10, 10, 0, 0, 10]
             self.particles.forEach { $0.regularize(D: D) }
             
             // Determine current position
@@ -201,6 +242,13 @@ class ParticleFilter: BayesianFilter {
                 meanX += Double(particle.position.x) * particle.weight
                 meanY += Double(particle.position.y) * particle.weight
             }
+            
+            if (meanX.isNaN || meanY.isNaN) {
+                fatalError("Algorithm produced error!")
+            }
+            
+            // Release semaphore
+            self.semaphore.signal()
             
             DispatchQueue.main.async(){
                 successCallback(CGPoint(x: meanX, y: meanY))

@@ -25,11 +25,15 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
             switch filterType {
             case .none:
                 covarianceView?.removeFromSuperview()
+                covarianceView = nil
                 particleViews?.forEach { $0.removeFromSuperview() }
+                particleViews = nil
             case .kalman:
                 particleViews?.forEach { $0.removeFromSuperview() }
+                particleViews = nil
             case .particle:
                 covarianceView?.removeFromSuperview()
+                covarianceView = nil
             }
         }
     }
