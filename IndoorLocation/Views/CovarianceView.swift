@@ -10,16 +10,16 @@ import UIKit
 
 class CovarianceView: UIView {
     
-    var covariance: (x: Double, y: Double)
+    var covariance: (x: Float, y: Float)
     private var covarianceLayer = CAShapeLayer()
     
-    init(position: CGPoint, covariance: (x: Double, y: Double)) {
+    init(position: CGPoint, covariance: (x: Float, y: Float)) {
         self.covariance = covariance
         
-        let width = covariance.x
-        let height = covariance.y
+        let width = CGFloat(covariance.x)
+        let height = CGFloat(covariance.y)
         
-        let frameRect = CGRect(x: Double(position.x) - width / 2, y: Double(position.y) - height / 2, width: width, height: height)
+        let frameRect = CGRect(x: position.x - width / 2, y: position.y - height / 2, width: width, height: height)
         
         super.init(frame: frameRect)
         
@@ -43,11 +43,11 @@ class CovarianceView: UIView {
         layer.addSublayer(covarianceLayer)
     }
     
-    func updateCovariance(position: CGPoint, covariance: (x: Double, y: Double)) {
+    func updateCovariance(position: CGPoint, covariance: (x: Float, y: Float)) {
         
-        let width = covariance.x * 10
-        let height = covariance.y * 10
-        frame = CGRect(x: Double(position.x) - width / 2, y: Double(position.y) - height / 2, width: width, height: height)
+        let width = CGFloat(covariance.x * 10)
+        let height = CGFloat(covariance.y * 10)
+        frame = CGRect(x: position.x - width / 2, y: position.y - height / 2, width: width, height: height)
         
         // Redraw covariance
         covarianceLayer.removeFromSuperlayer()

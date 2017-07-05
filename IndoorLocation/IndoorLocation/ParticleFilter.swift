@@ -11,16 +11,16 @@ import Accelerate
 class Particle {
     
     // State vector containing: [xPos, yPos, xVel, yVel, xAcc, yAcc]
-    private(set) var state: [Double]
-    var weight: Double
+    private(set) var state: [Float]
+    var weight: Float
     
     var position: CGPoint {
-        return CGPoint(x: state[0], y: state[1])
+        return CGPoint(x: CGFloat(state[0]), y: CGFloat(state[1]))
     }
     
     var filter: ParticleFilter
     
-    init(state: [Double], weight: Double, filter: ParticleFilter) {
+    init(state: [Float], weight: Float, filter: ParticleFilter) {
         self.state = state
         self.weight = weight
         self.filter = filter
@@ -37,29 +37,29 @@ class Particle {
     func updateState() {
         
         // Compute mean = F * state
-        var mean = [Double](repeating: 0, count: state.count)
-        vDSP_mmulD(filter.F, 1, state, 1, &mean, 1, vDSP_Length(state.count), 1, vDSP_Length(state.count))
+        var mean = [Float](repeating: 0, count: state.count)
+        vDSP_mmul(filter.F, 1, state, 1, &mean, 1, vDSP_Length(state.count), 1, vDSP_Length(state.count))
         
-        state = [Double].randomGaussianVector(mean: mean, A: filter.G)
+        state = [Float].randomGaussianVector(mean: mean, A: filter.G)
     }
     
-    func updateWeight(measurements: [Double]) {
+    func updateWeight(measurements: [Float]) {
         
         // Compute new weight = weight * p(z|x), where is the transitional prior p(z|x) = N(z; h(x), R)
         let normalDist = computeNormalDistribution(x: measurements, m: h(state), forTriangularCovariance: filter.R, withInverse: filter.R_inv)
         weight = weight * normalDist
     }
     
-    func regularize(D: [Double]) {
-        var regularizationNoise = [Double].randomGaussianVector(dim: state.count)
-        vDSP_mmulD(D, 1, regularizationNoise, 1, &regularizationNoise, 1, vDSP_Length(state.count), 1, vDSP_Length(state.count))
+    func regularize(D: [Float]) {
+        var regularizationNoise = [Float].randomGaussianVector(dim: state.count)
+        vDSP_mmul(D, 1, regularizationNoise, 1, &regularizationNoise, 1, vDSP_Length(state.count), 1, vDSP_Length(state.count))
         var h_opt = filter.h_opt
-        vDSP_vsmulD(regularizationNoise, 1, &h_opt, &regularizationNoise, 1, vDSP_Length(regularizationNoise.count))
-        vDSP_vaddD(state, 1, regularizationNoise, 1, &state, 1, vDSP_Length(state.count))
+        vDSP_vsmul(regularizationNoise, 1, &h_opt, &regularizationNoise, 1, vDSP_Length(regularizationNoise.count))
+        vDSP_vadd(state, 1, regularizationNoise, 1, &state, 1, vDSP_Length(state.count))
     }
     
     //MARK: Private API
-    private func h(_ state: [Double]) -> [Double] {
+    private func h(_ state: [Float]) -> [Float] {
         guard let anchors = IndoorLocationManager.shared.anchors else {
             fatalError("No anchors found!")
         }
@@ -71,9 +71,9 @@ class Particle {
         let xAcc = state[4]
         let yAcc = state[5]
         
-        var h = [Double]()
+        var h = [Float]()
         for i in 0..<anchors.count {
-            h.append(sqrt(pow(Double(anchorCoordinates[i].x) - xPos, 2) + pow(Double(anchorCoordinates[i].y) - yPos, 2)))
+            h.append(sqrt((Float(anchorCoordinates[i].x) - xPos) ^^ 2 + (Float(anchorCoordinates[i].y) - yPos) ^^ 2))
         }
         h.append(xAcc)
         h.append(yAcc)
@@ -89,14 +89,14 @@ class ParticleFilter: BayesianFilter {
     private(set) var particles: [Particle]
     
     // Matrices
-    private(set) var F: [Double]
-    private(set) var G: [Double]
-    private(set) var Q: [Double]
-    private(set) var R: [Double]
-    private(set) var R_inv: [Double]
+    private(set) var F: [Float]
+    private(set) var G: [Float]
+    private(set) var Q: [Float]
+    private(set) var R: [Float]
+    private(set) var R_inv: [Float]
     
-    var h_opt: Double {
-        return pow(0.5, 0.1) * pow(Double(numberOfParticles), -0.1)
+    var h_opt: Float {
+        return 0.5 ^^ 0.1 * Float(numberOfParticles) ^^ -0.1
     }
     
     // Using a semaphore to make sure that only one thread can execute the algorithm at each time instance
@@ -106,9 +106,9 @@ class ParticleFilter: BayesianFilter {
         
         let settings = IndoorLocationManager.shared.filterSettings
         
-        let acc_sig = Double(settings.accelerationUncertainty)
-        let pos_sig = Double(settings.distanceUncertainty)
-        var proc_fac = sqrt(Double(settings.processingUncertainty))
+        let acc_sig = Float(settings.accelerationUncertainty)
+        let pos_sig = Float(settings.distanceUncertainty)
+        var proc_fac = sqrt(Float(settings.processingUncertainty))
         let dt = settings.updateTime
         numberOfParticles = settings.numberOfParticles
         
@@ -118,7 +118,7 @@ class ParticleFilter: BayesianFilter {
         
         // Initialize matrices
         // F is a 6x6 matrix with '1's in main diagonal, 'dt's in second positive side diagonal and '(dt^2)/2's in fourth positive side diagonal
-        F = [Double]()
+        F = [Float]()
         for i in 0..<6 {
             for j in 0..<6 {
                 if (i == j) {
@@ -126,7 +126,7 @@ class ParticleFilter: BayesianFilter {
                 } else if (i + 2 == j) {
                     F.append(dt)
                 } else if (i + 4 == j) {
-                    F.append(pow(dt, 2)/2)
+                    F.append(dt ^^ 2 / 2)
                 } else {
                     F.append(0)
                 }
@@ -134,11 +134,11 @@ class ParticleFilter: BayesianFilter {
         }
         
         // G is a 6x2 matrix with '(dt^2)/2's in main diagonal, 'dt's in second negative side diagonal and '1's in fourth negative side diagonal
-        G = [Double]()
+        G = [Float]()
         for i in 0..<6 {
             for j in 0..<2 {
                 if (i == j) {
-                    G.append(pow(dt, 2)/2)
+                    G.append(dt ^^ 2 / 2)
                 } else if (i == j + 2) {
                     G.append(dt)
                 } else if (i == j + 4) {
@@ -150,14 +150,14 @@ class ParticleFilter: BayesianFilter {
         }
         
         // Multiply G with the square root of processing factor
-        vDSP_vsmulD(G, 1, &proc_fac, &G, 1, vDSP_Length(G.count))
+        vDSP_vsmul(G, 1, &proc_fac, &G, 1, vDSP_Length(G.count))
         
         // Compute Q from Q = G * G_t. Q is a 6x6 matrix
-        Q = [Double](repeating: 0, count: 36)
-        vDSP_mmulD(G, 1, G, 1, &Q, 1, 6, 6, 1)
+        Q = [Float](repeating: 0, count: 36)
+        vDSP_mmul(G, 1, G, 1, &Q, 1, 6, 6, 1)
         
         // R is a (numAnchors + 2)x(numAnchors + 2) diagonal matrix with 'pos_sig's in first numAnchors entries and 'acc_sig's in the remaining entries
-        R = [Double]()
+        R = [Float]()
         for i in 0..<anchors.count + 2 {
             for j in 0..<anchors.count + 2 {
                 if (i == j && i < anchors.count) {
@@ -179,14 +179,14 @@ class ParticleFilter: BayesianFilter {
         
         // Initialize particles with randomized positions
         for _ in 0..<numberOfParticles {
-            let (r1, r2) = Double.randomGaussian()
-            let randomizedState = [Double(position.x) + pos_sig * r1, Double(position.y) + pos_sig * r2, 0, 0, 0, 0]
-            let particle = Particle(state: randomizedState, weight: 1 / Double(numberOfParticles), filter: self)
+            let (r1, r2) = Float.randomGaussian()
+            let randomizedState = [Float(position.x) + pos_sig * r1, Float(position.y) + pos_sig * r2, 0, 0, 0, 0]
+            let particle = Particle(state: randomizedState, weight: 1 / Float(numberOfParticles), filter: self)
             particles.append(particle)
         }
     }
     
-    override func computeAlgorithm(measurements: [Double], successCallback: @escaping (CGPoint) -> Void) {
+    override func computeAlgorithm(measurements: [Float], successCallback: @escaping (CGPoint) -> Void) {
         
         // Request semaphore. Wait in case the algorithm is still in execution
         semaphore.wait()
@@ -210,16 +210,16 @@ class ParticleFilter: BayesianFilter {
             self.particles.forEach { $0.weight = $0.weight / totalWeight }
             
             // Determine mean state
-            var meanState: [Double] = [Double](repeating: 0, count: 6)
+            var meanState = [Float](repeating: 0, count: 6)
             for particle in self.particles {
-                var weightedState: [Double] = [Double](repeating: 0, count: particle.state.count)
-                vDSP_vsmulD(particle.state, 1, &particle.weight, &weightedState, 1, vDSP_Length(meanState.count))
-                vDSP_vaddD(meanState, 1, weightedState, 1, &meanState, 1, vDSP_Length(meanState.count))
+                var weightedState = [Float](repeating: 0, count: particle.state.count)
+                vDSP_vsmul(particle.state, 1, &particle.weight, &weightedState, 1, vDSP_Length(meanState.count))
+                vDSP_vadd(meanState, 1, weightedState, 1, &meanState, 1, vDSP_Length(meanState.count))
             }
             
             // Determine empirical covariance matrix S
-            var S = [Double]()
-            let sumOfSquaredWeights = self.particles.reduce(0, { $0 + pow($1.weight, 2) })
+            var S = [Float]()
+            let sumOfSquaredWeights = self.particles.reduce(0, { $0 + $1.weight ^^ 2 })
             for j in 0..<meanState.count {
                 for k in 0..<meanState.count {
                     let s_jk = (1 / 1 - sumOfSquaredWeights) * self.particles.reduce(0, { $0 + $1.weight * ($1.state[j] - meanState[j]) * ($1.state[k] - meanState[k]) })
@@ -236,11 +236,11 @@ class ParticleFilter: BayesianFilter {
             self.particles.forEach { $0.regularize(D: D) }
             
             // Determine current position
-            var meanX = 0.0
-            var meanY = 0.0
+            var meanX: Float = 0
+            var meanY: Float = 0
             for particle in self.particles {
-                meanX += Double(particle.position.x) * particle.weight
-                meanY += Double(particle.position.y) * particle.weight
+                meanX += Float(particle.position.x) * particle.weight
+                meanY += Float(particle.position.y) * particle.weight
             }
             
             if (meanX.isNaN || meanY.isNaN) {
@@ -251,7 +251,7 @@ class ParticleFilter: BayesianFilter {
             self.semaphore.signal()
             
             DispatchQueue.main.async(){
-                successCallback(CGPoint(x: meanX, y: meanY))
+                successCallback(CGPoint(x: CGFloat(meanX), y: CGFloat(meanY)))
             }
         }
     }
@@ -259,7 +259,7 @@ class ParticleFilter: BayesianFilter {
     //MARK: Private API
     private func resample() {
         var resampledParticles = [Particle]()
-        let N_inv = 1 / Double(numberOfParticles)
+        let N_inv = 1 / Float(numberOfParticles)
 
         // Construct cumulative sum of weights (CSW) c
         var c = [particles[0].weight]
@@ -268,12 +268,12 @@ class ParticleFilter: BayesianFilter {
         }
         var i = 0
         // Draw a starting point u_0 from uniform distribution U[0, 1/numberOfParticles]
-        let u_0 = Double.random(upperBound: N_inv)
-        var u = [Double]()
+        let u_0 = Float.random(upperBound: N_inv)
+        var u = [Float]()
         
         for j in 0..<numberOfParticles {
             // Move along the CSW
-            u.append(u_0 + (N_inv) * Double(j))
+            u.append(u_0 + (N_inv) * Float(j))
             
             while (u[j] > c[i]) {
                 i += 1

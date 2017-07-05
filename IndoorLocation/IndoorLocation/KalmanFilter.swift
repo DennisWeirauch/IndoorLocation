@@ -11,32 +11,32 @@ import Accelerate
 class KalmanFilter: BayesianFilter {
     
     // State vector containing: [xPos, yPos, xVel, yVel, xAcc, yAcc]
-    private var state: [Double]
+    private var state: [Float]
 
     // Matrices
-    private var F: [Double]
-    private var Q: [Double]
-    private var R: [Double]
-    private(set) var P: [Double]
+    private var F: [Float]
+    private var Q: [Float]
+    private var R: [Float]
+    private(set) var P: [Float]
     
     init(position: CGPoint) {
         
         let settings = IndoorLocationManager.shared.filterSettings
 
-        let acc_sig = Double(settings.accelerationUncertainty)
-        let pos_sig = Double(settings.distanceUncertainty)
-        var proc_fac = sqrt(Double(settings.processingUncertainty))
+        let acc_sig = Float(settings.accelerationUncertainty)
+        let pos_sig = Float(settings.distanceUncertainty)
+        var proc_fac = sqrt(Float(settings.processingUncertainty))
         let dt = settings.updateTime
         
         guard let anchors = IndoorLocationManager.shared.anchors else {
             fatalError("No anchors found!")
         }
         
-        state = [Double(position.x), Double(position.y), 0, 0, 0, 0]
+        state = [Float(position.x), Float(position.y), 0, 0, 0, 0]
         
         // Initialize matrices
         // F is a 6x6 matrix with '1's in main diagonal, 'dt's in second positive side diagonal and '(dt^2)/2's in fourth positive side diagonal
-        F = [Double]()
+        F = [Float]()
         for i in 0..<6 {
             for j in 0..<6 {
                 if (i == j) {
@@ -44,7 +44,7 @@ class KalmanFilter: BayesianFilter {
                 } else if (i + 2 == j) {
                     F.append(dt)
                 } else if (i + 4 == j) {
-                    F.append(pow(dt, 2)/2)
+                    F.append(dt ^^ 2 / 2)
                 } else {
                     F.append(0)
                 }
@@ -52,11 +52,11 @@ class KalmanFilter: BayesianFilter {
         }
 
         // G is a 6x2 matrix with '(dt^2)/2's in main diagonal, 'dt's in second negative side diagonal and '1's in fourth negative side diagonal
-        var G = [Double]()
+        var G = [Float]()
         for i in 0..<6 {
             for j in 0..<2 {
                 if (i == j) {
-                    G.append(pow(dt, 2)/2)
+                    G.append(dt ^^ 2 / 2)
                 } else if (i == j + 2) {
                     G.append(dt)
                 } else if (i == j + 4) {
@@ -68,17 +68,17 @@ class KalmanFilter: BayesianFilter {
         }
         
         // Multiply G with the square root of processing factor
-        vDSP_vsmulD(G, 1, &proc_fac, &G, 1, vDSP_Length(G.count))
+        vDSP_vsmul(G, 1, &proc_fac, &G, 1, vDSP_Length(G.count))
         
-        var G_t = [Double](repeating: 0, count: G.count)
-        vDSP_mtransD(G, 1, &G_t, 1, 2, 6)
+        var G_t = [Float](repeating: 0, count: G.count)
+        vDSP_mtrans(G, 1, &G_t, 1, 2, 6)
         
         // Compute Q from Q = G * G_t. Q is a 6x6 matrix
-        Q = [Double](repeating: 0, count: 36)
-        vDSP_mmulD(G, 1, G_t, 1, &Q, 1, 6, 6, 1)
+        Q = [Float](repeating: 0, count: 36)
+        vDSP_mmul(G, 1, G_t, 1, &Q, 1, 6, 6, 1)
         
         // R is a (numAnchors + 2)x(numAnchors + 2) diagonal matrix with 'pos_sig's in first numAnchors entries and 'acc_sig's in the remaining entries
-        R = [Double]()
+        R = [Float]()
         for i in 0..<anchors.count + 2 {
             for j in 0..<anchors.count + 2 {
                 if (i == j && i < anchors.count) {
@@ -92,7 +92,7 @@ class KalmanFilter: BayesianFilter {
         }
         
         // P is a 6x6 diagonal matrix with pos_sig entries
-        P = [Double]()
+        P = [Float]()
         for i in 0..<6 {
             for j in 0..<6 {
                 if (i == j) {
@@ -104,7 +104,7 @@ class KalmanFilter: BayesianFilter {
         }
     }
     
-    override func computeAlgorithm(measurements: [Double], successCallback: @escaping (CGPoint) -> Void) {
+    override func computeAlgorithm(measurements: [Float], successCallback: @escaping (CGPoint) -> Void) {
         predict()
         
         update(measurements: measurements, successCallback: successCallback)
@@ -113,20 +113,20 @@ class KalmanFilter: BayesianFilter {
     //MARK: Private API
     private func predict() {
         // Compute new state from state = F * state
-        vDSP_mmulD(F, 1, state, 1, &state, 1, 6, 1, 6)
+        vDSP_mmul(F, 1, state, 1, &state, 1, 6, 1, 6)
         
         // Compute new P from P = F * P * F_t + Q
-        vDSP_mmulD(F, 1, P, 1, &P, 1, 6, 6, 6)
+        vDSP_mmul(F, 1, P, 1, &P, 1, 6, 6, 6)
         
-        var F_t = [Double](repeating: 0, count : F.count)
-        vDSP_mtransD(F, 1, &F_t, 1, 6, 6)
+        var F_t = [Float](repeating: 0, count : F.count)
+        vDSP_mtrans(F, 1, &F_t, 1, 6, 6)
         
-        vDSP_mmulD(P, 1, F_t, 1, &P, 1, 6, 6, 6)
+        vDSP_mmul(P, 1, F_t, 1, &P, 1, 6, 6, 6)
         
-        vDSP_vaddD(P, 1, Q, 1, &P, 1, vDSP_Length(Q.count))
+        vDSP_vadd(P, 1, Q, 1, &P, 1, vDSP_Length(Q.count))
     }
     
-    private func update(measurements: [Double], successCallback: (CGPoint) -> Void) {
+    private func update(measurements: [Float], successCallback: (CGPoint) -> Void) {
         guard let anchors = IndoorLocationManager.shared.anchors else {
             fatalError("No anchors found!")
         }
@@ -136,45 +136,45 @@ class KalmanFilter: BayesianFilter {
         let numAnchPlus2 = vDSP_Length(anchors.count + 2)
         
         // Compute S from S = H * P * H_t + R
-        var H_t = [Double](repeating: 0, count : H.count)
-        vDSP_mtransD(H, 1, &H_t, 1, 6, numAnchPlus2)
+        var H_t = [Float](repeating: 0, count : H.count)
+        vDSP_mtrans(H, 1, &H_t, 1, 6, numAnchPlus2)
         
-        var P_H_t = [Double](repeating: 0, count: H_t.count)
-        vDSP_mmulD(P, 1, H_t, 1, &P_H_t, 1, 6, numAnchPlus2, 6)
+        var P_H_t = [Float](repeating: 0, count: H_t.count)
+        vDSP_mmul(P, 1, H_t, 1, &P_H_t, 1, 6, numAnchPlus2, 6)
         
-        var S = [Double](repeating: 0, count : R.count)
-        vDSP_mmulD(H, 1, P_H_t, 1, &S, 1, numAnchPlus2, numAnchPlus2, 6)
+        var S = [Float](repeating: 0, count : R.count)
+        vDSP_mmul(H, 1, P_H_t, 1, &S, 1, numAnchPlus2, numAnchPlus2, 6)
         
-        vDSP_vaddD(S, 1, R, 1, &S, 1, vDSP_Length(R.count))
+        vDSP_vadd(S, 1, R, 1, &S, 1, vDSP_Length(R.count))
         
         // Compute K from K = P * H_t * S_inv
-        var K = [Double](repeating: 0, count: 6 * (anchors.count + 2))
-        vDSP_mmulD(P_H_t, 1, S.inverse(), 1, &K, 1, 6, numAnchPlus2, numAnchPlus2)
+        var K = [Float](repeating: 0, count: 6 * (anchors.count + 2))
+        vDSP_mmul(P_H_t, 1, S.inverse(), 1, &K, 1, 6, numAnchPlus2, numAnchPlus2)
         
         // Compute new state = state + K * (measurements - h(state))
-        var innovation = [Double](repeating: 0, count: anchors.count + 2)
-        vDSP_vsubD(h(state), 1, measurements, 1, &innovation, 1, numAnchPlus2)
+        var innovation = [Float](repeating: 0, count: anchors.count + 2)
+        vDSP_vsub(h(state), 1, measurements, 1, &innovation, 1, numAnchPlus2)
         
-        var update = [Double](repeating: 0, count: 6)
-        vDSP_mmulD(K, 1, innovation, 1, &update, 1, 6, 1, numAnchPlus2)
+        var update = [Float](repeating: 0, count: 6)
+        vDSP_mmul(K, 1, innovation, 1, &update, 1, 6, 1, numAnchPlus2)
         
-        vDSP_vaddD(state, 1, update, 1, &state, 1, 6)
+        vDSP_vadd(state, 1, update, 1, &state, 1, 6)
         
         // Compute new P from P = P - K * H * P
-        var K_H = [Double](repeating: 0, count: 36)
-        vDSP_mmulD(K, 1, H, 1, &K_H, 1, 6, 6, numAnchPlus2)
+        var K_H = [Float](repeating: 0, count: 36)
+        vDSP_mmul(K, 1, H, 1, &K_H, 1, 6, 6, numAnchPlus2)
         
-        var K_H_P = [Double](repeating: 0, count: 36)
-        vDSP_mmulD(K_H, 1, P, 1, &K_H_P, 1, 6, 6, 6)
+        var K_H_P = [Float](repeating: 0, count: 36)
+        vDSP_mmul(K_H, 1, P, 1, &K_H_P, 1, 6, 6, 6)
         
-        vDSP_vsubD(K_H_P, 1, P, 1, &P, 1, 36)
+        vDSP_vsub(K_H_P, 1, P, 1, &P, 1, 36)
         
-        let position = CGPoint(x: state[0], y: state[1])
+        let position = CGPoint(x: CGFloat(state[0]), y: CGFloat(state[1]))
         
         successCallback(position)
     }
     
-    private func h(_ state: [Double]) -> [Double] {
+    private func h(_ state: [Float]) -> [Float] {
         guard let anchors = IndoorLocationManager.shared.anchors else {
             fatalError("No anchors found!")
         }
@@ -186,9 +186,9 @@ class KalmanFilter: BayesianFilter {
         let xAcc = state[4]
         let yAcc = state[5]
         
-        var h = [Double]()
+        var h = [Float]()
         for i in 0..<anchors.count {
-            h.append(sqrt(pow(Double(anchorCoordinates[i].x) - xPos, 2) + pow(Double(anchorCoordinates[i].y) - yPos, 2)))
+            h.append(sqrt((Float(anchorCoordinates[i].x) - xPos) ^^ 2 + (Float(anchorCoordinates[i].y) - yPos) ^^ 2))
         }
         h.append(xAcc)
         h.append(yAcc)
@@ -196,22 +196,22 @@ class KalmanFilter: BayesianFilter {
         return h
     }
     
-    private func H_j(_ state: [Double]) -> [Double] {
+    private func H_j(_ state: [Float]) -> [Float] {
         guard let anchors = IndoorLocationManager.shared.anchors else {
             fatalError("No anchors found!")
         }
         
         let anchorCoordinates = anchors.map { $0.position }
 
-        var H_j = [Double]()
+        var H_j = [Float]()
         for i in 0..<anchors.count {
-            if (state[0] == Double(anchorCoordinates[i].x) && state[1] == Double(anchorCoordinates[i].y)) {
+            if (state[0] == Float(anchorCoordinates[i].x) && state[1] == Float(anchorCoordinates[i].y)) {
                 // If position is exactly the same as an anchor, we would divide by 0. Therefore this
                 // case is treated here separately and zeros are added.
                 H_j += [0, 0]
             } else {
-                H_j.append((state[0] - Double(anchorCoordinates[i].x)) / sqrt(pow(Double(anchorCoordinates[i].x) - state[0], 2) + pow(Double(anchorCoordinates[i].y) - state[1], 2)))
-                H_j.append((state[1] - Double(anchorCoordinates[i].y)) / sqrt(pow(Double(anchorCoordinates[i].x) - state[0], 2) + pow(Double(anchorCoordinates[i].y) - state[1], 2)))
+                H_j.append((state[0] - Float(anchorCoordinates[i].x)) / sqrt((Float(anchorCoordinates[i].x) - state[0]) ^^ 2 + (Float(anchorCoordinates[i].y) - state[1]) ^^ 2))
+                H_j.append((state[1] - Float(anchorCoordinates[i].y)) / sqrt((Float(anchorCoordinates[i].x) - state[0]) ^^ 2 + (Float(anchorCoordinates[i].y) - state[1]) ^^ 2))
             }
             H_j += [0, 0, 0, 0]
         }

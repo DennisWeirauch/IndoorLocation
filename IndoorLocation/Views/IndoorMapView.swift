@@ -58,7 +58,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         }
     }
     
-    var covariance: (x: Double, y: Double)? {
+    var covariance: (x: Float, y: Float)? {
         didSet {
             updateCovariance()
         }

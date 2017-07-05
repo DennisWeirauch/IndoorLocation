@@ -40,7 +40,7 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
         indoorMapView.anchors = anchors
     }
     
-    func updateCovariance(covX: Double, covY: Double) {
+    func updateCovariance(covX: Float, covY: Float) {
         indoorMapView.covariance = (x: covX, y: covY)
     }
     

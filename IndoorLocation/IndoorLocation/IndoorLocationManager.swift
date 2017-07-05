@@ -19,7 +19,7 @@ typealias Anchor = (id: Int, position: CGPoint)
 protocol IndoorLocationManagerDelegate {
     func updatePosition(_ position: CGPoint)
     func updateAnchors(_ anchors: [Anchor])
-    func updateCovariance(covX: Double, covY: Double)
+    func updateCovariance(covX: Float, covY: Float)
     func updateParticles(_ particles: [Particle])
     
     func showAlertWithTitle(_ title: String, message: String)
@@ -40,12 +40,12 @@ class IndoorLocationManager {
     var isCalibrated = false
     var isRanging = false
     
-    private var cachedMeasurement: [String : Double]?
+    private var cachedMeasurement: [String : Float]?
     
     private init() {}
     
     //MARK: Private API
-    private func parseData(_ stringData: String) -> [String : Double]? {
+    private func parseData(_ stringData: String) -> [String : Float]? {
         
         // Remove carriage return
         if let inlineStringData = stringData.components(separatedBy: "\r").first {
@@ -58,10 +58,10 @@ class IndoorLocationManager {
             // Split string at "&" characters
             let splitData = inlineStringData.components(separatedBy: "&")
             
-            var parsedData = [String : Double]()
+            var parsedData = [String : Float]()
             for component in splitData {
                 let key = component.components(separatedBy: "=")[0]
-                let value = Double(component.components(separatedBy: "=")[1])
+                let value = Float(component.components(separatedBy: "=")[1])
                 parsedData[key] = value!
             }
             return parsedData
@@ -81,7 +81,7 @@ class IndoorLocationManager {
         guard let anchorDict = self.parseData(stringData) else { return false }
         
         var anchors = [Anchor]()
-        var distances = [Double]()
+        var distances = [Float]()
         
         // Iterate from 0 to anchorDict.count / 4 because there are 4 values for every anchor:
         // ID, xPos, yPos, dist
@@ -92,7 +92,7 @@ class IndoorLocationManager {
                 let distance = anchorDict["dist\(i)"] else {
                     fatalError("Error retrieving data from anchorDict")
             }
-            anchors.append(Anchor(id: Int(id), position: CGPoint(x: xCoordinate / 10, y: yCoordinate / 10)))
+            anchors.append(Anchor(id: Int(id), position: CGPoint(x: CGFloat(xCoordinate / 10), y: CGFloat(yCoordinate / 10))))
             distances.append(distance / 10)
         }
         
@@ -204,7 +204,7 @@ class IndoorLocationManager {
             fatalError("No Anchors found")
         }
         
-        var measurements = [Double]()
+        var measurements = [Float]()
         for i in 0..<anchors.count {
             guard let distance = measurementDict["dist\(i)"] else {
                 fatalError("Error retrieving data from measurementDict")
