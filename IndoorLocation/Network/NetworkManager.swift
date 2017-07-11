@@ -82,7 +82,7 @@ class NetworkManager {
         }
         
         let url = URL(string: urlString + task.rawValue + "/" + txData)
-        let task = session.dataTask(with: url!) { data, response, error in
+        let dataTask = session.dataTask(with: url!) { data, response, error in
             DispatchQueue.main.async {
                 if let error = error {
                     resultCallback(.failure(error))
@@ -91,6 +91,6 @@ class NetworkManager {
                 }
             }
         }
-        task.resume()
+        dataTask.resume()
     }
 }

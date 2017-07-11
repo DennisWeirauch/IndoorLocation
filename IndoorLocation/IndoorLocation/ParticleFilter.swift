@@ -33,9 +33,10 @@ class Particle {
     }
     
     //MARK: Public API
-    // Update state by drawing a value from the importance density of this particle
+    /**
+     Update state by drawing a value from the importance density of the particle
+     */
     func updateState() {
-        
         // Compute mean = F * state
         var mean = [Float](repeating: 0, count: state.count)
         vDSP_mmul(filter.F, 1, state, 1, &mean, 1, vDSP_Length(state.count), 1, vDSP_Length(state.count))
@@ -43,13 +44,20 @@ class Particle {
         state = [Float].randomGaussianVector(mean: mean, A: filter.G)
     }
     
+    /**
+     Update the particle's weight according to the measurement
+     - Parameter measurements: The measurements Vector containing distances to the anchors and acceleration values
+     */
     func updateWeight(measurements: [Float]) {
-        
         // Compute new weight = weight * p(z|x), where is the transitional prior p(z|x) = N(z; h(x), R)
         let normalDist = computeNormalDistribution(x: measurements, m: h(state), forTriangularCovariance: filter.R, withInverse: filter.R_inv)
-        weight = weight * normalDist
+        weight = weight + normalDist
     }
     
+    /**
+     Regularize the particle. The particle's state vector is jittered with some noise according to matrix D.
+     - Parameter D: Matrix D for which D*D_T = S (Covariance matrix for all particles)
+     */
     func regularize(D: [Float]) {
         var regularizationNoise = [Float].randomGaussianVector(dim: state.count)
         vDSP_mmul(D, 1, regularizationNoise, 1, &regularizationNoise, 1, vDSP_Length(state.count), 1, vDSP_Length(state.count))
@@ -181,7 +189,7 @@ class ParticleFilter: BayesianFilter {
         for _ in 0..<numberOfParticles {
             let (r1, r2) = Float.randomGaussian()
             let randomizedState = [Float(position.x) + pos_sig * r1, Float(position.y) + pos_sig * r2, 0, 0, 0, 0]
-            let particle = Particle(state: randomizedState, weight: 1 / Float(numberOfParticles), filter: self)
+            let particle = Particle(state: randomizedState, weight: log(1 / Float(numberOfParticles)), filter: self)
             particles.append(particle)
         }
     }
@@ -205,6 +213,14 @@ class ParticleFilter: BayesianFilter {
         }
         
         dispatchGroup.notify(queue: DispatchQueue.global()) {
+            
+            // Rescale weights for numerical stability
+            let maxWeight = self.particles.map { $0.weight }.max()!
+            self.particles.forEach { $0.weight = $0.weight - maxWeight }
+        
+            // Transform weights to normal domain
+            self.particles.forEach { $0.weight = exp($0.weight) }
+            
             // Normalize weights of all particles
             let totalWeight = self.particles.reduce(0, { $0 + $1.weight })
             self.particles.forEach { $0.weight = $0.weight / totalWeight }
@@ -246,6 +262,9 @@ class ParticleFilter: BayesianFilter {
             if (meanX.isNaN || meanY.isNaN) {
                 fatalError("Algorithm produced error!")
             }
+            
+            // Transform weights to log domain
+            self.particles.forEach { $0.weight = log($0.weight) }
             
             // Release semaphore
             self.semaphore.signal()

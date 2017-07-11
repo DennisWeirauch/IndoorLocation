@@ -206,6 +206,13 @@ func leastSquares(anchors: [CGPoint], distances: [Float]) -> CGPoint {
     return CGPoint(x: CGFloat(pos[0]), y: CGFloat(pos[1]))
 }
 
+/**
+ Computes the value of p(x) where p(X) = N(X, m, P) in a logarithmic scale.
+ - Parameter x: Vector x
+ - Parameter m: Vector of mean
+ - Parameter
+ - Returns: p(x) in logarithmic scale
+ */
 func computeNormalDistribution(x: [Float], m: [Float], forTriangularCovariance P: [Float], withInverse P_inv: [Float]) -> Float {
     // Compute the determinant by multiplying the diagonal elements. This is sufficient as we only deal with triangular matrices
     var determinant: Float = 1
@@ -226,5 +233,5 @@ func computeNormalDistribution(x: [Float], m: [Float], forTriangularCovariance P
     
     let exponent = -0.5 * diff_P_diff
     
-    return prefactor * exp(exponent)
+    return log(prefactor) + exponent
 }
