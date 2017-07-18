@@ -37,6 +37,7 @@ class IndoorLocationManager {
     var filterSettings = FilterSettings()
     
     var position: CGPoint?
+    var initialDistances: [Float]?
     
     var isCalibrated = false
     var isRanging = false
@@ -69,59 +70,48 @@ class IndoorLocationManager {
         return nil
     }
     
-    private func parseCalibrationData(data: Data?) -> Bool {
-        guard let data = data else {
-            delegate?.showAlertWithTitle("Error", message: "No calibration data received!")
-            return false
-        }
-        
-        let stringData = String(data: data, encoding: String.Encoding.utf8)!
-        
-        guard let anchorDict = self.parseData(stringData) else { return false }
-        
-        var anchors = [Anchor]()
-        var distances = [Float]()
-        
-        // Iterate from 0 to anchorDict.count / 4 because there are 4 values for every anchor:
-        // ID, xPos, yPos, dist
-        for i in 0..<anchorDict.count / 4 {
-            guard let id = anchorDict["ID\(i)"],
-                let xPos = anchorDict["xPos\(i)"],
-                let yPos = anchorDict["yPos\(i)"],
-                let dist = anchorDict["dist\(i)"] else {
-                    fatalError("Error retrieving data from anchorDict")
-            }
-            anchors.append(Anchor(id: Int(id), position: CGPoint(x: CGFloat(xPos / 10), y: CGFloat(yPos / 10)), isActive: false))
-            distances.append(dist / 10)
-        }
-        
-        self.anchors = anchors
-        
-        self.delegate?.setAnchors(anchors)
-        
-        // Determine which anchors are active
-        var activeAnchors = [Anchor]()
-        var activeDistances = [Float]()
-        for i in 0..<distances.count {
-            if distances[i] != 0 {
-                activeAnchors.append(anchors[i])
-                activeDistances.append(distances[i])
-            }
-        }
-
-        // Least squares algorithm to get initial position
-        self.position = leastSquares(anchors: activeAnchors.map { $0.position }, distances: activeDistances)
-        
-        return true
-    }
-    
     private func receivedCalibrationResult(_ result: NetworkResult) {
         switch result {
         case .success(let data):
-            if self.parseCalibrationData(data: data) {
-                isCalibrated = true
-                self.delegate?.showAlertWithTitle("Success", message: "Calibration Successful!")
+            guard let data = data else {
+                delegate?.showAlertWithTitle("Error", message: "No calibration data received!")
+                return
             }
+            
+            let stringData = String(data: data, encoding: String.Encoding.utf8)!
+            
+            guard var anchorDict = self.parseData(stringData) else { return }
+            
+            var anchors = [Anchor]()
+            var distances = [Float]()
+            
+            // Iterate from 0 to anchorDict.count / 4 because there are 4 values for every anchor:
+            // ID, xPos, yPos, dist
+            for i in 0..<anchorDict.count / 4 {
+                guard let id = anchorDict["ID\(i)"],
+                    let xPos = anchorDict["xPos\(i)"],
+                    let yPos = anchorDict["yPos\(i)"],
+                    let dist = anchorDict["dist\(i)"] else {
+                        fatalError("Error retrieving data from anchorDict")
+                }
+                
+                if dist != 0 {
+                    anchors.append(Anchor(id: Int(id), position: CGPoint(x: CGFloat(xPos / 10), y: CGFloat(yPos / 10)), isActive: true))
+                    distances.append(dist / 10)
+                } else {
+                    anchors.append(Anchor(id: Int(id), position: CGPoint(x: CGFloat(xPos / 10), y: CGFloat(yPos / 10)), isActive: false))
+                }
+            }
+            
+            self.anchors = anchors
+            
+            self.delegate?.setAnchors(anchors)
+            
+            initialDistances = distances
+            
+            isCalibrated = true
+            self.delegate?.showAlertWithTitle("Success", message: "Calibration Successful!")
+            
         case .failure(let error):
             self.delegate?.showAlertWithTitle("Error", message: error.localizedDescription)
         }

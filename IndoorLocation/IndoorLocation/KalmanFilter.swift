@@ -21,7 +21,23 @@ class KalmanFilter: BayesianFilter {
     
     var activeAnchors = [Anchor]()
     
-    init(position: CGPoint) {
+    init?(distances: [Float?]) {
+        guard let anchors = IndoorLocationManager.shared.anchors else {
+            fatalError("No anchors found!")
+        }
+        
+        // Determine which anchors are active
+        var activeAnchors = [Anchor]()
+        var activeDistances = [Float]()
+        for i in 0..<distances.count {
+            if let distance = distances[i] {
+                activeAnchors.append(anchors[i])
+                activeDistances.append(distance)
+            }
+        }
+        
+        // Compute least squares algorithm
+        guard let position = leastSquares(anchors: activeAnchors.map { $0.position }, distances: activeDistances) else { return nil }
         
         let settings = IndoorLocationManager.shared.filterSettings
 

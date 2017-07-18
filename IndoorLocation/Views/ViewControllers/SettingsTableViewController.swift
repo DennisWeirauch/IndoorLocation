@@ -67,11 +67,11 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
         case .none:
             IndoorLocationManager.shared.filter = BayesianFilter()
         case .kalman:
-            guard let position = IndoorLocationManager.shared.position else { return }
-            IndoorLocationManager.shared.filter = KalmanFilter(position: position)
+            guard let initialDistances = IndoorLocationManager.shared.initialDistances else { return }
+            IndoorLocationManager.shared.filter = KalmanFilter(distances: initialDistances)
         case .particle:
-            guard let position = IndoorLocationManager.shared.position else { return }
-            IndoorLocationManager.shared.filter = ParticleFilter(position: position)
+            guard let initialDistances = IndoorLocationManager.shared.initialDistances else { return }
+            IndoorLocationManager.shared.filter = ParticleFilter(distances: initialDistances)
         }
     }
 

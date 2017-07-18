@@ -31,7 +31,20 @@ class ParticleFilter: BayesianFilter {
     // Using a semaphore to make sure that only one thread can execute the algorithm at each time instance
     let semaphore = DispatchSemaphore(value: 1)
     
-    init(position: CGPoint) {
+    init(distances: [Float?]) {
+        guard let anchors = IndoorLocationManager.shared.anchors else {
+            fatalError("No anchors found!")
+        }
+        
+        // Determine which anchors are active
+        var activeAnchors = [Anchor]()
+        var activeDistances = [Float]()
+        for i in 0..<distances.count {
+            if let distance = distances[i] {
+                activeAnchors.append(anchors[i])
+                activeDistances.append(distance)
+            }
+        }
         
         let settings = IndoorLocationManager.shared.filterSettings
         
@@ -93,13 +106,30 @@ class ParticleFilter: BayesianFilter {
         
         super.init()
         
-        // Initialize particles with randomized positions
-        for _ in 0..<numberOfParticles {
-            let (r1, r2) = Float.randomGaussian()
-            let randomizedState = [Float(position.x) + pos_sig * r1, Float(position.y) + pos_sig * r2, 0, 0, 0, 0]
-            let particle = Particle(state: randomizedState, weight: log(1 / Float(numberOfParticles)), filter: self)
-            particles.append(particle)
+        if let position = leastSquares(anchors: activeAnchors.map { $0.position }, distances: activeDistances) {
+            // If a least squares estimate is available, use it to initialize all particles around that position.
+            for _ in 0..<numberOfParticles {
+                let (r1, r2) = Float.randomGaussian()
+                let randomizedState = [Float(position.x) + pos_sig * r1, Float(position.y) + pos_sig * r2, 0, 0, 0, 0]
+                let particle = Particle(state: randomizedState, weight: log(1 / Float(numberOfParticles)), filter: self)
+                particles.append(particle)
+            }
+        } else {
+            // If there were not enough anchors for a least squares estimate, initialize all particles on a circle around one anchor.
+            // Determine the nearest distance and the associated anchor
+            let nearestDistance = activeDistances.min()!
+            let nearestAnchor = activeAnchors[activeDistances.index(of: nearestDistance)!]
+            
+            for _ in 0..<numberOfParticles {
+                let phi = Float.random(upperBound: 2 * Float.pi)
+                let (r1, _) = Float.randomGaussian()
+                let radius = nearestDistance + pos_sig * r1
+                let randomizedState = [cos(phi) * radius + Float(nearestAnchor.position.x), sin(phi) * radius + Float(nearestAnchor.position.y), 0, 0, 0, 0]
+                let particle = Particle(state: randomizedState, weight: log(1 / Float(numberOfParticles)), filter: self)
+                particles.append(particle)
+            }
         }
+
     }
     
     override func computeAlgorithm(distances: [Float?], acceleration: [Float], successCallback: @escaping (_ position: CGPoint, _ activeAnchors: [Anchor]) -> Void) {

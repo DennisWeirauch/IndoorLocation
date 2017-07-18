@@ -16,14 +16,27 @@ func ^^ (radix: Float, power: Float) -> Float {
 }
 
 extension Float {
+    /**
+     Generate a random sample from a uniform distribution in the range [0, 1]
+     - Returns: A random uniform distributed Float in the range [0, 1]
+     */
     static func random() -> Float {
         return Float(arc4random()) / Float(UINT32_MAX)
     }
     
+    /**
+     Generate a random sample from a uniform distribution in the range [0, upperBound]
+     - Parameter upperBound: The upperbound for the random sample
+     - Returns: A random uniform distributed Float in the range [0, upperBound]
+     */
     static func random(upperBound: Float) -> Float {
         return upperBound * random()
     }
     
+    /**
+     Generate a random sample from a standard normal distribution
+     - Returns: A pair of random samples from a standard normal distribution
+     */
     static func randomGaussian() -> (Float, Float) {
         // Using Marsaglia's polar method to generate a normal distributed random variable
         var u: Float = 0
