@@ -9,7 +9,7 @@
 import Foundation
 import MapKit
 
-class MapViewController: UIViewController, UIPopoverPresentationControllerDelegate, IndoorLocationManagerDelegate, SettingsTableViewControllerDelegate {
+class MapViewController: UIViewController, UIPopoverPresentationControllerDelegate, IndoorLocationManagerDelegate, SettingsTableViewControllerDelegate, IndoorMapViewDelegate {
     
     //MARK: Private variables
     var settingsButton: UIButton!
@@ -36,8 +36,20 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
         indoorMapView.position = position
     }
     
-    func updateAnchors(_ anchors: [Anchor]) {
+    func setAnchors(_ anchors: [Anchor]) {
         indoorMapView.anchors = anchors
+    }
+    
+    func updateActiveAnchors(_ activeAnchors: [Anchor]) {
+        guard let anchors = indoorMapView.anchors else { return }
+        for i in 0..<anchors.count {
+            // Check for each anchor if it is currently active and set its value in indoorMapView accordingly
+            if (activeAnchors.map { $0.id }.contains(anchors[i].id) && !anchors[i].isActive) {
+                indoorMapView.anchors?[i].isActive = true
+            } else if (!activeAnchors.map { $0.id }.contains(anchors[i].id) && anchors[i].isActive) {
+                indoorMapView.anchors?[i].isActive = false
+            }
+        }
     }
     
     func updateCovariance(covX: Float, covY: Float) {
@@ -67,6 +79,15 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
     
     func changeFilterType(_ filterType: FilterType) {
         indoorMapView.filterType = filterType
+    }
+    
+    //MARK: IndoorMapViewDelegate
+    func didDoCalibrationFromView(newAnchors: [Anchor]) {
+        // Set settings to manual calibration
+        IndoorLocationManager.shared.filterSettings.calibrationModeIsAutomatic = false
+        // Replace anchors with newAnchors and calibrate
+        IndoorLocationManager.shared.anchors = newAnchors
+        IndoorLocationManager.shared.calibrate()
     }
     
     //MARK: Public API
@@ -109,6 +130,7 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
     private func setupView() {
         // Set up indoorMapView
         indoorMapView = IndoorMapView(frame: view.frame)
+        indoorMapView.delegate = self
         view.addSubview(indoorMapView)
         
         // Set up settingsButton

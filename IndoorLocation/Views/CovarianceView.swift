@@ -36,7 +36,7 @@ class CovarianceView: UIView {
         
         covarianceLayer = CAShapeLayer()
         covarianceLayer.path = covariancePath.cgPath
-        covarianceLayer.strokeColor = UIColor.yellow.cgColor
+        covarianceLayer.strokeColor = UIColor.orange.cgColor
         covarianceLayer.fillColor = UIColor.clear.cgColor
         covarianceLayer.lineWidth = 2
         
@@ -56,7 +56,7 @@ class CovarianceView: UIView {
         
         covarianceLayer = CAShapeLayer()
         covarianceLayer.path = covariancePath.cgPath
-        covarianceLayer.strokeColor = UIColor.yellow.cgColor
+        covarianceLayer.strokeColor = UIColor.orange.cgColor
         covarianceLayer.fillColor = UIColor.clear.cgColor
         covarianceLayer.lineWidth = 2
         

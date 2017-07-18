@@ -188,7 +188,12 @@ extension Array where Iterator.Element == Float {
     }
 }
 
-func leastSquares(anchors: [CGPoint], distances: [Float]) -> CGPoint {
+func leastSquares(anchors: [CGPoint], distances: [Float]) -> CGPoint? {
+    guard anchors.count > 2 else {
+        print("At least 3 anchors are necessary for the least squares algorithm.")
+        return nil
+    }
+    
     var A = [Float]()
     var b = [Float]()
     
@@ -198,10 +203,23 @@ func leastSquares(anchors: [CGPoint], distances: [Float]) -> CGPoint {
         A.append(-2 * Float(anchors[i].y - anchors.last!.y))
     }
     
-    let A_inv = A.inverse()
+    var A_inv: [Float]
+    if anchors.count == 3 {
+        A_inv = A.inverse()
+    } else {
+        // Determine the Moore-Penrose Pseudo-Inverse to solve the problem
+        var A_T = [Float](repeating: 0, count: A.count)
+        vDSP_mtrans(A, 1, &A_T, 1, 2, vDSP_Length(anchors.count - 1))
+        
+        var A_T_A = [Float](repeating: 0, count: 4)
+        vDSP_mmul(A_T, 1, A, 1, &A_T_A, 1, 2, 2, vDSP_Length(anchors.count - 1))
+        
+        A_inv = [Float](repeating: 0, count: A.count)
+        vDSP_mmul(A_T_A.inverse(), 1, A_T, 1, &A_inv, 1, 2, vDSP_Length(anchors.count - 1), 2)
+    }
     
     var pos: [Float] = [0, 0]
-    vDSP_mmul(A_inv, 1, b, 1, &pos, 1, 2, 1, 2)
+    vDSP_mmul(A_inv, 1, b, 1, &pos, 1, 2, 1, vDSP_Length(anchors.count - 1))
     
     return CGPoint(x: CGFloat(pos[0]), y: CGFloat(pos[1]))
 }

@@ -201,7 +201,7 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
     
     //MARK: ButtonTableViewCellDelegate
     func onButtonTapped(_ sender: UIButton) {
-        IndoorLocationManager.shared.calibrate(automatic: filterSettings.calibrationModeIsAutomatic)
+        IndoorLocationManager.shared.calibrate()
     }
     
     //MARK: AnchorTableViewCellDelegate

@@ -14,11 +14,12 @@ enum FilterType: Int {
     case particle
 }
 
-typealias Anchor = (id: Int, position: CGPoint)
+typealias Anchor = (id: Int, position: CGPoint, isActive: Bool)
 
 protocol IndoorLocationManagerDelegate {
+    func setAnchors(_ anchors: [Anchor])
+    func updateActiveAnchors(_ activeAnchors: [Anchor])
     func updatePosition(_ position: CGPoint)
-    func updateAnchors(_ anchors: [Anchor])
     func updateCovariance(covX: Float, covY: Float)
     func updateParticles(_ particles: [Particle])
     
@@ -39,8 +40,6 @@ class IndoorLocationManager {
     
     var isCalibrated = false
     var isRanging = false
-    
-    private var cachedMeasurement: [String : Float]?
     
     private init() {}
     
@@ -87,21 +86,31 @@ class IndoorLocationManager {
         // ID, xPos, yPos, dist
         for i in 0..<anchorDict.count / 4 {
             guard let id = anchorDict["ID\(i)"],
-                let xCoordinate = anchorDict["xPos\(i)"],
-                let yCoordinate = anchorDict["yPos\(i)"],
-                let distance = anchorDict["dist\(i)"] else {
+                let xPos = anchorDict["xPos\(i)"],
+                let yPos = anchorDict["yPos\(i)"],
+                let dist = anchorDict["dist\(i)"] else {
                     fatalError("Error retrieving data from anchorDict")
             }
-            anchors.append(Anchor(id: Int(id), position: CGPoint(x: CGFloat(xCoordinate / 10), y: CGFloat(yCoordinate / 10))))
-            distances.append(distance / 10)
+            anchors.append(Anchor(id: Int(id), position: CGPoint(x: CGFloat(xPos / 10), y: CGFloat(yPos / 10)), isActive: false))
+            distances.append(dist / 10)
         }
         
         self.anchors = anchors
         
-        self.delegate?.updateAnchors(anchors)
+        self.delegate?.setAnchors(anchors)
         
+        // Determine which anchors are active
+        var activeAnchors = [Anchor]()
+        var activeDistances = [Float]()
+        for i in 0..<distances.count {
+            if distances[i] != 0 {
+                activeAnchors.append(anchors[i])
+                activeDistances.append(distances[i])
+            }
+        }
+
         // Least squares algorithm to get initial position
-        self.position = leastSquares(anchors: anchors.map { $0.position }, distances: distances)
+        self.position = leastSquares(anchors: activeAnchors.map { $0.position }, distances: activeDistances)
         
         return true
     }
@@ -119,23 +128,22 @@ class IndoorLocationManager {
     }
     
     //MARK: Public API
-    func calibrate(automatic: Bool) {
-        if automatic {
+    func calibrate() {
+        if filterSettings.calibrationModeIsAutomatic {
             NetworkManager.shared.pozyxTask(task: .calibrate) { result in
                 self.receivedCalibrationResult(result)
             }
         } else {
-//            // Fake manual calibration response for testing purposes.
-//            let data = ("ID0=\(Int("666D", radix: 16)!)&xPos0=0&yPos0=0&dist0=500" +
-//                        "&ID1=\(Int("6F21", radix: 16)!)&xPos1=1100&yPos1=3350&dist1=500" +
-//                        "&ID2=\(Int("6F59", radix: 16)!)&xPos2=4050&yPos2=1300&dist2=500").data(using: .utf8)
-//            let result = NetworkResult.success(data)
-//            receivedCalibrationResult(result)
-            
             // Faking anchors as I'm too lazy to enter coordinates every time.
-            addAnchorWithID(Int("666D", radix: 16)!, x: 0, y: 0)
-            addAnchorWithID(Int("6F21", radix: 16)!, x: 110, y: 335)
-            addAnchorWithID(Int("6F59", radix: 16)!, x: 405, y: 130)
+            if (anchors == nil || !(anchors!.count > 0)) {
+                addAnchorWithID(Int("666D", radix: 16)!, x: 500, y: 0)
+                addAnchorWithID(Int("6F21", radix: 16)!, x: 390, y: 335)
+                addAnchorWithID(Int("6F59", radix: 16)!, x: 95, y: 130)
+                addAnchorWithID(Int("6F51", radix: 16)!, x: 195, y: 335)
+                // Not even existing anchors
+                addAnchorWithID(Int("6AAA", radix: 16)!, x: 0, y: 0)
+                addAnchorWithID(Int("6AAB", radix: 16)!, x: 250, y: 250)
+            }
             
             guard let anchors = anchors else { return }
             var anchorStringData = ""
@@ -192,36 +200,44 @@ class IndoorLocationManager {
 
         guard var measurementDict = parseData(data) else { return }
         
-        // If one component of the measurement is 0, use the last measurement again. This might sometimes happen as Pozyx is not that stable
-        if measurementDict.values.contains(0) {
-            guard let cachedMeasurement = cachedMeasurement else { return }
-            measurementDict = cachedMeasurement
-        } else {
-            cachedMeasurement = measurementDict
+        // Discard measurements equal to 0. This might sometimes happen as Pozyx is not that stable
+        for measurement in measurementDict {
+            if measurement.value == 0 {
+                measurementDict.removeValue(forKey: measurement.key)
+            }
         }
                 
         guard let anchors = anchors else {
             fatalError("No Anchors found")
         }
         
-        var measurements = [Float]()
-        for i in 0..<anchors.count {
-            guard let distance = measurementDict["dist\(i)"] else {
-                fatalError("Error retrieving data from measurementDict")
+        var distances = [Float?]()
+        for anchor in anchors {
+            if let distance = measurementDict["dist\(anchor.id)"] {
+                distances.append(distance / 10)
+            } else {
+                distances.append(nil)
             }
-            measurements.append(distance / 10)
         }
         
-        guard let xAcc = measurementDict["xAcc"], let yAcc = measurementDict["yAcc"] else {
-            fatalError("Error retrieving data from measurementDict")
+        var acceleration = [Float]()
+        if let xAcc = measurementDict["xAcc"] {
+            acceleration.append(xAcc / 10)
+        } else {
+            acceleration.append(0)
         }
-        measurements.append(xAcc / 10)
-        measurements.append(yAcc / 10)
+        if let yAcc = measurementDict["yAcc"] {
+            acceleration.append(yAcc / 10)
+        } else {
+            acceleration.append(0)
+        }
         
-        filter?.computeAlgorithm(measurements: measurements) { position in
+        filter?.computeAlgorithm(distances: distances, acceleration: acceleration) { position, anchors in
             self.position = position
             
             self.delegate?.updatePosition(position)
+            
+            self.delegate?.updateActiveAnchors(anchors)
             
             switch (self.filterSettings.filterType) {
             case .kalman:
@@ -240,6 +256,6 @@ class IndoorLocationManager {
         if (anchors == nil) {
             anchors = []
         }
-        anchors?.append(Anchor(id: id, position: CGPoint(x: x, y: y)))
+        anchors?.append(Anchor(id: id, position: CGPoint(x: x, y: y), isActive: false))
     }
 }

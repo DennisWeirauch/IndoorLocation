@@ -8,6 +8,10 @@
 
 import UIKit
 
+protocol IndoorMapViewDelegate {
+    func didDoCalibrationFromView(newAnchors: [Anchor])
+}
+
 class IndoorMapView: UIView, UIGestureRecognizerDelegate {
 
     var mapView: UIView!
@@ -75,6 +79,10 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     var particleViews: [PointView]?
     var covarianceView: CovarianceView?
     var trajectoryView: TrajectoryView?
+    
+    var calibrationButton: UIButton!
+    
+    var delegate: IndoorMapViewDelegate?
 
     // Variables used for zooming, rotating and panning the mapView
     var tx: CGFloat = 0.0
@@ -84,6 +92,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     var initScale: CGFloat = 1.0
     var initAngle: CGFloat = 0.0
     
+    //MARK: Initialization
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -92,24 +101,13 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         setupMapView()
         setupFloorplan()
         setupGestureRecognizers()
+        setupCalibrationButton()
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    //MARK: UIGestureRecognizerDelegate
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        if (gestureRecognizer.view != otherGestureRecognizer.view) {
-            return false
-        }
-        if (!gestureRecognizer.isKind(of: UITapGestureRecognizer.self) && !otherGestureRecognizer.isKind(of: UITapGestureRecognizer.self)) {
-            return true
-        }
-        return false
-    }
-    
-    //MARK: Private API
     private func setupMapView() {
         mapView = UIView(frame: CGRect(x: 0, y: 0, width: 1000, height: 1000))
         addSubview(mapView)
@@ -151,6 +149,17 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         addGestureRecognizer(panGesture)
     }
     
+    private func setupCalibrationButton() {
+        calibrationButton = UIButton(frame: CGRect(x: frame.width / 6, y: frame.maxY - 120, width: 2 * frame.width / 3, height: 50))
+        calibrationButton.layer.cornerRadius = calibrationButton.frame.height / 2
+        calibrationButton.backgroundColor = .blue
+        calibrationButton.setTitle("Calibrate from view", for: .normal)
+        calibrationButton.addTarget(self, action: #selector(didTapCalibrationButton(_:)), for: .touchUpInside)
+        calibrationButton.isHidden = true
+        addSubview(calibrationButton)
+    }
+    
+    //MARK: Private API
     private func setAnchor(_ anchorPoint: CGPoint, forView view: UIView) {
         let oldOrigin: CGPoint = view.frame.origin
         view.layer.anchorPoint = anchorPoint
@@ -189,6 +198,10 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
             let anchorView = PointView(pointType: .anchor(anchor))
             mapView.addSubview(anchorView)
             anchorViews?.append(anchorView)
+            
+            // Add Gesture Recognizer
+            let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(draggedAnchor(_:)))
+            anchorView.addGestureRecognizer(panGestureRecognizer)
         }
     }
     
@@ -244,7 +257,18 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         }
     }
     
-    //MARK: IBActions
+    //MARK: UIGestureRecognizerDelegate
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        if (gestureRecognizer.view != otherGestureRecognizer.view) {
+            return false
+        }
+        if (!gestureRecognizer.isKind(of: UITapGestureRecognizer.self) && !otherGestureRecognizer.isKind(of: UITapGestureRecognizer.self)) {
+            return true
+        }
+        return false
+    }
+    
+    //MARK: User interaction
     func handleRotation(_ recognizer: UIRotationGestureRecognizer) {
         if (recognizer.state == .began) {
             initAngle = angle
@@ -267,5 +291,31 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         let translation = recognizer.translation(in: mapView.superview)
         adjustAnchorPointForGestureRecognizer(recognizer)
         updateTransformWithOffset(translation)
+    }
+    
+    func draggedAnchor(_ sender: UIPanGestureRecognizer) {
+        let translation = sender.translation(in: mapView)
+        sender.view?.center = CGPoint(x: (sender.view?.center.x)! + translation.x, y: (sender.view?.center.y)! + translation.y)
+        sender.setTranslation(CGPoint.zero, in: mapView)
+        calibrationButton.isHidden = false
+    }
+    
+    func didTapCalibrationButton(_ sender: UIButton) {
+        // Determine anchor positions
+        guard let anchorViews = anchorViews else { return }
+        
+        var newAnchors = [Anchor]()
+        for anchorView in anchorViews {
+            switch anchorView.pointType {
+            case .anchor(let anchor):
+                newAnchors.append(Anchor(id: anchor.id, position: anchorView.center, isActive: anchor.isActive))
+            default:
+                break
+            }
+        }
+        
+        delegate?.didDoCalibrationFromView(newAnchors: newAnchors)
+        
+        calibrationButton.isHidden = true
     }
 }
