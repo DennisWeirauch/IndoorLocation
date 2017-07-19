@@ -6,11 +6,14 @@
 //  Copyright © 2017 Hirschgaenger. All rights reserved.
 //
 
-import UIKit
 import Accelerate
 
 precedencegroup PowerPrecedence { higherThan: MultiplicationPrecedence }
 infix operator ^^ : PowerPrecedence
+/**
+ Implements the power function
+ - Returns: The result of pow(radix, power)
+ */
 func ^^ (radix: Float, power: Float) -> Float {
     return pow(Float(radix), Float(power))
 }
@@ -58,6 +61,46 @@ extension Float {
 }
 
 extension Array where Iterator.Element == Float {
+    /**
+     Generate a random gaussian distributed vector with specified mean and covariance
+     - Parameter mean: The mean of the random vector
+     - Parameter A: A matrix for which holds `A` * `A_T` = Covariance matrix
+     - Returns: A random gaussian distributed vector with specified mean and covariance
+     */
+    static func randomGaussianVector(mean: [Float], A: [Float]) -> [Float] {
+        let dim = A.count / mean.count
+        let z = randomGaussianVector(dim: dim)
+        
+        // Compute and return result = mean + A * z
+        var result = [Float](repeating: 0, count: mean.count)
+        vDSP_mmul(A, 1, z, 1, &result, 1, vDSP_Length(mean.count), 1, vDSP_Length(dim))
+        
+        vDSP_vadd(mean, 1, result, 1, &result, 1, vDSP_Length(mean.count))
+        
+        return result
+    }
+    
+    /**
+      Generate a random normal distributed vector
+     - Parameter dim: The number of dimensions for the vector
+     - Returns: A random normal distributed vector of `dim` dimensions
+     */
+    static func randomGaussianVector(dim: Int) -> [Float] {
+        var rand = [Float]()
+        while rand.count < dim {
+            let (z1, z2) = Float.randomGaussian()
+            rand.append(z1)
+            if rand.count < dim {
+                rand.append(z2)
+            }
+        }
+        return rand
+    }
+    
+    /**
+     Determine the inverse of a matrix
+     - Returns: The inverse of the matrix
+     */
     func inverse() -> [Float] {
         var matrix = self
         
@@ -80,35 +123,11 @@ extension Array where Iterator.Element == Float {
         return matrix
     }
     
-    // Generate a random gaussian distributed vector with specified mean and matrix A where A*A_T = Covariance matrix.
-    static func randomGaussianVector(mean: [Float], A: [Float]) -> [Float] {
-        let dim = A.count / mean.count
-        let z = randomGaussianVector(dim: dim)
-        
-        // Compute and return result = mean + A * z
-        var result = [Float](repeating: 0, count: mean.count)
-        vDSP_mmul(A, 1, z, 1, &result, 1, vDSP_Length(mean.count), 1, vDSP_Length(dim))
-        
-        vDSP_vadd(mean, 1, result, 1, &result, 1, vDSP_Length(mean.count))
-        
-        return result
-    }
-    
-    // Generate a random normal distributed vector
-    static func randomGaussianVector(dim: Int) -> [Float] {
-        var rand = [Float]()
-        while rand.count < dim {
-            let (z1, z2) = Float.randomGaussian()
-            rand.append(z1)
-            if rand.count < dim {
-                rand.append(z2)
-            }
-        }
-        return rand
-    }
-    
-    func computeCholeskyDecomposition() -> [Float] {
-        var isPositiveDefinite = true
+    /**
+     Computes the cholesky decomposition of the matrix
+     - Returns: Returns the cholesky decomposition if the matrix was positive definite. Otherwise returns `nil`
+     */
+    func computeCholeskyDecomposition() -> [Float]? {
         let n = Int(sqrt(Float(self.count)))
         var L = [Float](repeating: 0, count: self.count)
         
@@ -122,8 +141,7 @@ extension Array where Iterator.Element == Float {
                     // Check if we are trying to compute the square root of a negative number here. If so, the input matrix is not positive definite.
                     let diagonalEntry = sqrt(self[j * n + j] - sum)
                     if diagonalEntry.isNaN {
-                        isPositiveDefinite = false
-                        break
+                        return nil
                     }
                     L[i * n + j] = diagonalEntry
                 } else {
@@ -132,15 +150,13 @@ extension Array where Iterator.Element == Float {
             }
         }
         
-        if !isPositiveDefinite {
-            // Algorithm could not be executed because matrix was not positive definite. Make matrix positive definite and execute algorithm again
-            let A = self.positiveDefiniteMatrix()
-            return A.computeCholeskyDecomposition()
-        }
         return L
     }
     
-    // Return a positive definite matrix from a positive semidefinite matrix by setting zero eigenvalues to small values.
+    /**
+     Compute a positive definite matrix from a positive semidefinite matrix by setting zero eigenvalues to small values
+     - Returns: A positive definite matrix
+     */
     func positiveDefiniteMatrix() -> [Float] {
         // Execute eigenvalue decomposition
         let dim = Int(sqrt(Float(self.count)))
@@ -194,6 +210,11 @@ extension Array where Iterator.Element == Float {
         return A
     }
     
+    /**
+     Prints matrices nicely for debugging purposes
+     - Parameter numRows: Number of rows of the matrix
+     - Parameter numCols: Number of colums of the matrix
+     */
     func pprint(numRows: Int, numCols: Int) {
         for i in 0..<numRows {
             print(self[(i * numCols)..<((i + 1) * numCols)], separator: ", ")
@@ -201,6 +222,12 @@ extension Array where Iterator.Element == Float {
     }
 }
 
+/**
+ Executes the least squares algorithm
+ - Parameter anchors: The set of active anchors
+ - Parameter distances: The raw distances to the anchors
+ - Returns: The position determined by the least squares algorithm or `nil` if too few anchors are available
+ */
 func leastSquares(anchors: [CGPoint], distances: [Float]) -> CGPoint? {
     guard anchors.count > 2 else {
         print("At least 3 anchors are necessary for the least squares algorithm.")

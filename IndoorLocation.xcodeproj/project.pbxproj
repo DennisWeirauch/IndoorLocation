@@ -14,7 +14,7 @@
 		954B55F11EF0251C00AE923F /* IndoorMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954B55F01EF0251C00AE923F /* IndoorMapView.swift */; };
 		95570C781EDD7E7000F15E30 /* AnchorTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95570C771EDD7E7000F15E30 /* AnchorTableViewCell.swift */; };
 		956227CA1E965F2700288A1A /* ParticleFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 956227C91E965F2700288A1A /* ParticleFilter.swift */; };
-		959540591F04EBFC0095755D /* CovarianceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959540581F04EBFC0095755D /* CovarianceView.swift */; };
+		959540591F04EBFC0095755D /* EllipseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959540581F04EBFC0095755D /* EllipseView.swift */; };
 		9595405B1F04F3DF0095755D /* TrajectoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9595405A1F04F3DF0095755D /* TrajectoryView.swift */; };
 		95A19DF01ED6C72A004BC415 /* LabelHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A19DEF1ED6C72A004BC415 /* LabelHelper.swift */; };
 		95A19DF31ED6C998004BC415 /* SliderHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A19DF21ED6C998004BC415 /* SliderHelper.swift */; };
@@ -66,7 +66,7 @@
 		954B55F01EF0251C00AE923F /* IndoorMapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = IndoorMapView.swift; path = IndoorLocation/Views/IndoorMapView.swift; sourceTree = SOURCE_ROOT; };
 		95570C771EDD7E7000F15E30 /* AnchorTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AnchorTableViewCell.swift; path = Cells/AnchorTableViewCell.swift; sourceTree = "<group>"; };
 		956227C91E965F2700288A1A /* ParticleFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParticleFilter.swift; sourceTree = "<group>"; };
-		959540581F04EBFC0095755D /* CovarianceView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CovarianceView.swift; sourceTree = "<group>"; };
+		959540581F04EBFC0095755D /* EllipseView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EllipseView.swift; sourceTree = "<group>"; };
 		9595405A1F04F3DF0095755D /* TrajectoryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrajectoryView.swift; sourceTree = "<group>"; };
 		95A19DEF1ED6C72A004BC415 /* LabelHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LabelHelper.swift; path = Helpers/LabelHelper.swift; sourceTree = "<group>"; };
 		95A19DF21ED6C998004BC415 /* SliderHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SliderHelper.swift; path = Helpers/SliderHelper.swift; sourceTree = "<group>"; };
@@ -148,10 +148,10 @@
 			isa = PBXGroup;
 			children = (
 				95A19DFC1EDD6B9B004BC415 /* Cells */,
+				959540581F04EBFC0095755D /* EllipseView.swift */,
 				954B55F01EF0251C00AE923F /* IndoorMapView.swift */,
-				9595405A1F04F3DF0095755D /* TrajectoryView.swift */,
 				953AFC2E1F026C5B00FAD3D8 /* PointView.swift */,
-				959540581F04EBFC0095755D /* CovarianceView.swift */,
+				9595405A1F04F3DF0095755D /* TrajectoryView.swift */,
 				95A19DFD1EDD6BAF004BC415 /* ViewControllers */,
 			);
 			path = Views;
@@ -481,7 +481,7 @@
 				95C3C1AE1ECC3C5100704437 /* KalmanFilter.swift in Sources */,
 				95A19DF31ED6C998004BC415 /* SliderHelper.swift in Sources */,
 				95A19DF51ED6DAB7004BC415 /* TextFieldHelper.swift in Sources */,
-				959540591F04EBFC0095755D /* CovarianceView.swift in Sources */,
+				959540591F04EBFC0095755D /* EllipseView.swift in Sources */,
 				954B55F11EF0251C00AE923F /* IndoorMapView.swift in Sources */,
 				950769641E8D3F0400233FF8 /* Utilities.swift in Sources */,
 				95A19DF91EDC4080004BC415 /* SegmentedControlTableViewCell.swift in Sources */,

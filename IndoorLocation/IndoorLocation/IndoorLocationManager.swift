@@ -18,7 +18,7 @@ typealias Anchor = (id: Int, position: CGPoint, isActive: Bool)
 
 protocol IndoorLocationManagerDelegate {
     func setAnchors(_ anchors: [Anchor])
-    func updateActiveAnchors(_ activeAnchors: [Anchor])
+    func updateActiveAnchors(_ anchors: [Anchor], distances: [Float])
     func updatePosition(_ position: CGPoint)
     func updateCovariance(covX: Float, covY: Float)
     func updateParticles(_ particles: [Particle])
@@ -197,16 +197,18 @@ class IndoorLocationManager {
             }
         }
                 
-        guard let anchors = anchors else {
+        guard var anchors = anchors else {
             fatalError("No Anchors found")
         }
         
-        var distances = [Float?]()
-        for anchor in anchors {
-            if let distance = measurementDict["dist\(anchor.id)"] {
+        // Determine which anchors are active
+        var distances = [Float]()
+        for i in 0..<anchors.count {
+            if let distance = measurementDict["dist\(anchors[i].id)"] {
                 distances.append(distance / 10)
+                anchors[i].isActive = true
             } else {
-                distances.append(nil)
+                anchors[i].isActive = false
             }
         }
         
@@ -222,12 +224,12 @@ class IndoorLocationManager {
             acceleration.append(0)
         }
         
-        filter?.computeAlgorithm(distances: distances, acceleration: acceleration) { position, anchors in
+        filter?.computeAlgorithm(anchors: anchors.filter({ $0.isActive }), distances: distances, acceleration: acceleration) { position in
             self.position = position
             
             self.delegate?.updatePosition(position)
             
-            self.delegate?.updateActiveAnchors(anchors)
+            self.delegate?.updateActiveAnchors(anchors, distances: distances)
             
             switch (self.filterSettings.filterType) {
             case .kalman:

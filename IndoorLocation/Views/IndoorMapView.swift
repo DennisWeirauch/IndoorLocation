@@ -14,15 +14,12 @@ protocol IndoorMapViewDelegate {
 
 class IndoorMapView: UIView, UIGestureRecognizerDelegate {
 
-    var mapView: UIView!
-    
+    //MARK: Public variables
     var isFloorPlanVisible = false {
         didSet {
             floorplanView?.isHidden = !isFloorPlanVisible
         }
     }
-    
-    var floorplanView: UIImageView?
     
     var filterType = FilterType.none {
         didSet {
@@ -41,8 +38,6 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
             }
         }
     }
-
-    var lastPositions = [CGPoint]()
     
     var position: CGPoint? {
         didSet {
@@ -74,23 +69,37 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         }
     }
     
-    var positionView: PointView?
-    var anchorViews: [PointView]?
-    var particleViews: [PointView]?
-    var covarianceView: CovarianceView?
-    var trajectoryView: TrajectoryView?
-    
-    var calibrationButton: UIButton!
+    var anchorDistances: [Float]? {
+        didSet {
+            updateAnchorDistances()
+        }
+    }
     
     var delegate: IndoorMapViewDelegate?
 
+    //MARK: Private variables
+    private var mapView: UIView!
+
+    private var floorplanView: UIImageView?
+
+    private var positionView: PointView?
+    private var anchorViews: [PointView]?
+    private var particleViews: [PointView]?
+    private var covarianceView: EllipseView?
+    private var trajectoryView: TrajectoryView?
+    private var distanceViews: [EllipseView]?
+    
+    private var calibrationButton: UIButton!
+    
+    private var lastPositions = [CGPoint]()
+    
     // Variables used for zooming, rotating and panning the mapView
-    var tx: CGFloat = 0.0
-    var ty: CGFloat = 0.0
-    var scale: CGFloat = 1.0
-    var angle: CGFloat = 0.0
-    var initScale: CGFloat = 1.0
-    var initAngle: CGFloat = 0.0
+    private var tx: CGFloat = 0.0
+    private var ty: CGFloat = 0.0
+    private var scale: CGFloat = 1.0
+    private var angle: CGFloat = 0.0
+    private var initScale: CGFloat = 1.0
+    private var initAngle: CGFloat = 0.0
     
     //MARK: Initialization
     override init(frame: CGRect) {
@@ -98,23 +107,20 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         
         backgroundColor = .white
         
-        setupMapView()
-        setupFloorplan()
+        setupView()
         setupGestureRecognizers()
-        setupCalibrationButton()
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func setupMapView() {
+    private func setupView() {
+        // Set up mapView
         mapView = UIView(frame: CGRect(x: 0, y: 0, width: 1000, height: 1000))
         addSubview(mapView)
-    }
-    
-    private func setupFloorplan() {
-        // Initialize floorplanView
+        
+        // Set up floorplanView
         guard let url = Bundle.main.url(forResource: "room_10_blueprint", withExtension: "pdf") else { return }
         guard let pdfPage = CGPDFDocument(url as CFURL)?.page(at: 1) else { return }
         
@@ -132,6 +138,15 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         floorplanView = UIImageView(image: floorplan)
         floorplanView?.isHidden = true
         mapView.addSubview(floorplanView!)
+        
+        // Set up calibrationButton
+        calibrationButton = UIButton(frame: CGRect(x: frame.width / 6, y: frame.maxY - 120, width: 2 * frame.width / 3, height: 50))
+        calibrationButton.layer.cornerRadius = calibrationButton.frame.height / 2
+        calibrationButton.backgroundColor = .blue
+        calibrationButton.setTitle("Calibrate from view", for: .normal)
+        calibrationButton.addTarget(self, action: #selector(didTapCalibrationButton(_:)), for: .touchUpInside)
+        calibrationButton.isHidden = true
+        addSubview(calibrationButton)
     }
     
     private func setupGestureRecognizers() {
@@ -147,16 +162,6 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         panGesture.delegate = self
         panGesture.maximumNumberOfTouches = 1
         addGestureRecognizer(panGesture)
-    }
-    
-    private func setupCalibrationButton() {
-        calibrationButton = UIButton(frame: CGRect(x: frame.width / 6, y: frame.maxY - 120, width: 2 * frame.width / 3, height: 50))
-        calibrationButton.layer.cornerRadius = calibrationButton.frame.height / 2
-        calibrationButton.backgroundColor = .blue
-        calibrationButton.setTitle("Calibrate from view", for: .normal)
-        calibrationButton.addTarget(self, action: #selector(didTapCalibrationButton(_:)), for: .touchUpInside)
-        calibrationButton.isHidden = true
-        addSubview(calibrationButton)
     }
     
     //MARK: Private API
@@ -230,9 +235,9 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         guard let position = position, let covariance = covariance else { return }
         
         if let covarianceView = covarianceView {
-            covarianceView.updateCovariance(position: position, covariance: covariance)
+            covarianceView.updateEllipse(withEllipseType: .covariance(covariance), position: position)
         } else {
-            covarianceView = CovarianceView(position: position, covariance: covariance)
+            covarianceView = EllipseView(ellipseType: .covariance(covariance), position: position)
             mapView.addSubview(covarianceView!)
         }
     }
@@ -253,6 +258,26 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
                 mapView.addSubview(particleView)
                 mapView.sendSubview(toBack: particleView)
                 particleViews?.append(particleView)
+            }
+        }
+    }
+    
+    private func updateAnchorDistances() {
+        guard let anchorDistances = anchorDistances,
+            let anchors = anchors?.filter({ $0.isActive }) else { return }
+        
+        if anchorDistances.count == distanceViews?.count {
+            for i in 0..<anchorDistances.count {
+                distanceViews?[i].updateEllipse(withEllipseType: .distance(radius: anchorDistances[i]))
+            }
+        } else {
+            distanceViews?.forEach { $0.removeFromSuperview() }
+            distanceViews = [EllipseView]()
+            
+            for i in 0..<anchorDistances.count {
+                let distanceView = EllipseView(ellipseType: .distance(radius: anchorDistances[i]), position: anchors[i].position)
+                mapView.addSubview(distanceView)
+                distanceViews?.append(distanceView)
             }
         }
     }
@@ -308,7 +333,8 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         for anchorView in anchorViews {
             switch anchorView.pointType {
             case .anchor(let anchor):
-                newAnchors.append(Anchor(id: anchor.id, position: anchorView.center, isActive: anchor.isActive))
+                let newPosition = CGPoint(x: anchorView.frame.minX + anchorView.pointSize / 2, y: anchorView.frame.midY)
+                newAnchors.append(Anchor(id: anchor.id, position: newPosition, isActive: anchor.isActive))
             default:
                 break
             }

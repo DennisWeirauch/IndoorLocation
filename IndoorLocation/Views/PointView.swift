@@ -16,7 +16,7 @@ enum PointType {
 
 class PointView: UIView {
     
-    var pointSize: CGFloat
+    private(set) var pointSize: CGFloat
     let pointType: PointType
     
     init(pointType: PointType) {
@@ -81,21 +81,17 @@ class PointView: UIView {
     }
     
     func updatePoint(withPointType pointType: PointType) {
-        var width: CGFloat
         var pointPosition: CGPoint
         
         switch pointType {
         case .position(let position):
-            width = pointSize
             pointPosition = position
         case .anchor(let anchor):
-            width = 5 * pointSize
             pointPosition = anchor.position
         case .particle(let particle):
-            width = pointSize
             pointPosition = particle.position
         }
         
-        frame = CGRect(x: pointPosition.x - pointSize / 2, y: pointPosition.y - pointSize / 2, width: width, height: pointSize)
+        frame.origin = pointPosition
     }
 }

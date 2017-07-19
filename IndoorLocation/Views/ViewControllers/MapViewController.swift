@@ -40,16 +40,9 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
         indoorMapView.anchors = anchors
     }
     
-    func updateActiveAnchors(_ activeAnchors: [Anchor]) {
-        guard let anchors = indoorMapView.anchors else { return }
-        for i in 0..<anchors.count {
-            // Check for each anchor if it is currently active and set its value in indoorMapView accordingly
-            if (activeAnchors.map { $0.id }.contains(anchors[i].id) && !anchors[i].isActive) {
-                indoorMapView.anchors?[i].isActive = true
-            } else if (!activeAnchors.map { $0.id }.contains(anchors[i].id) && anchors[i].isActive) {
-                indoorMapView.anchors?[i].isActive = false
-            }
-        }
+    func updateActiveAnchors(_ anchors: [Anchor], distances: [Float]) {
+        indoorMapView.anchors = anchors
+        indoorMapView.anchorDistances = distances
     }
     
     func updateCovariance(covX: Float, covY: Float) {

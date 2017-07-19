@@ -106,33 +106,20 @@ class KalmanFilter: BayesianFilter {
         }
     }
     
-    override func computeAlgorithm(distances: [Float?], acceleration: [Float], successCallback: @escaping (_ position: CGPoint, _ activeAnchors: [Anchor]) -> Void) {
-        guard let anchors = IndoorLocationManager.shared.anchors else {
-            fatalError("No anchors found!")
-        }
+    override func computeAlgorithm(anchors: [Anchor], distances: [Float], acceleration: [Float], successCallback: @escaping (_ position: CGPoint) -> Void) {
         
-        // Determine which anchors are active
-        var activeAnchors = [Anchor]()
-        var activeDistances = [Float]()
-        for i in 0..<distances.count {
-            if let distance = distances[i] {
-                activeAnchors.append(anchors[i])
-                activeDistances.append(distance)
-            }
-        }
-        
-        if (self.activeAnchors.map { $0.id } != activeAnchors.map { $0.id }) {
-            didChangeAnchors(activeAnchors)
+        if (activeAnchors.map { $0.id } != anchors.map { $0.id }) {
+            didChangeAnchors(anchors)
         }
         
         // Execute the prediction step of the algorithm
         predict()
         
         // Execute the update step of the algorithm
-        let measurements = activeDistances + acceleration
-        let position = update(anchors: activeAnchors, measurements: measurements)
+        let measurements = distances + acceleration
+        let position = update(anchors: anchors, measurements: measurements)
         
-        successCallback(position, activeAnchors)
+        successCallback(position)
     }
     
     //MARK: Private API

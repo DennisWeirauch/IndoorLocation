@@ -132,26 +132,12 @@ class ParticleFilter: BayesianFilter {
 
     }
     
-    override func computeAlgorithm(distances: [Float?], acceleration: [Float], successCallback: @escaping (_ position: CGPoint, _ activeAnchors: [Anchor]) -> Void) {
-        guard let anchors = IndoorLocationManager.shared.anchors else {
-            fatalError("No anchors found!")
-        }
-        
-        // Determine which anchors are active
-        var activeAnchors = [Anchor]()
-        var activeDistances = [Float]()
-        for i in 0..<distances.count {
-            if let distance = distances[i] {
-                activeAnchors.append(anchors[i])
-                activeDistances.append(distance)
-            }
-        }
-        
+    override func computeAlgorithm(anchors: [Anchor], distances: [Float], acceleration: [Float], successCallback: @escaping (_ position: CGPoint) -> Void) {
         // Request semaphore. Wait in case the algorithm is still in execution
         semaphore.wait()
         
-        if (self.activeAnchors.map { $0.id } != activeAnchors.map { $0.id }) {
-            didChangeAnchors(activeAnchors)
+        if (activeAnchors.map { $0.id } != anchors.map { $0.id }) {
+            didChangeAnchors(anchors)
         }
         
         // Using a DispatchGroup to continue execution of algorithm only after the functions on each particle were executed
@@ -162,9 +148,9 @@ class ParticleFilter: BayesianFilter {
                 // Draw new state from importance density
                 particle.updateState()
                 
-                let measurements = activeDistances + acceleration
+                let measurements = distances + acceleration
                 // Evaluate the importance weight up to a normalizing constant
-                particle.updateWeight(anchors: activeAnchors, measurements: measurements)
+                particle.updateWeight(anchors: anchors, measurements: measurements)
             }
         }
         
@@ -199,14 +185,21 @@ class ParticleFilter: BayesianFilter {
                 }
             }
             
-            let D = S.computeCholeskyDecomposition()
+            var D = S.computeCholeskyDecomposition()
+            if D == nil {
+                // Algorithm could not be executed because matrix was not positive definite. Make matrix positive definite and execute algorithm again
+                let A = S.positiveDefiniteMatrix()
+                D = A.computeCholeskyDecomposition()
+            }
             
             // Execute resampling algorithm
             self.resample()
             
-            // Regularize
-            self.particles.forEach { $0.regularize(D: D) }
-            
+            // Make sure a valid D has been computed and execute regularization
+            if let D = D {
+                // Regularize
+                self.particles.forEach { $0.regularize(D: D) }
+            }
             // Determine position
             let position = self.particles.reduce((x: Float(0), y: Float(0)), { ($0.x + Float($1.position.x) * $1.weight, $0.y + Float($1.position.y) * $1.weight) })
             
@@ -218,7 +211,7 @@ class ParticleFilter: BayesianFilter {
             
             // Return with position on main thread
             DispatchQueue.main.async(){
-                successCallback(CGPoint(x: CGFloat(position.x), y: CGFloat(position.y)), activeAnchors)
+                successCallback(CGPoint(x: CGFloat(position.x), y: CGFloat(position.y)))
             }
         }
     }
