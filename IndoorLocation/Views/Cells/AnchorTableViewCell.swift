@@ -10,22 +10,21 @@ import UIKit
 
 protocol AnchorTableViewCellDelegate: class {
     func onAddAnchorButtonTapped(_ sender: UIButton, id: Int, x: Int, y: Int)
-    
-    func onEditTextField(_ sender: UITextField)
+    func onRemoveAnchorButtonTapped(_ sender: UIButton, id: Int)
 }
 
-class AnchorTableViewCell: UITableViewCell, UITextFieldDelegate {
+class AnchorTableViewCell: UITableViewCell {
     
     weak var delegate: AnchorTableViewCellDelegate?
     
-    var idTextField: UITextField?
-    var xTextField: UITextField?
-    var yTextField: UITextField?
+    var idTextField: UITextField!
+    var xTextField: UITextField!
+    var yTextField: UITextField!
     
-    var addButton: UIButton?
+    var button: UIButton!
     
     //MARK: Public API
-    func setupWithID(_ id: Int, x: Int, y: Int, delegate: AnchorTableViewCellDelegate) {
+    func setupWithDelegate(_ delegate: AnchorTableViewCellDelegate, anchor: Anchor? = nil) {
         
         for subview in contentView.subviews {
             subview.removeFromSuperview()
@@ -33,60 +32,24 @@ class AnchorTableViewCell: UITableViewCell, UITextFieldDelegate {
         
         self.delegate = delegate
                 
-        idTextField = UITextField(frame: CGRect(x: 20, y: 0, width: 40, height: frame.height))
-        xTextField = UITextField(frame: CGRect(x: 65, y: 0, width: 55, height: frame.height))
-        yTextField = UITextField(frame: CGRect(x: 125, y: 0, width: 55, height: frame.height))
-        
-        guard let idTextField = idTextField, let xTextField = xTextField, let yTextField = yTextField else { return }
-        
-        idTextField.delegate = self
-        xTextField.delegate = self
-        yTextField.delegate = self
+        idTextField = UITextField(frame: CGRect(x: 10, y: 0, width: 40, height: frame.height))
+        xTextField = UITextField(frame: CGRect(x: idTextField.frame.maxX, y: 0, width: 50, height: frame.height))
+        yTextField = UITextField(frame: CGRect(x: xTextField.frame.maxX, y: 0, width: xTextField.frame.width, height: frame.height))
         
         idTextField.font = UIFont.systemFont(ofSize: 12)
         xTextField.font = UIFont.systemFont(ofSize: 12)
         yTextField.font = UIFont.systemFont(ofSize: 12)
         
-        idTextField.text = String(format:"%2X:", id)
-        xTextField.text = "x: \(x)"
-        yTextField.text = "y: \(y)"
-        
-        xTextField.keyboardType = .numberPad
-        yTextField.keyboardType = .numberPad
-        
-        idTextField.isEnabled = false
-        
-        contentView.addSubview(idTextField)
-        contentView.addSubview(xTextField)
-        contentView.addSubview(yTextField)
-    }
-    
-    func setupWithDelegate(_ delegate: AnchorTableViewCellDelegate) {
-        
-        for subview in contentView.subviews {
-            subview.removeFromSuperview()
+        if let anchor = anchor {
+            idTextField.text = String(format:"%2X", anchor.id)
+            xTextField.text = "x: \(Int(anchor.position.x))"
+            yTextField.text = "y: \(Int(anchor.position.y))"
+        } else {
+            idTextField.placeholder = "ID:"
+            xTextField.placeholder = "x:"
+            yTextField.placeholder = "y:"
         }
         
-        self.delegate = delegate
-        
-        idTextField = UITextField(frame: CGRect(x: 20, y: 0, width: 40, height: frame.height))
-        xTextField = UITextField(frame: CGRect(x: 65, y: 0, width: 40, height: frame.height))
-        yTextField = UITextField(frame: CGRect(x: 110, y: 0, width: 40, height: frame.height))
-        
-        guard let idTextField = idTextField, let xTextField = xTextField, let yTextField = yTextField else { return }
-        
-        idTextField.delegate = self
-        xTextField.delegate = self
-        yTextField.delegate = self
-        
-        idTextField.font = UIFont.systemFont(ofSize: 12)
-        xTextField.font = UIFont.systemFont(ofSize: 12)
-        yTextField.font = UIFont.systemFont(ofSize: 12)
-        
-        idTextField.placeholder = "ID: "
-        xTextField.placeholder = "x: "
-        yTextField.placeholder = "y: "
-        
         xTextField.keyboardType = .numberPad
         yTextField.keyboardType = .numberPad
         
@@ -94,22 +57,25 @@ class AnchorTableViewCell: UITableViewCell, UITextFieldDelegate {
         contentView.addSubview(xTextField)
         contentView.addSubview(yTextField)
         
-        addButton = UIButton(type: .contactAdd)
-        guard let addButton = addButton else { return }
-        addButton.frame = CGRect(x: frame.width - addButton.frame.width - 20, y: (frame.height - addButton.frame.height) / 2, width: addButton.frame.width, height: addButton.frame.height)
-        addButton.addTarget(self, action: #selector(onAddAnchorButtonTapped(_:)), for: .touchUpInside)
-        
-        contentView.addSubview(addButton)
+        let buttonSize: CGFloat = 25
+        button = UIButton(frame: CGRect(x: contentView.frame.width - buttonSize - 10, y: (contentView.frame.height - buttonSize) / 2, width: buttonSize, height: buttonSize))
+        if anchor != nil {
+            button.setImage(UIImage(named: "trashIcon"), for: .normal)
+            button.addTarget(self, action: #selector(onRemoveAnchorButtonTapped(_:)), for: .touchUpInside)
+        } else {
+            button.setImage(UIImage(named: "addIcon"), for: .normal)
+            button.addTarget(self, action: #selector(onAddAnchorButtonTapped(_:)), for: .touchUpInside)
+        }
+        contentView.addSubview(button)
     }
     
     func onAddAnchorButtonTapped(_ sender: UIButton) {
-        guard let idTextField = idTextField, let xTextField = xTextField, let yTextField = yTextField else { return }
         guard let id = Int(idTextField.text!, radix: 16), let x = Int(xTextField.text!), let y = Int(yTextField.text!) else { return }
         delegate?.onAddAnchorButtonTapped(sender, id: id, x: x, y: y)
     }
     
-    //MARK: UITextFieldDelegate
-    func textFieldDidEndEditing(_ textField: UITextField) {
-
+    func onRemoveAnchorButtonTapped(_ sender: UIButton) {
+        guard let id = Int(idTextField.text!, radix: 16) else { return }
+        delegate?.onRemoveAnchorButtonTapped(sender, id: id)
     }
 }

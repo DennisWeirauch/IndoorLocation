@@ -8,32 +8,40 @@
 
 import UIKit
 
-enum SettingsTableViewSection: Int {
-    case positioningMode = 0
-    case calibrationMode
-    case filterType
-}
-
-enum SliderType: Int {
-    case accelerationUncertainty = 0
-    case distanceUncertainty
-    case processingUncertainty
-    case numberOfParticles
-}
-
 protocol SettingsTableViewControllerDelegate {
     func toggleFloorplanVisible(_ isFloorPlanVisible: Bool)
+    func toggleMeasurementsVisible(_ areMeasurementsVisible: Bool)
     func changeFilterType(_ filterType: FilterType)
 }
 
-class SettingsTableViewController: UITableViewController, SegmentedControlTableViewCellDelegate, SliderTableViewCellDelegate, ButtonTableViewCellDelegate, AnchorTableViewCellDelegate {
+class SettingsTableViewController: UITableViewController, AnchorTableViewCellDelegate, ButtonTableViewCellDelegate, SegmentedControlTableViewCellDelegate, SliderTableViewCellDelegate, SwitchTableViewCellDelegate {
     
-    let tableViewSections = [SettingsTableViewSection.positioningMode.rawValue,
-                             SettingsTableViewSection.calibrationMode.rawValue,
-                             SettingsTableViewSection.filterType.rawValue]
+    enum SettingsTableViewSection: Int {
+        case view = 0
+        case calibration
+        case filter
+    }
+    
+    enum SliderType: Int {
+        case accelerationUncertainty = 0
+        case distanceUncertainty
+        case processingUncertainty
+        case numberOfParticles
+    }
+    
+    enum SwitchType: Int {
+        case floorplanVisible = 0
+        case measurementsVisible
+    }
+    
+    let tableViewSections = [SettingsTableViewSection.view.rawValue,
+                             SettingsTableViewSection.calibration.rawValue,
+                             SettingsTableViewSection.filter.rawValue]
     
     let filterSettings = IndoorLocationManager.shared.filterSettings
     var settingsDelegate: SettingsTableViewControllerDelegate?
+    
+    var calibrationPending = false
     
     //MARK: ViewController lifecycle
     override func viewDidLoad() {
@@ -47,10 +55,11 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
         tableView.bounces = false
         tableView.showsVerticalScrollIndicator = false
         
+        tableView.register(AnchorTableViewCell.self, forCellReuseIdentifier: String(describing: AnchorTableViewCell.self))
+        tableView.register(ButtonTableViewCell.self, forCellReuseIdentifier: String(describing: ButtonTableViewCell.self))
         tableView.register(SegmentedControlTableViewCell.self, forCellReuseIdentifier: String(describing: SegmentedControlTableViewCell.self))
         tableView.register(SliderTableViewCell.self, forCellReuseIdentifier: String(describing: SliderTableViewCell.self))
-        tableView.register(ButtonTableViewCell.self, forCellReuseIdentifier: String(describing: ButtonTableViewCell.self))
-        tableView.register(AnchorTableViewCell.self, forCellReuseIdentifier: String(describing: AnchorTableViewCell.self))
+        tableView.register(SwitchTableViewCell.self, forCellReuseIdentifier: String(describing: SwitchTableViewCell.self))
         
         tableView.separatorStyle = .none
         tableView.allowsSelection = false
@@ -61,7 +70,7 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
         self.view.addGestureRecognizer(tapGestureRecognizer)
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         // Initialize Filter
         switch filterSettings.filterType {
         case .none:
@@ -72,6 +81,10 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
         case .particle:
             guard let initialDistances = IndoorLocationManager.shared.initialDistances else { return }
             IndoorLocationManager.shared.filter = ParticleFilter(distances: initialDistances)
+        }
+        
+        if calibrationPending {
+            alertWithTitle("Attention", message: "The specified anchors have not been calibrated. Changes for ranging are only visible after calibration.")
         }
     }
 
@@ -87,15 +100,19 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
         }
         
         switch tableViewSection {
-        case .positioningMode:
-            return 1
-        case .calibrationMode:
+        case .view:
+            return 2
+        case .calibration:
             if filterSettings.calibrationModeIsAutomatic {
                 return 2
             } else {
-                return 3 + (IndoorLocationManager.shared.anchors?.count ?? 0) // 1 Segmented Control, 1 Button, 1 cell for each anchor found, 1 empty cell
+                var numAnchorCells = IndoorLocationManager.shared.anchors?.count ?? 0
+                if numAnchorCells < 6 {
+                    numAnchorCells += 1
+                }
+                return 2 + numAnchorCells
             }
-        case .filterType:
+        case .filter:
             switch filterSettings.filterType {
             case .none:
                 return 1
@@ -115,22 +132,26 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
         }
         
         switch tableViewSection {
-        case .positioningMode:
-            cell = tableView.dequeueReusableCell(withIdentifier: String(describing: SegmentedControlTableViewCell.self), for: indexPath)
-        case .calibrationMode:
+        case .view:
+            cell = tableView.dequeueReusableCell(withIdentifier: String(describing: SwitchTableViewCell.self), for: indexPath)
+        case .calibration:
             if (indexPath.row == 0) {
                 cell = tableView.dequeueReusableCell(withIdentifier: String(describing: SegmentedControlTableViewCell.self), for: indexPath)
             } else if filterSettings.calibrationModeIsAutomatic {
                 cell = tableView.dequeueReusableCell(withIdentifier: String(describing: ButtonTableViewCell.self), for: indexPath)
             } else {
-                let numCells = 3 + (IndoorLocationManager.shared.anchors?.count ?? 0)
-                if (indexPath.row == numCells - 1) {
-                    cell = tableView.dequeueReusableCell(withIdentifier: String(describing: ButtonTableViewCell.self), for: indexPath)
-                } else {
+                var numAnchorCells = IndoorLocationManager.shared.anchors?.count ?? 0
+                if numAnchorCells < 6 {
+                    // Add an empty cell if less than 6 anchors are entered
+                    numAnchorCells += 1
+                }
+                if (indexPath.row <= numAnchorCells) {
                     cell = tableView.dequeueReusableCell(withIdentifier: String(describing: AnchorTableViewCell.self), for: indexPath)
+                } else {
+                    cell = tableView.dequeueReusableCell(withIdentifier: String(describing: ButtonTableViewCell.self), for: indexPath)
                 }
             }
-        case .filterType:
+        case .filter:
             if (indexPath.row == 0) {
                 cell = tableView.dequeueReusableCell(withIdentifier: String(describing: SegmentedControlTableViewCell.self), for: indexPath)
             } else {
@@ -150,12 +171,12 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
         }
         
         switch tableViewSection {
-        case .positioningMode:
-            return "Positioning mode"
-        case .calibrationMode:
-            return "Calibration mode"
-        case .filterType:
-            return "Filter Type"
+        case .view:
+            return "View"
+        case .calibration:
+            return "Calibration"
+        case .filter:
+            return "Filter"
         }
     }
         
@@ -167,16 +188,16 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
         }
         
         switch tableViewSection {
-        case .positioningMode:
-            filterSettings.positioningModeIsRelative = sender.selectedSegmentIndex == 0
-            settingsDelegate?.toggleFloorplanVisible(!filterSettings.positioningModeIsRelative)
-        case .calibrationMode:
+        case .calibration:
             filterSettings.calibrationModeIsAutomatic = sender.selectedSegmentIndex == 0
+            calibrationPending = true
             tableView.reloadData()
-        case .filterType:
+        case .filter:
             filterSettings.filterType = FilterType(rawValue: sender.selectedSegmentIndex) ?? .none
             tableView.reloadData()
             settingsDelegate?.changeFilterType(filterSettings.filterType)
+        default:
+            break
         }
     }
     
@@ -202,16 +223,37 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
     //MARK: ButtonTableViewCellDelegate
     func onButtonTapped(_ sender: UIButton) {
         IndoorLocationManager.shared.calibrate()
+        calibrationPending = false
     }
     
     //MARK: AnchorTableViewCellDelegate
     func onAddAnchorButtonTapped(_ sender: UIButton, id: Int, x: Int, y: Int) {
         IndoorLocationManager.shared.addAnchorWithID(id, x: x, y: y)
+        calibrationPending = true
         tableView.reloadData()
     }
     
-    func onEditTextField(_ sender: UITextField) {
-        //TODO!
+    func onRemoveAnchorButtonTapped(_ sender: UIButton, id: Int) {
+        IndoorLocationManager.shared.removeAnchorWithID(id)
+        calibrationPending = true
+        tableView.reloadData()
+    }
+    
+    //MARK: SwitchTableViewCellDelegate
+    func onSwitchTapped(_ sender: UISwitch) {
+        
+        guard let switchType = SwitchType(rawValue: sender.tag) else {
+            fatalError("Could not retrieve switch type")
+        }
+        
+        switch switchType {
+        case .floorplanVisible:
+            filterSettings.floorplanVisible = sender.isOn
+            settingsDelegate?.toggleFloorplanVisible(sender.isOn)
+        case .measurementsVisible:
+            filterSettings.measurementsVisible = sender.isOn
+            settingsDelegate?.toggleMeasurementsVisible(sender.isOn)
+        }
     }
     
     //MARK: Private API
@@ -222,13 +264,19 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
         }
         
         switch tableViewSection {
-        case .positioningMode:
-            if let cell = cell as? SegmentedControlTableViewCell {
-                let selectedSegmentIndex = filterSettings.positioningModeIsRelative ? 0 : 1
-                
-                cell.setupWithSegments(["Relative", "Absolute"], selectedSegmentIndex: selectedSegmentIndex, delegate: self, tag: tableViewSection.rawValue)
+        case .view:
+            if let cell = cell as? SwitchTableViewCell {
+                switch indexPath.row {
+                case 0:
+                    cell.setupWithText("Floorplan", isOn: filterSettings.floorplanVisible, delegate: self, tag: SwitchType.floorplanVisible.rawValue)
+                case 1:
+                    cell.setupWithText("Measurements", isOn: filterSettings.measurementsVisible, delegate: self, tag: SwitchType.measurementsVisible.rawValue)
+                default:
+                    break
+                }
             }
-        case .calibrationMode:
+            
+        case .calibration:
             if let cell = cell as? SegmentedControlTableViewCell {
                 let selectedSegmentIndex = filterSettings.calibrationModeIsAutomatic ? 0 : 1
                 
@@ -239,7 +287,7 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
                 if let anchors = IndoorLocationManager.shared.anchors {
                     let index = indexPath.row - 1
                     if index < anchors.count {
-                        cell.setupWithID(anchors[index].id, x: Int(anchors[index].position.x), y: Int(anchors[index].position.y), delegate: self)
+                        cell.setupWithDelegate(self, anchor: anchors[index])
                     } else {
                         cell.setupWithDelegate(self)
                     }
@@ -247,7 +295,8 @@ class SettingsTableViewController: UITableViewController, SegmentedControlTableV
                     cell.setupWithDelegate(self)
                 }
             }
-        case .filterType:
+            
+        case .filter:
             if let cell = cell as? SegmentedControlTableViewCell {
                 let selectedSegmentIndex = filterSettings.filterType.rawValue
                 

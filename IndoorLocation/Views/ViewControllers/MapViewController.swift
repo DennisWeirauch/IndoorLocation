@@ -53,21 +53,13 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
         indoorMapView.particles = particles
     }
     
-    func showAlertWithTitle(_ title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let action = UIAlertAction(title: "OK", style: .default)
-        alert.addAction(action)
-        
-        if let presentedViewController = presentedViewController {
-            presentedViewController.present(alert, animated: true)
-        } else {
-            self.present(alert, animated: true)
-        }
-    }
-    
     //MARK: SettingsTableViewControllerDelegate
     func toggleFloorplanVisible(_ isFloorPlanVisible: Bool) {
         indoorMapView.isFloorPlanVisible = isFloorPlanVisible
+    }
+    
+    func toggleMeasurementsVisible(_ areMeasurementsVisible: Bool) {
+        indoorMapView.areMeasurementsVisible = areMeasurementsVisible
     }
     
     func changeFilterType(_ filterType: FilterType) {
@@ -78,6 +70,7 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
     func didDoCalibrationFromView(newAnchors: [Anchor]) {
         // Set settings to manual calibration
         IndoorLocationManager.shared.filterSettings.calibrationModeIsAutomatic = false
+        
         // Replace anchors with newAnchors and calibrate
         IndoorLocationManager.shared.anchors = newAnchors
         IndoorLocationManager.shared.calibrate()
@@ -108,12 +101,12 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
 
         if IndoorLocationManager.shared.isRanging {
             IndoorLocationManager.shared.stopRanging() {
-                self.startButton.setImage(UIImage(named: "start.png"), for: .normal)
+                self.startButton.setImage(UIImage(named: "startIcon"), for: .normal)
                 self.activityIndicatorView.stopAnimating()
             }
         } else {
             IndoorLocationManager.shared.beginRanging() {
-                self.startButton.setImage(UIImage(named: "stop.png"), for: .normal)
+                self.startButton.setImage(UIImage(named: "stopIcon"), for: .normal)
                 self.activityIndicatorView.stopAnimating()
             }
         }
@@ -128,13 +121,13 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
         
         // Set up settingsButton
         settingsButton = UIButton(frame: CGRect(x: view.frame.width - 50, y: 30, width: 40, height: 40))
-        settingsButton.setImage(UIImage(named: "settings.png"), for: .normal)
+        settingsButton.setImage(UIImage(named: "settingsIcon"), for: .normal)
         settingsButton.addTarget(self, action: #selector(onSettingsButtonTapped(_:)), for: .touchUpInside)
         view.addSubview(settingsButton)
         
         // Set up startButton
         startButton = UIButton(frame: CGRect(x: 10, y: 30, width: 40, height: 40))
-        startButton.setImage(UIImage(named: "start.png"), for: .normal)
+        startButton.setImage(UIImage(named: "startIcon"), for: .normal)
         startButton.addTarget(self, action: #selector(onStartButtonTapped(_:)), for: .touchUpInside)
         view.addSubview(startButton)
         

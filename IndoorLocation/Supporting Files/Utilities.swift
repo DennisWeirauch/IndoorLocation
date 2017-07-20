@@ -7,6 +7,7 @@
 //
 
 import Accelerate
+import UIKit
 
 precedencegroup PowerPrecedence { higherThan: MultiplicationPrecedence }
 infix operator ^^ : PowerPrecedence
@@ -292,4 +293,18 @@ func computeNormalDistribution(x: [Float], m: [Float], forTriangularCovariance P
     let exponent = -0.5 * diff_P_diff
     
     return log(prefactor) + exponent
+}
+
+func alertWithTitle(_ title: String, message: String? = nil) {
+    let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+    let action = UIAlertAction(title: "OK", style: .default)
+    alertController.addAction(action)
+    
+    guard let mapViewController = UIApplication.shared.keyWindow?.rootViewController else { return }
+    
+    if let settingsViewController = mapViewController.presentedViewController {
+        settingsViewController.present(alertController, animated: true, completion: nil)
+    } else {
+        mapViewController.present(alertController, animated: true, completion: nil)
+    }
 }

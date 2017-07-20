@@ -30,7 +30,7 @@ class SegmentedControlTableViewCell: UITableViewCell {
                 
         segmentedControl = UISegmentedControl(items: segments)
         guard let segmentedControl = segmentedControl else { return }
-        segmentedControl.frame = CGRect(x: 20, y: 5, width: contentView.frame.width - 40, height: 30)
+        segmentedControl.frame = CGRect(x: 10, y: 5, width: contentView.frame.width - 20, height: 30)
         segmentedControl.selectedSegmentIndex = selectedSegmentIndex
         segmentedControl.addTarget(self, action: #selector(onSegmentedControlValueChanged(_:)), for: .valueChanged)
         segmentedControl.tag = tag

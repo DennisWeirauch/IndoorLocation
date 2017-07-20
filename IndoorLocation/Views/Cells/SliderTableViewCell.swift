@@ -32,13 +32,13 @@ class SliderTableViewCell: UITableViewCell {
         
         labelText = text
                 
-        label = UILabel(frame: CGRect(x: 20, y: 4, width: contentView.frame.width - 40, height: 16))
+        label = UILabel(frame: CGRect(x: 10, y: 4, width: contentView.frame.width - 20, height: 16))
         guard let label = label else { return }
         LabelHelper.setupLabel(label, withText: text + " \(value)", fontSize: 13)
         
         contentView.addSubview(label)
         
-        slider = UISlider(frame: CGRect(x: 20, y: 24, width: contentView.frame.width - 40, height: 20))
+        slider = UISlider(frame: CGRect(x: 10, y: 24, width: contentView.frame.width - 20, height: 20))
         guard let slider = slider else { return }
         SliderHelper.setupSlider(slider, value: Float(value), minValue: Float(minValue), maxValue: Float(maxValue), tag: tag)
         slider.addTarget(self, action: #selector(onSliderValueChanged(_:)), for: .valueChanged)

@@ -21,6 +21,12 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         }
     }
     
+    var areMeasurementsVisible = false {
+        didSet {
+            distanceViews?.forEach { $0.isHidden = !areMeasurementsVisible }
+        }
+    }
+    
     var filterType = FilterType.none {
         didSet {
             switch filterType {

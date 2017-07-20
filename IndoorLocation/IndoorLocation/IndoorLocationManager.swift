@@ -22,8 +22,6 @@ protocol IndoorLocationManagerDelegate {
     func updatePosition(_ position: CGPoint)
     func updateCovariance(covX: Float, covY: Float)
     func updateParticles(_ particles: [Particle])
-    
-    func showAlertWithTitle(_ title: String, message: String)
 }
 
 class IndoorLocationManager {
@@ -51,7 +49,7 @@ class IndoorLocationManager {
         if let inlineStringData = stringData.components(separatedBy: "\r").first {
             // Check that returned data is of expected format
             if (inlineStringData.range(of: "([A-Za-z]+-?[0-9-]*=-?[0-9.]+&)*([A-Za-z]+-?[0-9.]*=-?[0-9.]+)", options: .regularExpression) != inlineStringData.startIndex..<inlineStringData.endIndex) {
-                delegate?.showAlertWithTitle("Error", message: String(describing: inlineStringData))
+                alertWithTitle("Error", message: String(describing: inlineStringData))
                 return nil
             }
             
@@ -66,7 +64,7 @@ class IndoorLocationManager {
             }
             return parsedData
         }
-        delegate?.showAlertWithTitle("Error", message: "Received unexpected format from Arduino!")
+        alertWithTitle("Error", message: "Received unexpected format from Arduino!")
         return nil
     }
     
@@ -74,7 +72,7 @@ class IndoorLocationManager {
         switch result {
         case .success(let data):
             guard let data = data else {
-                delegate?.showAlertWithTitle("Error", message: "No calibration data received!")
+                alertWithTitle("Error", message: "No calibration data received!")
                 return
             }
             
@@ -110,10 +108,10 @@ class IndoorLocationManager {
             initialDistances = distances
             
             isCalibrated = true
-            self.delegate?.showAlertWithTitle("Success", message: "Calibration Successful!")
+            alertWithTitle("Success", message: "Calibration Successful!")
             
         case .failure(let error):
-            self.delegate?.showAlertWithTitle("Error", message: error.localizedDescription)
+            alertWithTitle("Error", message: error.localizedDescription)
         }
     }
     
@@ -154,14 +152,14 @@ class IndoorLocationManager {
             NetworkManager.shared.pozyxTask(task: .beginRanging) { result in
                 switch result {
                 case .failure(let error):
-                    self.delegate?.showAlertWithTitle("Error", message: error.localizedDescription)
+                    alertWithTitle("Error", message: error.localizedDescription)
                 case .success(_):
                     self.isRanging = true
                     successCallback()
                 }
             }
         } else {
-            delegate?.showAlertWithTitle("Error", message: "Calibration has to be executed first!")
+            alertWithTitle("Error", message: "Calibration has to be executed first!")
         }
     }
     
@@ -169,7 +167,7 @@ class IndoorLocationManager {
         NetworkManager.shared.pozyxTask(task: .stopRanging) { result in
             switch result {
             case .failure(let error):
-                self.delegate?.showAlertWithTitle("Error", message: error.localizedDescription)
+                alertWithTitle("Error", message: error.localizedDescription)
             case .success(_):
                 self.isRanging = false
                 successCallback()
@@ -184,7 +182,7 @@ class IndoorLocationManager {
         }
         
         guard let data = data else {
-            delegate?.showAlertWithTitle("Error", message: "No ranging data received!")
+            alertWithTitle("Error", message: "No ranging data received!")
             return
         }
 
@@ -245,9 +243,14 @@ class IndoorLocationManager {
     }
     
     func addAnchorWithID(_ id: Int, x: Int, y: Int) {
-        if (anchors == nil) {
-            anchors = []
+        if anchors != nil {
+            anchors?.append(Anchor(id: id, position: CGPoint(x: x, y: y), isActive: false))
+        } else {
+            anchors = [Anchor(id: id, position: CGPoint(x: x, y: y), isActive: false)]
         }
-        anchors?.append(Anchor(id: id, position: CGPoint(x: x, y: y), isActive: false))
+    }
+    
+    func removeAnchorWithID(_ id: Int) {
+        anchors = anchors?.filter({ $0.id != id })
     }
 }

@@ -8,20 +8,20 @@
 
 class FilterSettings {
     
-    var positioningModeIsRelative = true
+    // View
+    var floorplanVisible = false
+    var measurementsVisible = false
     
+    // Calibration
     var calibrationModeIsAutomatic = true
-        
+    
+    // Filter
     var filterType: FilterType = .none
     
-    // Filter parameters
     var accelerationUncertainty: Int = 25
-    
     var distanceUncertainty: Int = 50
-    
     var processingUncertainty: Int = 40
-    
-    var updateTime: Float = 0.15
-    
     var numberOfParticles: Int = 500
+
+    let updateTime: Float = 0.1
 }
