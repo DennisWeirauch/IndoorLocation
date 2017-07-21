@@ -147,15 +147,15 @@ class IndoorLocationManager {
         }
     }
     
-    func beginRanging(successCallback: @escaping () -> ()) {
+    func beginRanging(resultCallback: @escaping (Error?) -> ()) {
         if isCalibrated {
             NetworkManager.shared.pozyxTask(task: .beginRanging) { result in
                 switch result {
                 case .failure(let error):
-                    alertWithTitle("Error", message: error.localizedDescription)
+                    resultCallback(error)
                 case .success(_):
                     self.isRanging = true
-                    successCallback()
+                    resultCallback(nil)
                 }
             }
         } else {
@@ -163,14 +163,14 @@ class IndoorLocationManager {
         }
     }
     
-    func stopRanging(successCallback: @escaping () -> ()) {
+    func stopRanging(resultCallback: @escaping (Error?) -> ()) {
         NetworkManager.shared.pozyxTask(task: .stopRanging) { result in
             switch result {
             case .failure(let error):
-                alertWithTitle("Error", message: error.localizedDescription)
+                resultCallback(error)
             case .success(_):
                 self.isRanging = false
-                successCallback()
+                resultCallback(nil)
             }
         }
     }

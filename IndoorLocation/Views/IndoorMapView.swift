@@ -17,13 +17,18 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     //MARK: Public variables
     var isFloorPlanVisible = false {
         didSet {
-            floorplanView?.isHidden = !isFloorPlanVisible
+            floorplanView.isHidden = !isFloorPlanVisible
         }
     }
     
     var areMeasurementsVisible = false {
         didSet {
-            distanceViews?.forEach { $0.isHidden = !areMeasurementsVisible }
+            if !areMeasurementsVisible {
+                distanceViews?.forEach { $0.removeFromSuperview() }
+                distanceViews = nil
+            } else {
+                updateAnchorDistances()
+            }
         }
     }
     
@@ -77,7 +82,9 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     
     var anchorDistances: [Float]? {
         didSet {
-            updateAnchorDistances()
+            if areMeasurementsVisible {
+                updateAnchorDistances()
+            }
         }
     }
     
@@ -86,7 +93,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     //MARK: Private variables
     private var mapView: UIView!
 
-    private var floorplanView: UIImageView?
+    private var floorplanView: UIImageView!
 
     private var positionView: PointView?
     private var anchorViews: [PointView]?
@@ -142,8 +149,8 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
             ctx.cgContext.drawPDFPage(pdfPage);
         }
         floorplanView = UIImageView(image: floorplan)
-        floorplanView?.isHidden = true
-        mapView.addSubview(floorplanView!)
+        floorplanView.isHidden = true
+        mapView.addSubview(floorplanView)
         
         // Set up calibrationButton
         calibrationButton = UIButton(frame: CGRect(x: frame.width / 6, y: frame.maxY - 120, width: 2 * frame.width / 3, height: 50))
@@ -171,6 +178,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     }
     
     //MARK: Private API
+    // Functions used for zooming, rotating and panning the mapView
     private func setAnchor(_ anchorPoint: CGPoint, forView view: UIView) {
         let oldOrigin: CGPoint = view.frame.origin
         view.layer.anchorPoint = anchorPoint
@@ -196,6 +204,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         }
     }
     
+    // Functions to show views for indoor location tracking
     private func setAnchors() {
         guard let anchors = anchors else { return }
         

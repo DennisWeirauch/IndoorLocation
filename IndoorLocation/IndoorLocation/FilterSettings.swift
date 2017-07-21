@@ -23,5 +23,5 @@ class FilterSettings {
     var processingUncertainty: Int = 40
     var numberOfParticles: Int = 500
 
-    let updateTime: Float = 0.1
+    let updateTime: Float = 0.05
 }

@@ -42,6 +42,7 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
     var settingsDelegate: SettingsTableViewControllerDelegate?
     
     var calibrationPending = false
+    var calibratedAnchors = IndoorLocationManager.shared.anchors
     
     //MARK: ViewController lifecycle
     override func viewDidLoad() {
@@ -70,7 +71,7 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
         self.view.addGestureRecognizer(tapGestureRecognizer)
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         // Initialize Filter
         switch filterSettings.filterType {
         case .none:
@@ -84,7 +85,26 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
         }
         
         if calibrationPending {
-            alertWithTitle("Attention", message: "The specified anchors have not been calibrated. Changes for ranging are only visible after calibration.")
+            //            alertWithTitle("Attention", message: "The specified anchors have not been calibrated. Changes for ranging are only visible after calibration.")
+            let alertController = UIAlertController(title: "Attention", message: "Changes in calibration have not been applied. Do you want to execute calibration to apply changes?", preferredStyle: .alert)
+            
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
+                IndoorLocationManager.shared.anchors = self.calibratedAnchors
+            }
+            alertController.addAction(cancelAction)
+            
+            let calibrateAction = UIAlertAction(title: "Calibrate", style: .default) { _ in
+                IndoorLocationManager.shared.calibrate()
+            }
+            alertController.addAction(calibrateAction)
+            
+            guard let mapViewController = UIApplication.shared.keyWindow?.rootViewController else { return }
+            
+            //            if let settingsViewController = mapViewController.presentedViewController {
+            //                settingsViewController.present(alertController, animated: true, completion: nil)
+            //            } else {
+            mapViewController.present(alertController, animated: true, completion: nil)
+            //            }
         }
     }
 
@@ -224,6 +244,7 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
     func onButtonTapped(_ sender: UIButton) {
         IndoorLocationManager.shared.calibrate()
         calibrationPending = false
+        calibratedAnchors = IndoorLocationManager.shared.anchors
     }
     
     //MARK: AnchorTableViewCellDelegate

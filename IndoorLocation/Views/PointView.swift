@@ -92,6 +92,6 @@ class PointView: UIView {
             pointPosition = particle.position
         }
         
-        frame.origin = pointPosition
+        frame.origin = CGPoint(x: pointPosition.x - pointSize / 2, y: pointPosition.y - pointSize / 2)
     }
 }

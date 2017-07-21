@@ -44,6 +44,10 @@ class AnchorTableViewCell: UITableViewCell {
             idTextField.text = String(format:"%2X", anchor.id)
             xTextField.text = "x: \(Int(anchor.position.x))"
             yTextField.text = "y: \(Int(anchor.position.y))"
+            
+            idTextField.isEnabled = false
+            xTextField.isEnabled = false
+            yTextField.isEnabled = false
         } else {
             idTextField.placeholder = "ID:"
             xTextField.placeholder = "x:"

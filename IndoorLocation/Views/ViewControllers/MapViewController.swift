@@ -41,7 +41,9 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
     }
     
     func updateActiveAnchors(_ anchors: [Anchor], distances: [Float]) {
-        indoorMapView.anchors = anchors
+        if (indoorMapView.anchors == nil || (indoorMapView.anchors!.map { $0.isActive } != anchors.map { $0.isActive })) {
+            indoorMapView.anchors = anchors
+        }
         indoorMapView.anchorDistances = distances
     }
     
@@ -100,13 +102,21 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
         view.bringSubview(toFront: activityIndicatorView)
 
         if IndoorLocationManager.shared.isRanging {
-            IndoorLocationManager.shared.stopRanging() {
-                self.startButton.setImage(UIImage(named: "startIcon"), for: .normal)
+            IndoorLocationManager.shared.stopRanging() { error in
+                if let error = error {
+                    alertWithTitle("Error", message: error.localizedDescription)
+                } else {
+                    self.startButton.setImage(UIImage(named: "startIcon"), for: .normal)
+                }
                 self.activityIndicatorView.stopAnimating()
             }
         } else {
-            IndoorLocationManager.shared.beginRanging() {
-                self.startButton.setImage(UIImage(named: "stopIcon"), for: .normal)
+            IndoorLocationManager.shared.beginRanging() { error in
+                if let error = error {
+                    alertWithTitle("Error", message: error.localizedDescription)
+                } else {
+                    self.startButton.setImage(UIImage(named: "stopIcon"), for: .normal)
+                }
                 self.activityIndicatorView.stopAnimating()
             }
         }
