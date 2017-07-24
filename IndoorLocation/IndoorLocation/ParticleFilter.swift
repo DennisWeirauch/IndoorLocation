@@ -10,17 +10,17 @@ import Accelerate
 
 class ParticleFilter: BayesianFilter {
     
-    let numberOfParticles: Int
+    var numberOfParticles: Int
     let stateDim = 6
     
-    private(set) var particles: [Particle]
+    internal(set) var particles: [Particle]
     
     // Matrices
-    private(set) var F: [Float]
-    private(set) var G: [Float]
-    private(set) var Q: [Float]
-    private(set) var R: [Float]
-    private(set) var R_inv: [Float]
+    internal(set) var F: [Float]
+    internal(set) var G: [Float]
+    internal(set) var Q: [Float]
+    internal(set) var R: [Float]
+    internal(set) var R_inv: [Float]
     
     var h_opt: Float {
         return 0.5 ^^ 0.1 * Float(numberOfParticles) ^^ -0.1
@@ -31,24 +31,13 @@ class ParticleFilter: BayesianFilter {
     // Using a semaphore to make sure that only one thread can execute the algorithm at each time instance
     let semaphore = DispatchSemaphore(value: 1)
     
-    init(distances: [Float?]) {
-        guard let anchors = IndoorLocationManager.shared.anchors else {
-            fatalError("No anchors found!")
-        }
-        
-        // Determine which anchors are active
-        var activeAnchors = [Anchor]()
-        var activeDistances = [Float]()
-        for i in 0..<distances.count {
-            if let distance = distances[i] {
-                activeAnchors.append(anchors[i])
-                activeDistances.append(distance)
-            }
-        }
+    init(anchors: [Anchor], distances: [Float]) {
+        activeAnchors = anchors
         
         let settings = IndoorLocationManager.shared.filterSettings
         
         let pos_sig = Float(settings.distanceUncertainty)
+        let acc_sig = Float(settings.accelerationUncertainty)
         var proc_fac = sqrt(Float(settings.processingUncertainty))
         let dt = settings.updateTime
         numberOfParticles = settings.numberOfParticles
@@ -98,15 +87,26 @@ class ParticleFilter: BayesianFilter {
         
         // R is a (numAnchors + 2) x (numAnchors + 2) covariance matrix for the measurement noise
         R = [Float]()
+        for i in 0..<anchors.count + 2 {
+            for j in 0..<anchors.count + 2 {
+                if (i == j && i < anchors.count) {
+                    R.append(pos_sig)
+                } else if (i == j && i >= anchors.count) {
+                    R.append(acc_sig)
+                } else {
+                    R.append(0)
+                }
+            }
+        }
         
         // Store inverse of matrix R as well to avoid computing it in every step for every particle
-        R_inv = [Float]()
+        R_inv = R.inverse()
         
         particles = [Particle]()
         
         super.init()
         
-        if let position = leastSquares(anchors: activeAnchors.map { $0.position }, distances: activeDistances) {
+        if let position = leastSquares(anchors: activeAnchors.map { $0.position }, distances: distances) {
             // If a least squares estimate is available, use it to initialize all particles around that position.
             for _ in 0..<numberOfParticles {
                 let (r1, r2) = Float.randomGaussian()
@@ -117,8 +117,8 @@ class ParticleFilter: BayesianFilter {
         } else {
             // If there were not enough anchors for a least squares estimate, initialize all particles on a circle around one anchor.
             // Determine the nearest distance and the associated anchor
-            let nearestDistance = activeDistances.min()!
-            let nearestAnchor = activeAnchors[activeDistances.index(of: nearestDistance)!]
+            let nearestDistance = distances.min()!
+            let nearestAnchor = activeAnchors[distances.index(of: nearestDistance)!]
             
             for _ in 0..<numberOfParticles {
                 let phi = Float.random(upperBound: 2 * Float.pi)

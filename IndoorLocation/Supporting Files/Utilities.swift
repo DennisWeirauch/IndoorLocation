@@ -295,10 +295,15 @@ func computeNormalDistribution(x: [Float], m: [Float], forTriangularCovariance P
     return log(prefactor) + exponent
 }
 
-func alertWithTitle(_ title: String, message: String? = nil) {
+func alertWithTitle(_ title: String, message: String? = nil, actions: [UIAlertAction]? = nil) {
     let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
-    let action = UIAlertAction(title: "OK", style: .default)
-    alertController.addAction(action)
+    
+    if let actions = actions {
+        actions.forEach { action in alertController.addAction(action) }
+    } else {
+        let action = UIAlertAction(title: "OK", style: .default)
+        alertController.addAction(action)
+    }
     
     guard let mapViewController = UIApplication.shared.keyWindow?.rootViewController else { return }
     

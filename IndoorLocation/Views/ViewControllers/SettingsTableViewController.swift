@@ -71,40 +71,31 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
         self.view.addGestureRecognizer(tapGestureRecognizer)
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
+    override func viewDidDisappear(_ animated: Bool) {
         // Initialize Filter
         switch filterSettings.filterType {
         case .none:
             IndoorLocationManager.shared.filter = BayesianFilter()
         case .kalman:
-            guard let initialDistances = IndoorLocationManager.shared.initialDistances else { return }
-            IndoorLocationManager.shared.filter = KalmanFilter(distances: initialDistances)
+            guard let anchors = IndoorLocationManager.shared.anchors,
+                let initialDistances = IndoorLocationManager.shared.initialDistances else { return }
+            IndoorLocationManager.shared.filter = KalmanFilter(anchors: anchors.filter({ $0.isActive }), distances: initialDistances)
         case .particle:
-            guard let initialDistances = IndoorLocationManager.shared.initialDistances else { return }
-            IndoorLocationManager.shared.filter = ParticleFilter(distances: initialDistances)
+            guard let anchors = IndoorLocationManager.shared.anchors,
+                let initialDistances = IndoorLocationManager.shared.initialDistances else { return }
+            IndoorLocationManager.shared.filter = ParticleFilter(anchors: anchors.filter({ $0.isActive }), distances: initialDistances)
         }
         
         if calibrationPending {
-            //            alertWithTitle("Attention", message: "The specified anchors have not been calibrated. Changes for ranging are only visible after calibration.")
-            let alertController = UIAlertController(title: "Attention", message: "Changes in calibration have not been applied. Do you want to execute calibration to apply changes?", preferredStyle: .alert)
-            
             let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { _ in
                 IndoorLocationManager.shared.anchors = self.calibratedAnchors
             }
-            alertController.addAction(cancelAction)
             
             let calibrateAction = UIAlertAction(title: "Calibrate", style: .default) { _ in
                 IndoorLocationManager.shared.calibrate()
             }
-            alertController.addAction(calibrateAction)
-            
-            guard let mapViewController = UIApplication.shared.keyWindow?.rootViewController else { return }
-            
-            //            if let settingsViewController = mapViewController.presentedViewController {
-            //                settingsViewController.present(alertController, animated: true, completion: nil)
-            //            } else {
-            mapViewController.present(alertController, animated: true, completion: nil)
-            //            }
+
+            alertWithTitle("Attention", message: "Changes in calibration have not been applied. Do you want to execute calibration to apply changes?", actions: [cancelAction, calibrateAction])
         }
     }
 

@@ -103,6 +103,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     private var distanceViews: [EllipseView]?
     
     private var calibrationButton: UIButton!
+    private var cancelCalibrationButton: UIButton!
     
     private var lastPositions = [CGPoint]()
     
@@ -152,8 +153,15 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         floorplanView.isHidden = true
         mapView.addSubview(floorplanView)
         
+        // Set up cancelCalibrationButton
+        cancelCalibrationButton = UIButton(frame: CGRect(x: frame.width / 8, y: frame.maxY - 120, width: 50, height: 50))
+        cancelCalibrationButton.setImage(UIImage(named: "cancelIcon"), for: .normal)
+        cancelCalibrationButton.addTarget(self, action: #selector(didTapCancelCalibrationButton(_:)), for: .touchUpInside)
+        cancelCalibrationButton.isHidden = true
+        addSubview(cancelCalibrationButton)
+        
         // Set up calibrationButton
-        calibrationButton = UIButton(frame: CGRect(x: frame.width / 6, y: frame.maxY - 120, width: 2 * frame.width / 3, height: 50))
+        calibrationButton = UIButton(frame: CGRect(x: cancelCalibrationButton.frame.maxX + 5, y: frame.maxY - 120, width: 3 * frame.width / 4 - 55, height: 50))
         calibrationButton.layer.cornerRadius = calibrationButton.frame.height / 2
         calibrationButton.backgroundColor = .blue
         calibrationButton.setTitle("Calibrate from view", for: .normal)
@@ -338,6 +346,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         sender.view?.center = CGPoint(x: (sender.view?.center.x)! + translation.x, y: (sender.view?.center.y)! + translation.y)
         sender.setTranslation(CGPoint.zero, in: mapView)
         calibrationButton.isHidden = false
+        cancelCalibrationButton.isHidden = false
     }
     
     func didTapCalibrationButton(_ sender: UIButton) {
@@ -358,5 +367,14 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         delegate?.didDoCalibrationFromView(newAnchors: newAnchors)
         
         calibrationButton.isHidden = true
+        cancelCalibrationButton.isHidden = true
+    }
+    
+    func didTapCancelCalibrationButton(_ sender: UIButton) {
+        // Restore view from stored anchors
+        setAnchors()
+        
+        calibrationButton.isHidden = true
+        cancelCalibrationButton.isHidden = true
     }
 }

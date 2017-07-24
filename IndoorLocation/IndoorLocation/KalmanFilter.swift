@@ -21,27 +21,17 @@ class KalmanFilter: BayesianFilter {
     
     var activeAnchors = [Anchor]()
     
-    init?(distances: [Float?]) {
-        guard let anchors = IndoorLocationManager.shared.anchors else {
-            fatalError("No anchors found!")
-        }
+    init?(anchors: [Anchor], distances: [Float]) {
         
-        // Determine which anchors are active
-        var activeAnchors = [Anchor]()
-        var activeDistances = [Float]()
-        for i in 0..<distances.count {
-            if let distance = distances[i] {
-                activeAnchors.append(anchors[i])
-                activeDistances.append(distance)
-            }
-        }
+        activeAnchors = anchors
         
         // Compute least squares algorithm
-        guard let position = leastSquares(anchors: activeAnchors.map { $0.position }, distances: activeDistances) else { return nil }
+        guard let position = leastSquares(anchors: anchors.map { $0.position }, distances: distances) else { return nil }
         
         let settings = IndoorLocationManager.shared.filterSettings
 
         let pos_sig = Float(settings.distanceUncertainty)
+        let acc_sig = Float(settings.accelerationUncertainty)
         var proc_fac = sqrt(Float(settings.processingUncertainty))
         let dt = settings.updateTime
         
@@ -92,6 +82,17 @@ class KalmanFilter: BayesianFilter {
         
         // R is a (numAnchors + 2) x (numAnchors + 2) covariance matrix for the measurement noise
         R = [Float]()
+        for i in 0..<anchors.count + 2 {
+            for j in 0..<anchors.count + 2 {
+                if (i == j && i < anchors.count) {
+                    R.append(pos_sig)
+                } else if (i == j && i >= anchors.count) {
+                    R.append(acc_sig)
+                } else {
+                    R.append(0)
+                }
+            }
+        }
         
         // P is a stateDim x stateDim covariance matrix for the current state. It is initialized with the selected distance uncertainty
         P = [Float]()
