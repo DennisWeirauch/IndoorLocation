@@ -154,11 +154,7 @@ extension Array where Iterator.Element == Float {
         return L
     }
     
-    /**
-     Compute a positive definite matrix from a positive semidefinite matrix by setting zero eigenvalues to small values
-     - Returns: A positive definite matrix
-     */
-    func positiveDefiniteMatrix() -> [Float] {
+    func computeEigenvalueDecomposition() -> (eigenvalues: [Float], eigenvectors: [Float]) {
         // Execute eigenvalue decomposition
         let dim = Int(sqrt(Float(self.count)))
         
@@ -188,8 +184,20 @@ extension Array where Iterator.Element == Float {
         // Execute dgeev() again to compute eigenvalues and eigenvectors
         sgeev_(jobvl, jobvr, &n, &a, &n, &wr, &wi, &vl, &n, &vr, &n, &work, &lwork, &info)
         
+        return (eigenvalues: wr, eigenvectors: vr)
+    }
+    
+    /**
+     Compute a positive definite matrix from a positive semidefinite matrix by setting zero eigenvalues to small values
+     - Returns: A positive definite matrix
+     */
+    func positiveDefiniteMatrix() -> [Float] {
+        let dim = Int(sqrt(Float(self.count)))
+
+        let (eigenvalues, eigenvectors) = self.computeEigenvalueDecomposition()
+        
         // Fix zero or negative eigenvalues
-        let fixedEigenvalues = wr.map { $0 < 1e-10 ? 1e-6 : $0 }
+        let fixedEigenvalues = eigenvalues.map { $0 < 1e-10 ? 1e-6 : $0 }
         
         var D = [Float]()
         for i in 0..<dim {
@@ -203,10 +211,10 @@ extension Array where Iterator.Element == Float {
         }
         
         // Compute and return A = V * D * inv(V)
-        var A = [Float](repeating: 0, count: vr.count)
-        vDSP_mmul(vr, 1, D, 1, &A, 1, vDSP_Length(dim), vDSP_Length(dim), vDSP_Length(dim))
+        var A = [Float](repeating: 0, count: eigenvectors.count)
+        vDSP_mmul(eigenvectors, 1, D, 1, &A, 1, vDSP_Length(dim), vDSP_Length(dim), vDSP_Length(dim))
         
-        vDSP_mmul(A, 1, vr.inverse(), 1, &A, 1, vDSP_Length(dim), vDSP_Length(dim), vDSP_Length(dim))
+        vDSP_mmul(A, 1, eigenvectors.inverse(), 1, &A, 1, vDSP_Length(dim), vDSP_Length(dim), vDSP_Length(dim))
         
         return A
     }

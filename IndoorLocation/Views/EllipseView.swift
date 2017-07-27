@@ -9,8 +9,8 @@
 import UIKit
 
 enum EllipseType {
-    case covariance((x: Float, y: Float))
-    case distance(radius: Float)
+    case covariance((a: CGFloat, b: CGFloat, angle: CGFloat))
+    case distance(radius: CGFloat)
 }
 
 class EllipseView: UIView {
@@ -23,14 +23,16 @@ class EllipseView: UIView {
         
         var width: CGFloat
         var height: CGFloat
+        var rotationAngle: CGFloat?
         
         switch ellipseType {
         case .covariance(let covariance):
-            width = 2 * CGFloat(covariance.x)
-            height = 2 * CGFloat(covariance.y)
+            width = covariance.a
+            height = covariance.b
+            rotationAngle = covariance.angle
         case .distance(let radius):
-            width = 2 * CGFloat(radius)
-            height = 2 * CGFloat(radius)
+            width = 2 * radius
+            height = 2 * radius
         }
         
         let frameRect = CGRect(x: position.x - width / 2, y: position.y - height / 2, width: width, height: height)
@@ -38,6 +40,10 @@ class EllipseView: UIView {
         super.init(frame: frameRect)
         
         backgroundColor = .clear
+        
+        if let rotationAngle = rotationAngle {
+            transform = CGAffineTransform(rotationAngle: rotationAngle)
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -45,7 +51,6 @@ class EllipseView: UIView {
     }
     
     override func draw(_ rect: CGRect) {
-        
         let ellipsePath = UIBezierPath(ovalIn: CGRect(x: 0, y: 0, width: rect.width, height: rect.height))
         
         ellipseLayer = CAShapeLayer()
@@ -67,15 +72,16 @@ class EllipseView: UIView {
         
         var width: CGFloat
         var height: CGFloat
+        var rotationAngle: CGFloat?
         
         switch ellipseType {
         case .covariance(let covariance):
-            //FIXME: Remove multiplication by 5
-            width = 2 * CGFloat(covariance.x * 5)
-            height = 2 * CGFloat(covariance.y * 5)
+            width = covariance.a
+            height = covariance.b
+            rotationAngle = covariance.angle
         case .distance(let radius):
-            width = 2 * CGFloat(radius)
-            height = 2 * CGFloat(radius)
+            width = 2 * radius
+            height = 2 * radius
         }
         
         let frameCenter = position ?? center
@@ -83,5 +89,9 @@ class EllipseView: UIView {
         
         let ellipsePath = UIBezierPath(ovalIn: CGRect(x: 0, y: 0, width: width, height: height))
         ellipseLayer.path = ellipsePath.cgPath
+        
+        if let rotationAngle = rotationAngle {
+            transform = CGAffineTransform(rotationAngle: rotationAngle)
+        }
     }
 }

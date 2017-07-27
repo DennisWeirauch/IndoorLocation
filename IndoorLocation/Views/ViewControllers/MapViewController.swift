@@ -40,15 +40,18 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
         indoorMapView.anchors = anchors
     }
     
-    func updateActiveAnchors(_ anchors: [Anchor], distances: [Float]) {
+    func updateActiveAnchors(_ anchors: [Anchor], distances: [Float], acceleration: [Float]) {
         if (indoorMapView.anchors == nil || (indoorMapView.anchors!.map { $0.isActive } != anchors.map { $0.isActive })) {
             indoorMapView.anchors = anchors
         }
-        indoorMapView.anchorDistances = distances
+        indoorMapView.anchorDistances = distances.map { CGFloat($0) }
+        indoorMapView.acceleration = acceleration.map { CGFloat($0) }
     }
     
-    func updateCovariance(covX: Float, covY: Float) {
-        indoorMapView.covariance = (x: covX, y: covY)
+    func updateCovariance(eigenValue1: Float, eigenValue2: Float, angle: Float) {
+        let a = CGFloat(2 * sqrt(5.991) * eigenValue1)
+        let b = CGFloat(2 * sqrt(5.991) * eigenValue2)
+        indoorMapView.covariance = (a: a, b: b, angle: CGFloat(angle))
     }
     
     func updateParticles(_ particles: [Particle]) {
@@ -69,13 +72,16 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
     }
     
     //MARK: IndoorMapViewDelegate
-    func didDoCalibrationFromView(newAnchors: [Anchor]) {
-        // Set settings to manual calibration
-        IndoorLocationManager.shared.filterSettings.calibrationModeIsAutomatic = false
-        
+    func didDoCalibrationFromView(newAnchors: [Anchor]) {        
         // Replace anchors with newAnchors and calibrate
         IndoorLocationManager.shared.anchors = newAnchors
-        IndoorLocationManager.shared.calibrate()
+        IndoorLocationManager.shared.calibrate() { error in
+            if let error = error {
+                alertWithTitle("Error", message: error.localizedDescription)
+            } else {
+                alertWithTitle("Success", message: "Calibration Successful!")
+            }
+        }
     }
     
     //MARK: Public API

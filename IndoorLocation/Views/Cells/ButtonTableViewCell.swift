@@ -16,7 +16,7 @@ class ButtonTableViewCell: UITableViewCell {
 
     weak var delegate: ButtonTableViewCellDelegate?
     
-    var button: UIButton?
+    var button: UIButton!
     
     //MARK: Public API
     func setupWithText(_ text: String, delegate: ButtonTableViewCellDelegate) {
@@ -28,8 +28,10 @@ class ButtonTableViewCell: UITableViewCell {
         self.delegate = delegate
                 
         button = UIButton(frame: contentView.frame)
-        guard let button = button else { return }
-        ButtonHelper.setupButton(button, text: text)
+        
+        button.setTitle(text, for: .normal)
+        button.setTitleColor(button.tintColor, for: .normal)
+        
         button.addTarget(self, action: #selector(onButtonTapped(_:)), for: .touchUpInside)
         
         contentView.addSubview(button)

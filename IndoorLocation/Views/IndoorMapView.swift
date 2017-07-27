@@ -21,7 +21,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         }
     }
     
-    var areMeasurementsVisible = false {
+    var areMeasurementsVisible = true {
         didSet {
             if !areMeasurementsVisible {
                 distanceViews?.forEach { $0.removeFromSuperview() }
@@ -68,7 +68,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         }
     }
     
-    var covariance: (x: Float, y: Float)? {
+    var covariance: (a: CGFloat, b: CGFloat, angle: CGFloat)? {
         didSet {
             updateCovariance()
         }
@@ -80,10 +80,18 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         }
     }
     
-    var anchorDistances: [Float]? {
+    var anchorDistances: [CGFloat]? {
         didSet {
             if areMeasurementsVisible {
                 updateAnchorDistances()
+            }
+        }
+    }
+    
+    var acceleration: [CGFloat]? {
+        didSet {
+            if areMeasurementsVisible {
+                updateAcceleration()
             }
         }
     }
@@ -101,6 +109,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     private var covarianceView: EllipseView?
     private var trajectoryView: TrajectoryView?
     private var distanceViews: [EllipseView]?
+    private var vectorViews: [VectorView]?
     
     private var calibrationButton: UIButton!
     private var cancelCalibrationButton: UIButton!
@@ -131,7 +140,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     
     private func setupView() {
         // Set up mapView
-        mapView = UIView(frame: CGRect(x: 0, y: 0, width: 1000, height: 1000))
+        mapView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 10))
         addSubview(mapView)
         
         // Set up floorplanView
@@ -302,6 +311,26 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
                 mapView.addSubview(distanceView)
                 distanceViews?.append(distanceView)
             }
+        }
+    }
+    
+    private func updateAcceleration() {
+        guard let acceleration = acceleration,
+            let position = position else { return }
+        
+        if vectorViews != nil {
+            vectorViews?[0].updateVector(withOrigin: position, vector: CGSize(width: acceleration[0], height: 0))
+            vectorViews?[1].updateVector(withOrigin: position, vector: CGSize(width: 0, height: acceleration[1]))
+        } else {
+            vectorViews?.forEach { $0.removeFromSuperview() }
+            
+            // Initialize vectors with unit vectors
+            let xVector = VectorView(origin: position, vector: CGSize(width: 1, height: 0))
+            let yVector = VectorView(origin: position, vector: CGSize(width: 0, height: 1))
+            mapView.addSubview(xVector)
+            mapView.addSubview(yVector)
+            
+            vectorViews = [xVector, yVector]
         }
     }
     

@@ -36,11 +36,17 @@ class Particle {
     /**
      Update state by drawing a value from the importance density of the particle
      */
-    func updateState() {
-        // Compute mean = F * state
+    func updateState(u: [Float]) {
+        // Compute mean = F * state + A * u
+        var A_u = [Float](repeating: 0, count: state.count)
+        vDSP_mmul(filter.A, 1, u, 1, &A_u, 1, vDSP_Length(state.count), 1, 2)
+        
         var mean = [Float](repeating: 0, count: state.count)
         vDSP_mmul(filter.F, 1, state, 1, &mean, 1, vDSP_Length(state.count), 1, vDSP_Length(state.count))
         
+        vDSP_vadd(mean, 1, A_u, 1, &mean, 1, vDSP_Length(state.count))
+        
+        // Draw new state from specified Gaussian distribution
         state = [Float].randomGaussianVector(mean: mean, A: filter.G)
     }
     
@@ -80,24 +86,19 @@ class Particle {
      Evaluates the measurement equation
      - Parameter state: The current state to evaluate
      - Parameter anchors: The currently active anchors
-     - Returns: A vector containing the distances to all anchors and the accelerations in format: [dist0, ..., distN, xAcc, yAcc]
+     - Returns: A vector containing the distances to all anchors
      */
     private func h(_ state: [Float], anchors: [Anchor]) -> [Float] {
         let anchorPositions = anchors.map { $0.position }
         
         let xPos = state[0]
         let yPos = state[1]
-        let xAcc = state[4]
-        let yAcc = state[5]
         
         var h = [Float]()
         for i in 0..<anchors.count {
             // Determine the euclidean distance to each anchor point
             h.append(sqrt((Float(anchorPositions[i].x) - xPos) ^^ 2 + (Float(anchorPositions[i].y) - yPos) ^^ 2))
         }
-        // Append accelerations in x and y direction
-        h.append(xAcc)
-        h.append(yAcc)
         
         return h
     }

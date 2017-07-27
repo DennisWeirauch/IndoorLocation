@@ -12,7 +12,6 @@ enum TaskType : String {
     case beginRanging = "r"
     case stopRanging = "s"
     case calibrate = "c"
-    case setAnchors = "a"
 }
 
 enum NetworkResult {

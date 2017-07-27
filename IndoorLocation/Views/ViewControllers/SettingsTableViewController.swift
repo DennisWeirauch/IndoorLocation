@@ -30,8 +30,8 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
     }
     
     enum SwitchType: Int {
-        case floorplanVisible = 0
-        case measurementsVisible
+        case isFloorplanVisible = 0
+        case areMeasurementsVisible
     }
     
     let tableViewSections = [SettingsTableViewSection.view.rawValue,
@@ -44,14 +44,19 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
     var calibrationPending = false
     var calibratedAnchors = IndoorLocationManager.shared.anchors
     
+    var filterInitializationPending = false
+    
     //MARK: ViewController lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
 
         let headerView = UIView(frame: CGRect(x: 0, y: 0, width: 200, height: 50))
         let titleLabel = UILabel(frame: CGRect(x: 0, y: 12.5, width: 200, height: 25))
-        LabelHelper.setupLabel(titleLabel, withText: "Settings", fontSize: 20, alignment: .center)
+        titleLabel.text = "Settings"
+        titleLabel.font = UIFont.systemFont(ofSize: 20)
+        titleLabel.textAlignment = .center
         headerView.addSubview(titleLabel)
+        
         tableView.tableHeaderView = headerView
         tableView.bounces = false
         tableView.showsVerticalScrollIndicator = false
@@ -69,21 +74,26 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tapGestureRecognizer.cancelsTouchesInView = false
         self.view.addGestureRecognizer(tapGestureRecognizer)
+        
+        calibrationPending = false
+        filterInitializationPending = false
     }
     
     override func viewDidDisappear(_ animated: Bool) {
-        // Initialize Filter
-        switch filterSettings.filterType {
-        case .none:
-            IndoorLocationManager.shared.filter = BayesianFilter()
-        case .kalman:
-            guard let anchors = IndoorLocationManager.shared.anchors,
-                let initialDistances = IndoorLocationManager.shared.initialDistances else { return }
-            IndoorLocationManager.shared.filter = KalmanFilter(anchors: anchors.filter({ $0.isActive }), distances: initialDistances)
-        case .particle:
-            guard let anchors = IndoorLocationManager.shared.anchors,
-                let initialDistances = IndoorLocationManager.shared.initialDistances else { return }
-            IndoorLocationManager.shared.filter = ParticleFilter(anchors: anchors.filter({ $0.isActive }), distances: initialDistances)
+        // Initialize Filter if settings have changed
+        if filterInitializationPending {
+            switch filterSettings.filterType {
+            case .none:
+                IndoorLocationManager.shared.filter = BayesianFilter()
+            case .kalman:
+                guard let anchors = IndoorLocationManager.shared.anchors,
+                    let initialDistances = IndoorLocationManager.shared.initialDistances else { return }
+                IndoorLocationManager.shared.filter = KalmanFilter(anchors: anchors.filter({ $0.isActive }), distances: initialDistances)
+            case .particle:
+                guard let anchors = IndoorLocationManager.shared.anchors,
+                    let initialDistances = IndoorLocationManager.shared.initialDistances else { return }
+                IndoorLocationManager.shared.filter = ParticleFilter(anchors: anchors.filter({ $0.isActive }), distances: initialDistances)
+            }
         }
         
         if calibrationPending {
@@ -92,7 +102,13 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
             }
             
             let calibrateAction = UIAlertAction(title: "Calibrate", style: .default) { _ in
-                IndoorLocationManager.shared.calibrate()
+                IndoorLocationManager.shared.calibrate() { error in
+                    if let error = error {
+                        alertWithTitle("Error", message: error.localizedDescription)
+                    } else {
+                        alertWithTitle("Success", message: "Calibration Successful!")
+                    }
+                }
             }
 
             alertWithTitle("Attention", message: "Changes in calibration have not been applied. Do you want to execute calibration to apply changes?", actions: [cancelAction, calibrateAction])
@@ -114,15 +130,13 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
         case .view:
             return 2
         case .calibration:
-            if filterSettings.calibrationModeIsAutomatic {
-                return 2
-            } else {
-                var numAnchorCells = IndoorLocationManager.shared.anchors?.count ?? 0
-                if numAnchorCells < 6 {
-                    numAnchorCells += 1
-                }
-                return 2 + numAnchorCells
+            var numAnchorCells = IndoorLocationManager.shared.anchors?.count ?? 0
+            if numAnchorCells < 20 {
+                // If less than 20 anchors are entered add an empty cell
+                numAnchorCells += 1
             }
+            return numAnchorCells + 1   // Add a cell for calibration button
+            
         case .filter:
             switch filterSettings.filterType {
             case .none:
@@ -146,21 +160,15 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
         case .view:
             cell = tableView.dequeueReusableCell(withIdentifier: String(describing: SwitchTableViewCell.self), for: indexPath)
         case .calibration:
-            if (indexPath.row == 0) {
-                cell = tableView.dequeueReusableCell(withIdentifier: String(describing: SegmentedControlTableViewCell.self), for: indexPath)
-            } else if filterSettings.calibrationModeIsAutomatic {
-                cell = tableView.dequeueReusableCell(withIdentifier: String(describing: ButtonTableViewCell.self), for: indexPath)
+            var numAnchorCells = IndoorLocationManager.shared.anchors?.count ?? 0
+            if numAnchorCells < 20 {
+                // Add an empty cell if less than 20 anchors are entered
+                numAnchorCells += 1
+            }
+            if (indexPath.row < numAnchorCells) {
+                cell = tableView.dequeueReusableCell(withIdentifier: String(describing: AnchorTableViewCell.self), for: indexPath)
             } else {
-                var numAnchorCells = IndoorLocationManager.shared.anchors?.count ?? 0
-                if numAnchorCells < 6 {
-                    // Add an empty cell if less than 6 anchors are entered
-                    numAnchorCells += 1
-                }
-                if (indexPath.row <= numAnchorCells) {
-                    cell = tableView.dequeueReusableCell(withIdentifier: String(describing: AnchorTableViewCell.self), for: indexPath)
-                } else {
-                    cell = tableView.dequeueReusableCell(withIdentifier: String(describing: ButtonTableViewCell.self), for: indexPath)
-                }
+                cell = tableView.dequeueReusableCell(withIdentifier: String(describing: ButtonTableViewCell.self), for: indexPath)
             }
         case .filter:
             if (indexPath.row == 0) {
@@ -193,23 +201,10 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
         
     //MARK: SegmentedControlTableViewCellDelegate
     func onSegmentedControlValueChanged(_ sender: UISegmentedControl) {
-        
-        guard let tableViewSection = SettingsTableViewSection(rawValue: sender.tag) else {
-            fatalError("Could not retrieve section")
-        }
-        
-        switch tableViewSection {
-        case .calibration:
-            filterSettings.calibrationModeIsAutomatic = sender.selectedSegmentIndex == 0
-            calibrationPending = true
-            tableView.reloadData()
-        case .filter:
-            filterSettings.filterType = FilterType(rawValue: sender.selectedSegmentIndex) ?? .none
-            tableView.reloadData()
-            settingsDelegate?.changeFilterType(filterSettings.filterType)
-        default:
-            break
-        }
+        filterSettings.filterType = FilterType(rawValue: sender.selectedSegmentIndex) ?? .none
+        tableView.reloadData()
+        settingsDelegate?.changeFilterType(filterSettings.filterType)
+        filterInitializationPending = true
     }
     
     //MARK: SliderTableViewCellDelegate
@@ -229,13 +224,21 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
         case .numberOfParticles:
             filterSettings.numberOfParticles = Int(sender.value)
         }
+        
+        filterInitializationPending = true
     }
     
     //MARK: ButtonTableViewCellDelegate
     func onButtonTapped(_ sender: UIButton) {
-        IndoorLocationManager.shared.calibrate()
-        calibrationPending = false
-        calibratedAnchors = IndoorLocationManager.shared.anchors
+        IndoorLocationManager.shared.calibrate() { error in
+            if let error = error {
+                alertWithTitle("Error", message: error.localizedDescription)
+            } else {
+                alertWithTitle("Success", message: "Calibration Successful!")
+                self.calibrationPending = false
+                self.calibratedAnchors = IndoorLocationManager.shared.anchors
+            }
+        }
     }
     
     //MARK: AnchorTableViewCellDelegate
@@ -259,11 +262,11 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
         }
         
         switch switchType {
-        case .floorplanVisible:
-            filterSettings.floorplanVisible = sender.isOn
+        case .isFloorplanVisible:
+            filterSettings.isFloorplanVisible = sender.isOn
             settingsDelegate?.toggleFloorplanVisible(sender.isOn)
-        case .measurementsVisible:
-            filterSettings.measurementsVisible = sender.isOn
+        case .areMeasurementsVisible:
+            filterSettings.areMeasurementsVisible = sender.isOn
             settingsDelegate?.toggleMeasurementsVisible(sender.isOn)
         }
     }
@@ -280,24 +283,20 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
             if let cell = cell as? SwitchTableViewCell {
                 switch indexPath.row {
                 case 0:
-                    cell.setupWithText("Floorplan", isOn: filterSettings.floorplanVisible, delegate: self, tag: SwitchType.floorplanVisible.rawValue)
+                    cell.setupWithText("Floorplan", isOn: filterSettings.isFloorplanVisible, delegate: self, tag: SwitchType.isFloorplanVisible.rawValue)
                 case 1:
-                    cell.setupWithText("Measurements", isOn: filterSettings.measurementsVisible, delegate: self, tag: SwitchType.measurementsVisible.rawValue)
+                    cell.setupWithText("Measurements", isOn: filterSettings.areMeasurementsVisible, delegate: self, tag: SwitchType.areMeasurementsVisible.rawValue)
                 default:
                     break
                 }
             }
             
         case .calibration:
-            if let cell = cell as? SegmentedControlTableViewCell {
-                let selectedSegmentIndex = filterSettings.calibrationModeIsAutomatic ? 0 : 1
-                
-                cell.setupWithSegments(["Automatic", "Manual"], selectedSegmentIndex: selectedSegmentIndex, delegate: self, tag: tableViewSection.rawValue)
-            } else if let cell = cell as? ButtonTableViewCell {
+            if let cell = cell as? ButtonTableViewCell {
                 cell.setupWithText("Calibrate!", delegate: self)
             } else if let cell = cell as? AnchorTableViewCell {
                 if let anchors = IndoorLocationManager.shared.anchors {
-                    let index = indexPath.row - 1
+                    let index = indexPath.row
                     if index < anchors.count {
                         cell.setupWithDelegate(self, anchor: anchors[index])
                     } else {
@@ -318,22 +317,23 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
                 case .kalman:
                     switch indexPath.row {
                     case 1:
-                        cell.setupWithValue(filterSettings.accelerationUncertainty, minValue: 1, maxValue: 100, text: "Acc. uncertainty:", delegate: self, tag: SliderType.accelerationUncertainty.rawValue)
+                        cell.setupWithValue(filterSettings.accelerationUncertainty, minValue: 1, maxValue: 100, text: "Acc. uncertainty:", unit: "cm/s²", delegate: self, tag: SliderType.accelerationUncertainty.rawValue)
                     case 2:
-                        cell.setupWithValue(filterSettings.distanceUncertainty, minValue: 1, maxValue: 100, text: "Dist. uncertainty:", delegate: self, tag: SliderType.distanceUncertainty.rawValue)
+                        cell.setupWithValue(filterSettings.distanceUncertainty, minValue: 1, maxValue: 100, text: "Dist. uncertainty:", unit: "cm", delegate: self, tag: SliderType.distanceUncertainty.rawValue)
                     case 3:
-                        cell.setupWithValue(filterSettings.processingUncertainty, minValue: 0, maxValue: 100, text: "Proc. uncertainty:", delegate: self, tag: SliderType.processingUncertainty.rawValue)
+                        cell.setupWithValue(filterSettings.processingUncertainty, minValue: 0, maxValue: 100, text: "Proc. uncertainty:", unit: "cm/s²", delegate: self, tag: SliderType.processingUncertainty.rawValue)
                     default:
                         break
                     }
                 case .particle:
                     switch indexPath.row {
                     case 1:
-                        cell.setupWithValue(filterSettings.accelerationUncertainty, minValue: 1, maxValue: 100, text: "Acc. uncertainty:", delegate: self, tag: SliderType.accelerationUncertainty.rawValue)
+                        //TODO: Remove acceleration uncertainty from particle filter
+                        cell.setupWithValue(0, minValue: 0, maxValue: 0, text: "Acc. uncertainty:", unit: "cm/s²", delegate: self, tag: SliderType.accelerationUncertainty.rawValue)
                     case 2:
-                        cell.setupWithValue(filterSettings.distanceUncertainty, minValue: 1, maxValue: 100, text: "Dist. uncertainty:", delegate: self, tag: SliderType.distanceUncertainty.rawValue)
+                        cell.setupWithValue(filterSettings.distanceUncertainty, minValue: 1, maxValue: 100, text: "Dist. uncertainty:", unit: "cm", delegate: self, tag: SliderType.distanceUncertainty.rawValue)
                     case 3:
-                        cell.setupWithValue(filterSettings.processingUncertainty, minValue: 0, maxValue: 100, text: "Proc. uncertainty:", delegate: self, tag: SliderType.processingUncertainty.rawValue)
+                        cell.setupWithValue(filterSettings.processingUncertainty, minValue: 0, maxValue: 1000, text: "Proc. uncertainty:", unit: "cm/s²", delegate: self, tag: SliderType.processingUncertainty.rawValue)
                     case 4:
                         cell.setupWithValue(filterSettings.numberOfParticles, minValue: 1, maxValue: 1000, text: "Particles:", delegate: self, tag: SliderType.numberOfParticles.rawValue)
                     default:

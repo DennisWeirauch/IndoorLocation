@@ -24,19 +24,16 @@
 		9595405B1F04F3DF0095755D /* TrajectoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9595405A1F04F3DF0095755D /* TrajectoryView.swift */; };
 		959FD16D1F1FA6FA00BFC2DE /* SwitchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959FD16C1F1FA6FA00BFC2DE /* SwitchTableViewCell.swift */; };
 		959FD1851F223C8700BFC2DE /* RaoBlackwellizedParticleFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959FD1841F223C8700BFC2DE /* RaoBlackwellizedParticleFilter.swift */; };
-		95A19DF01ED6C72A004BC415 /* LabelHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A19DEF1ED6C72A004BC415 /* LabelHelper.swift */; };
-		95A19DF31ED6C998004BC415 /* SliderHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A19DF21ED6C998004BC415 /* SliderHelper.swift */; };
-		95A19DF51ED6DAB7004BC415 /* TextFieldHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A19DF41ED6DAB7004BC415 /* TextFieldHelper.swift */; };
 		95A19DF71EDC3A81004BC415 /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A19DF61EDC3A81004BC415 /* SettingsTableViewController.swift */; };
 		95A19DF91EDC4080004BC415 /* SegmentedControlTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A19DF81EDC4080004BC415 /* SegmentedControlTableViewCell.swift */; };
 		95A19DFB1EDC4889004BC415 /* SliderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A19DFA1EDC4889004BC415 /* SliderTableViewCell.swift */; };
 		95A19DFF1EDD724C004BC415 /* ButtonTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A19DFE1EDD724C004BC415 /* ButtonTableViewCell.swift */; };
-		95A19E011EDD7448004BC415 /* ButtonHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A19E001EDD7448004BC415 /* ButtonHelper.swift */; };
 		95A1F61E1E8BB5C700D2CDD2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A1F61D1E8BB5C700D2CDD2 /* AppDelegate.swift */; };
 		95A1F6201E8BB5C700D2CDD2 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A1F61F1E8BB5C700D2CDD2 /* MapViewController.swift */; };
 		95A1F6251E8BB5C700D2CDD2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 95A1F6241E8BB5C700D2CDD2 /* Assets.xcassets */; };
 		95A1F6331E8BB5C800D2CDD2 /* IndoorLocationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A1F6321E8BB5C800D2CDD2 /* IndoorLocationTests.swift */; };
 		95A1F63E1E8BB5C800D2CDD2 /* IndoorLocationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A1F63D1E8BB5C800D2CDD2 /* IndoorLocationUITests.swift */; };
+		95BC59AE1F28A35000519C23 /* VectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BC59AD1F28A35000519C23 /* VectorView.swift */; };
 		95BDB2FD1F1CF14900EF2BC9 /* Particle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BDB2FC1F1CF14900EF2BC9 /* Particle.swift */; };
 		95C3C1AE1ECC3C5100704437 /* KalmanFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C3C1AD1ECC3C5100704437 /* KalmanFilter.swift */; };
 		95E3DCBB1E9D2F0E006D6C08 /* FilterSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E3DCBA1E9D2F0E006D6C08 /* FilterSettings.swift */; };
@@ -81,14 +78,10 @@
 		9595405A1F04F3DF0095755D /* TrajectoryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrajectoryView.swift; sourceTree = "<group>"; };
 		959FD16C1F1FA6FA00BFC2DE /* SwitchTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SwitchTableViewCell.swift; path = Cells/SwitchTableViewCell.swift; sourceTree = "<group>"; };
 		959FD1841F223C8700BFC2DE /* RaoBlackwellizedParticleFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RaoBlackwellizedParticleFilter.swift; sourceTree = "<group>"; };
-		95A19DEF1ED6C72A004BC415 /* LabelHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = LabelHelper.swift; path = Helpers/LabelHelper.swift; sourceTree = "<group>"; };
-		95A19DF21ED6C998004BC415 /* SliderHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SliderHelper.swift; path = Helpers/SliderHelper.swift; sourceTree = "<group>"; };
-		95A19DF41ED6DAB7004BC415 /* TextFieldHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = TextFieldHelper.swift; path = Helpers/TextFieldHelper.swift; sourceTree = "<group>"; };
 		95A19DF61EDC3A81004BC415 /* SettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SettingsTableViewController.swift; path = ViewControllers/SettingsTableViewController.swift; sourceTree = "<group>"; };
 		95A19DF81EDC4080004BC415 /* SegmentedControlTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SegmentedControlTableViewCell.swift; path = Cells/SegmentedControlTableViewCell.swift; sourceTree = "<group>"; };
 		95A19DFA1EDC4889004BC415 /* SliderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SliderTableViewCell.swift; path = Cells/SliderTableViewCell.swift; sourceTree = "<group>"; };
 		95A19DFE1EDD724C004BC415 /* ButtonTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ButtonTableViewCell.swift; path = Cells/ButtonTableViewCell.swift; sourceTree = "<group>"; };
-		95A19E001EDD7448004BC415 /* ButtonHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ButtonHelper.swift; path = Helpers/ButtonHelper.swift; sourceTree = "<group>"; };
 		95A1F61A1E8BB5C700D2CDD2 /* IndoorLocation.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IndoorLocation.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		95A1F61D1E8BB5C700D2CDD2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		95A1F61F1E8BB5C700D2CDD2 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MapViewController.swift; path = ViewControllers/MapViewController.swift; sourceTree = "<group>"; };
@@ -100,6 +93,7 @@
 		95A1F6391E8BB5C800D2CDD2 /* IndoorLocationUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IndoorLocationUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		95A1F63D1E8BB5C800D2CDD2 /* IndoorLocationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndoorLocationUITests.swift; sourceTree = "<group>"; };
 		95A1F63F1E8BB5C800D2CDD2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		95BC59AD1F28A35000519C23 /* VectorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VectorView.swift; sourceTree = "<group>"; };
 		95BDB2FC1F1CF14900EF2BC9 /* Particle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Particle.swift; sourceTree = "<group>"; };
 		95C3C1AD1ECC3C5100704437 /* KalmanFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KalmanFilter.swift; sourceTree = "<group>"; };
 		95E3DCBA1E9D2F0E006D6C08 /* FilterSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterSettings.swift; sourceTree = "<group>"; };
@@ -161,24 +155,10 @@
 			isa = PBXGroup;
 			children = (
 				95A19DFC1EDD6B9B004BC415 /* Cells */,
-				959540581F04EBFC0095755D /* EllipseView.swift */,
-				954B55F01EF0251C00AE923F /* IndoorMapView.swift */,
-				953AFC2E1F026C5B00FAD3D8 /* PointView.swift */,
-				9595405A1F04F3DF0095755D /* TrajectoryView.swift */,
+				95BC59AF1F28AA4500519C23 /* IndoorMapView */,
 				95A19DFD1EDD6BAF004BC415 /* ViewControllers */,
 			);
 			path = Views;
-			sourceTree = "<group>";
-		};
-		95A19DF11ED6C733004BC415 /* Helpers */ = {
-			isa = PBXGroup;
-			children = (
-				95A19E001EDD7448004BC415 /* ButtonHelper.swift */,
-				95A19DEF1ED6C72A004BC415 /* LabelHelper.swift */,
-				95A19DF21ED6C998004BC415 /* SliderHelper.swift */,
-				95A19DF41ED6DAB7004BC415 /* TextFieldHelper.swift */,
-			);
-			name = Helpers;
 			sourceTree = "<group>";
 		};
 		95A19DFC1EDD6B9B004BC415 /* Cells */ = {
@@ -229,7 +209,6 @@
 			children = (
 				95A1F61D1E8BB5C700D2CDD2 /* AppDelegate.swift */,
 				95A1F6241E8BB5C700D2CDD2 /* Assets.xcassets */,
-				95A19DF11ED6C733004BC415 /* Helpers */,
 				95E3DCCB1EA22244006D6C08 /* IndoorLocation */,
 				95E3DCC61EA10315006D6C08 /* Network */,
 				95AEABB91EBC796F005249FC /* Supporting Files */,
@@ -264,6 +243,18 @@
 				950769631E8D3F0400233FF8 /* Utilities.swift */,
 			);
 			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		95BC59AF1F28AA4500519C23 /* IndoorMapView */ = {
+			isa = PBXGroup;
+			children = (
+				959540581F04EBFC0095755D /* EllipseView.swift */,
+				954B55F01EF0251C00AE923F /* IndoorMapView.swift */,
+				953AFC2E1F026C5B00FAD3D8 /* PointView.swift */,
+				9595405A1F04F3DF0095755D /* TrajectoryView.swift */,
+				95BC59AD1F28A35000519C23 /* VectorView.swift */,
+			);
+			name = IndoorMapView;
 			sourceTree = "<group>";
 		};
 		95E3DCC61EA10315006D6C08 /* Network */ = {
@@ -491,20 +482,17 @@
 				95A19DFF1EDD724C004BC415 /* ButtonTableViewCell.swift in Sources */,
 				959FD1851F223C8700BFC2DE /* RaoBlackwellizedParticleFilter.swift in Sources */,
 				9595405B1F04F3DF0095755D /* TrajectoryView.swift in Sources */,
-				95A19DF01ED6C72A004BC415 /* LabelHelper.swift in Sources */,
 				95A1F6201E8BB5C700D2CDD2 /* MapViewController.swift in Sources */,
 				95E3DCBB1E9D2F0E006D6C08 /* FilterSettings.swift in Sources */,
+				95BC59AE1F28A35000519C23 /* VectorView.swift in Sources */,
 				95E3DCC81EA103A5006D6C08 /* IndoorLocationManager.swift in Sources */,
 				956227CA1E965F2700288A1A /* ParticleFilter.swift in Sources */,
 				95570C781EDD7E7000F15E30 /* AnchorTableViewCell.swift in Sources */,
 				95C3C1AE1ECC3C5100704437 /* KalmanFilter.swift in Sources */,
-				95A19DF31ED6C998004BC415 /* SliderHelper.swift in Sources */,
-				95A19DF51ED6DAB7004BC415 /* TextFieldHelper.swift in Sources */,
 				959540591F04EBFC0095755D /* EllipseView.swift in Sources */,
 				954B55F11EF0251C00AE923F /* IndoorMapView.swift in Sources */,
 				950769641E8D3F0400233FF8 /* Utilities.swift in Sources */,
 				95A19DF91EDC4080004BC415 /* SegmentedControlTableViewCell.swift in Sources */,
-				95A19E011EDD7448004BC415 /* ButtonHelper.swift in Sources */,
 				95A19DF71EDC3A81004BC415 /* SettingsTableViewController.swift in Sources */,
 				959FD16D1F1FA6FA00BFC2DE /* SwitchTableViewCell.swift in Sources */,
 				95E3DCC31EA0E014006D6C08 /* NetworkManager.swift in Sources */,

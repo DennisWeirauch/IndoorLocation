@@ -17,7 +17,7 @@ class SegmentedControlTableViewCell: UITableViewCell {
     //MARK: Stored properties
     weak var delegate: SegmentedControlTableViewCellDelegate?
     
-    var segmentedControl: UISegmentedControl?
+    var segmentedControl: UISegmentedControl!
     
     //MARK: Public API
     func setupWithSegments(_ segments: [String], selectedSegmentIndex: Int, delegate: SegmentedControlTableViewCellDelegate, tag: Int) {
@@ -29,7 +29,6 @@ class SegmentedControlTableViewCell: UITableViewCell {
         self.delegate = delegate
                 
         segmentedControl = UISegmentedControl(items: segments)
-        guard let segmentedControl = segmentedControl else { return }
         segmentedControl.frame = CGRect(x: 10, y: 5, width: contentView.frame.width - 20, height: 30)
         segmentedControl.selectedSegmentIndex = selectedSegmentIndex
         segmentedControl.addTarget(self, action: #selector(onSegmentedControlValueChanged(_:)), for: .valueChanged)

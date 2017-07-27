@@ -18,9 +18,9 @@ typealias Anchor = (id: Int, position: CGPoint, isActive: Bool)
 
 protocol IndoorLocationManagerDelegate {
     func setAnchors(_ anchors: [Anchor])
-    func updateActiveAnchors(_ anchors: [Anchor], distances: [Float])
+    func updateActiveAnchors(_ anchors: [Anchor], distances: [Float], acceleration: [Float])
     func updatePosition(_ position: CGPoint)
-    func updateCovariance(covX: Float, covY: Float)
+    func updateCovariance(eigenValue1: Float, eigenValue2: Float, angle: Float)
     func updateParticles(_ particles: [Particle])
 }
 
@@ -43,42 +43,40 @@ class IndoorLocationManager {
     private init() {}
     
     //MARK: Private API
-    private func parseData(_ stringData: String) -> [String : Float]? {
+    private func parseData(_ stringData: String) throws -> [String : Float] {
         
         // Remove carriage return
-        if let inlineStringData = stringData.components(separatedBy: "\r").first {
-            // Check that returned data is of expected format
-            if (inlineStringData.range(of: "([A-Za-z]+-?[0-9-]*=-?[0-9.]+&)*([A-Za-z]+-?[0-9.]*=-?[0-9.]+)", options: .regularExpression) != inlineStringData.startIndex..<inlineStringData.endIndex) {
-                alertWithTitle("Error", message: String(describing: inlineStringData))
-                return nil
-            }
-            
-            // Split string at "&" characters
-            let splitData = inlineStringData.components(separatedBy: "&")
-            
-            var parsedData = [String : Float]()
-            for component in splitData {
-                let key = component.components(separatedBy: "=")[0]
-                let value = Float(component.components(separatedBy: "=")[1])
-                parsedData[key] = value!
-            }
-            return parsedData
+        guard let inlineStringData = stringData.components(separatedBy: "\r").first else {
+            throw NSError(domain: "Error", code: 0, userInfo: [NSLocalizedDescriptionKey : "Received unexpected message from Arduino!"])
         }
-        alertWithTitle("Error", message: "Received unexpected format from Arduino!")
-        return nil
+        
+        // Check that returned data is of expected format
+        guard (inlineStringData.range(of: "([A-Za-z]+-?[0-9-]*=-?[0-9.]+&)*([A-Za-z]+-?[0-9.]*=-?[0-9.]+)", options: .regularExpression) == inlineStringData.startIndex..<inlineStringData.endIndex) else {
+            throw NSError(domain: "Error", code: 0, userInfo: [NSLocalizedDescriptionKey : "Received unexpected message from Arduino!"])
+        }
+        
+        // Split string at "&" characters
+        let splitData = inlineStringData.components(separatedBy: "&")
+        
+        var parsedData = [String : Float]()
+        for component in splitData {
+            let key = component.components(separatedBy: "=")[0]
+            let value = Float(component.components(separatedBy: "=")[1])
+            parsedData[key] = value!
+        }
+        return parsedData
     }
     
-    private func receivedCalibrationResult(_ result: NetworkResult) {
+    private func receivedCalibrationResult(_ result: NetworkResult) throws {
         switch result {
         case .success(let data):
             guard let data = data else {
-                alertWithTitle("Error", message: "No calibration data received!")
-                return
+                throw NSError(domain: "Error", code: 0, userInfo: [NSLocalizedDescriptionKey : "No calibration data received!"])
             }
             
             let stringData = String(data: data, encoding: String.Encoding.utf8)!
             
-            guard var anchorDict = self.parseData(stringData) else { return }
+            var anchorDict = try self.parseData(stringData)
             
             var anchors = [Anchor]()
             var distances = [Float]()
@@ -108,43 +106,54 @@ class IndoorLocationManager {
             initialDistances = distances
             
             isCalibrated = true
-            alertWithTitle("Success", message: "Calibration Successful!")
             
         case .failure(let error):
-            alertWithTitle("Error", message: error.localizedDescription)
+            throw error
         }
     }
     
     //MARK: Public API
-    func calibrate() {
-        if filterSettings.calibrationModeIsAutomatic {
-            NetworkManager.shared.pozyxTask(task: .calibrate) { result in
-                self.receivedCalibrationResult(result)
-            }
-        } else {
-            // Faking anchors as I'm too lazy to enter coordinates every time.
-            if (anchors == nil || !(anchors!.count > 0)) {
-                addAnchorWithID(Int("666D", radix: 16)!, x: 500, y: 0)
-                addAnchorWithID(Int("6F21", radix: 16)!, x: 390, y: 335)
-                addAnchorWithID(Int("6F59", radix: 16)!, x: 95, y: 130)
-                addAnchorWithID(Int("6F51", radix: 16)!, x: 195, y: 335)
-                // Not even existing anchors
-                addAnchorWithID(Int("6AAA", radix: 16)!, x: 0, y: 0)
-                addAnchorWithID(Int("6AAB", radix: 16)!, x: 250, y: 250)
-            }
-            
-            guard let anchors = anchors else { return }
-            var anchorStringData = ""
-            for (i, anchor) in anchors.enumerated() {
-                anchorStringData += "ID\(i)=\(anchor.id)&xPos\(i)=\(Int((anchor.position.x) * 10))&yPos\(i)=\(Int((anchor.position.y) * 10))"
-                if (i != anchors.count - 1) {
-                    anchorStringData += "&"
-                }
-            }
-            NetworkManager.shared.pozyxTask(task: .setAnchors, data: anchorStringData) { result in
-                self.receivedCalibrationResult(result)
+    func calibrate(resultCallback: @escaping (Error?) -> ()) {
+        // Faking anchors as I'm too lazy to enter coordinates every time.
+        if (anchors == nil || !(anchors!.count > 0)) {
+            addAnchorWithID(Int("666D", radix: 16)!, x: 500, y: 0)
+            addAnchorWithID(Int("6F21", radix: 16)!, x: 390, y: 335)
+            addAnchorWithID(Int("6F59", radix: 16)!, x: 95, y: 130)
+            addAnchorWithID(Int("6F51", radix: 16)!, x: 195, y: 335)
+            // Not even existing anchors
+            addAnchorWithID(Int("1111", radix: 16)!, x: 0, y: 0)
+            addAnchorWithID(Int("1112", radix: 16)!, x: 345, y: 624)
+            addAnchorWithID(Int("1113", radix: 16)!, x: 234, y: 0)
+            addAnchorWithID(Int("1114", radix: 16)!, x: 250, y: 250)
+            addAnchorWithID(Int("1115", radix: 16)!, x: 0, y: 654)
+            //                addAnchorWithID(Int("1116", radix: 16)!, x: 123, y: 12)
+            //                addAnchorWithID(Int("1117", radix: 16)!, x: 753, y: 54)
+            //                addAnchorWithID(Int("1118", radix: 16)!, x: 938, y: 834)
+            //                addAnchorWithID(Int("1119", radix: 16)!, x: 45, y: 234)
+            //                addAnchorWithID(Int("1120", radix: 16)!, x: 65, y: 7)
+            //                addAnchorWithID(Int("1121", radix: 16)!, x: 453, y: 24)
+            //                addAnchorWithID(Int("1122", radix: 16)!, x: 653, y: 983)
+            //                addAnchorWithID(Int("1123", radix: 16)!, x: 1453, y: 1038)
+            //                addAnchorWithID(Int("1124", radix: 16)!, x: 45, y: 1250)
+        }
+        
+        guard let anchors = anchors else { return }
+        var anchorStringData = ""
+        for (i, anchor) in anchors.enumerated() {
+            anchorStringData += "ID\(i)=\(anchor.id)&xPos\(i)=\(Int((anchor.position.x) * 10))&yPos\(i)=\(Int((anchor.position.y) * 10))"
+            if (i != anchors.count - 1) {
+                anchorStringData += "&"
             }
         }
+        NetworkManager.shared.pozyxTask(task: .calibrate, data: anchorStringData) { result in
+            do {
+                try self.receivedCalibrationResult(result)
+                resultCallback(nil)
+            } catch let error {
+                resultCallback(error)
+            }
+        }
+        
     }
     
     func beginRanging(resultCallback: @escaping (Error?) -> ()) {
@@ -159,7 +168,8 @@ class IndoorLocationManager {
                 }
             }
         } else {
-            alertWithTitle("Error", message: "Calibration has to be executed first!")
+            let error = NSError(domain: "Error", code: 0, userInfo: [NSLocalizedDescriptionKey : "Calibration has to be executed first!"])
+            resultCallback(error)
         }
     }
     
@@ -181,22 +191,15 @@ class IndoorLocationManager {
             return
         }
         
-        guard let data = data else {
-            alertWithTitle("Error", message: "No ranging data received!")
-            return
-        }
-
-        guard var measurementDict = parseData(data) else { return }
+        guard let data = data,
+            var anchors = anchors,
+            var measurementDict = try? parseData(data) else { return }
         
         // Discard measurements equal to 0. This might sometimes happen as Pozyx is not that stable
         for measurement in measurementDict {
             if measurement.value == 0 {
                 measurementDict.removeValue(forKey: measurement.key)
             }
-        }
-                
-        guard var anchors = anchors else {
-            fatalError("No Anchors found")
         }
         
         // Determine which anchors are active
@@ -227,12 +230,15 @@ class IndoorLocationManager {
             
             self.delegate?.updatePosition(position)
             
-            self.delegate?.updateActiveAnchors(anchors, distances: distances)
+            self.delegate?.updateActiveAnchors(anchors, distances: distances, acceleration: acceleration)
             
             switch (self.filterSettings.filterType) {
             case .kalman:
                 guard let filter = self.filter as? KalmanFilter else { return }
-                self.delegate?.updateCovariance(covX: filter.P[0], covY: filter.P[7])
+                let positionCovariance = [filter.P[0], filter.P[1], filter.P[6], filter.P[7]]
+                let (eigenvalues, eigenvectors) = positionCovariance.computeEigenvalueDecomposition()
+                let angle = atan(eigenvectors[2] / eigenvectors[0])
+                self.delegate?.updateCovariance(eigenValue1: eigenvalues[0], eigenValue2: eigenvalues[1], angle: angle)
             case .particle:
                 guard let filter = self.filter as? ParticleFilter else { return }
                 self.delegate?.updateParticles(filter.particles)

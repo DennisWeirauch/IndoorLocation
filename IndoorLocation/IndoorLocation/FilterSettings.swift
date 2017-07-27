@@ -9,11 +9,8 @@
 class FilterSettings {
     
     // View
-    var floorplanVisible = false
-    var measurementsVisible = false
-    
-    // Calibration
-    var calibrationModeIsAutomatic = true
+    var isFloorplanVisible = false
+    var areMeasurementsVisible = true
     
     // Filter
     var filterType: FilterType = .none
@@ -23,5 +20,5 @@ class FilterSettings {
     var processingUncertainty: Int = 40
     var numberOfParticles: Int = 500
 
-    let updateTime: Float = 0.05
+    let updateTime: Float = 0.2
 }

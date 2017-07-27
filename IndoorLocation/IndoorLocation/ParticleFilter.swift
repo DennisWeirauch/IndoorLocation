@@ -11,12 +11,13 @@ import Accelerate
 class ParticleFilter: BayesianFilter {
     
     var numberOfParticles: Int
-    let stateDim = 6
+    let stateDim = 4
     
     internal(set) var particles: [Particle]
     
     // Matrices
     internal(set) var F: [Float]
+    internal(set) var A: [Float]
     internal(set) var G: [Float]
     internal(set) var Q: [Float]
     internal(set) var R: [Float]
@@ -25,6 +26,8 @@ class ParticleFilter: BayesianFilter {
     var h_opt: Float {
         return 0.5 ^^ 0.1 * Float(numberOfParticles) ^^ -0.1
     }
+    
+    private var u: [Float]
     
     var activeAnchors = [Anchor]()
     
@@ -37,10 +40,11 @@ class ParticleFilter: BayesianFilter {
         let settings = IndoorLocationManager.shared.filterSettings
         
         let pos_sig = Float(settings.distanceUncertainty)
-        let acc_sig = Float(settings.accelerationUncertainty)
         var proc_fac = sqrt(Float(settings.processingUncertainty))
         let dt = settings.updateTime
         numberOfParticles = settings.numberOfParticles
+        
+        u = [0, 0]
         
         // Initialize matrices
         // F is a stateDim x stateDim matrix representing the physical model
@@ -51,8 +55,6 @@ class ParticleFilter: BayesianFilter {
                     F.append(1)
                 } else if (i + 2 == j) {
                     F.append(dt)
-                } else if (i + 4 == j) {
-                    F.append(dt ^^ 2 / 2)
                 } else {
                     F.append(0)
                 }
@@ -67,13 +69,13 @@ class ParticleFilter: BayesianFilter {
                     G.append(dt ^^ 2 / 2)
                 } else if (i == j + 2) {
                     G.append(dt)
-                } else if (i == j + 4) {
-                    G.append(1)
                 } else {
                     G.append(0)
                 }
             }
         }
+        
+        A = G
         
         // Multiply G with the square root of processing factor
         vDSP_vsmul(G, 1, &proc_fac, &G, 1, vDSP_Length(G.count))
@@ -85,14 +87,12 @@ class ParticleFilter: BayesianFilter {
         Q = [Float](repeating: 0, count: stateDim * stateDim)
         vDSP_mmul(G, 1, G_t, 1, &Q, 1, vDSP_Length(stateDim), vDSP_Length(stateDim), 1)
         
-        // R is a (numAnchors + 2) x (numAnchors + 2) covariance matrix for the measurement noise
+        // R is a numAnchors x numAnchors covariance matrix for the measurement noise
         R = [Float]()
-        for i in 0..<anchors.count + 2 {
-            for j in 0..<anchors.count + 2 {
+        for i in 0..<anchors.count {
+            for j in 0..<anchors.count {
                 if (i == j && i < anchors.count) {
                     R.append(pos_sig)
-                } else if (i == j && i >= anchors.count) {
-                    R.append(acc_sig)
                 } else {
                     R.append(0)
                 }
@@ -110,7 +110,8 @@ class ParticleFilter: BayesianFilter {
             // If a least squares estimate is available, use it to initialize all particles around that position.
             for _ in 0..<numberOfParticles {
                 let (r1, r2) = Float.randomGaussian()
-                let randomizedState = [Float(position.x) + pos_sig * r1, Float(position.y) + pos_sig * r2, 0, 0, 0, 0]
+                let randomizedPosition = [Float(position.x) + pos_sig * r1, Float(position.y) + pos_sig * r2]
+                let randomizedState = randomizedPosition + [Float](repeating: 0, count: stateDim - 2)
                 let particle = Particle(state: randomizedState, weight: log(1 / Float(numberOfParticles)), filter: self)
                 particles.append(particle)
             }
@@ -124,12 +125,12 @@ class ParticleFilter: BayesianFilter {
                 let phi = Float.random(upperBound: 2 * Float.pi)
                 let (r1, _) = Float.randomGaussian()
                 let radius = nearestDistance + pos_sig * r1
-                let randomizedState = [cos(phi) * radius + Float(nearestAnchor.position.x), sin(phi) * radius + Float(nearestAnchor.position.y), 0, 0, 0, 0]
+                let randomizedPosition = [cos(phi) * radius + Float(nearestAnchor.position.x), sin(phi) * radius + Float(nearestAnchor.position.y)]
+                let randomizedState = randomizedPosition + [Float](repeating: 0, count: stateDim - 2)
                 let particle = Particle(state: randomizedState, weight: log(1 / Float(numberOfParticles)), filter: self)
                 particles.append(particle)
             }
         }
-
     }
     
     override func computeAlgorithm(anchors: [Anchor], distances: [Float], acceleration: [Float], successCallback: @escaping (_ position: CGPoint) -> Void) {
@@ -146,11 +147,10 @@ class ParticleFilter: BayesianFilter {
             // Execute functions on particles concurrently
             DispatchQueue.global().async(group: dispatchGroup) {
                 // Draw new state from importance density
-                particle.updateState()
-                
-                let measurements = distances + acceleration
+                particle.updateState(u: self.u)
+                self.u = acceleration
                 // Evaluate the importance weight up to a normalizing constant
-                particle.updateWeight(anchors: anchors, measurements: measurements)
+                particle.updateWeight(anchors: anchors, measurements: distances)
             }
         }
         
@@ -180,21 +180,31 @@ class ParticleFilter: BayesianFilter {
             let sumOfSquaredWeights = self.particles.reduce(0, { $0 + $1.weight ^^ 2 })
             for j in 0..<meanState.count {
                 for k in 0..<meanState.count {
-                    let s_jk = (1 / 1 - sumOfSquaredWeights) * self.particles.reduce(0, { $0 + $1.weight * ($1.state[j] - meanState[j]) * ($1.state[k] - meanState[k]) })
-                    S.append(s_jk)
+                    if k < j {
+                        let s_jk = S[k * meanState.count + j]
+                        S.append(s_jk)
+                    } else {
+                        let s_jk = (1 / 1 - sumOfSquaredWeights) * self.particles.reduce(0, { $0 + $1.weight * ($1.state[j] - meanState[j]) * ($1.state[k] - meanState[k]) })
+                        S.append(s_jk)
+                    }
                 }
             }
-            
+
             var D = S.computeCholeskyDecomposition()
             if D == nil {
+                print("Making matrix positive definite")
+                S.pprint(numRows: 4, numCols: 4)
                 // Algorithm could not be executed because matrix was not positive definite. Make matrix positive definite and execute algorithm again
                 let A = S.positiveDefiniteMatrix()
                 D = A.computeCholeskyDecomposition()
             }
             
-            // Execute resampling algorithm
-            self.resample()
-            
+            //TODO: Check if N_thr should be defined as the algorithm from the book says so
+//            let N_eff = 1 / sumOfSquaredWeights
+//            if N_eff < Float(self.numberOfParticles) / 10 {
+                // Execute resampling algorithm
+                self.resample()
+//            }
             // Make sure a valid D has been computed and execute regularization
             if let D = D {
                 // Regularize
@@ -257,17 +267,14 @@ class ParticleFilter: BayesianFilter {
     private func didChangeAnchors(_ anchors: [Anchor]) {
         self.activeAnchors = anchors
         
-        let acc_sig = Float(IndoorLocationManager.shared.filterSettings.accelerationUncertainty)
         let pos_sig = Float(IndoorLocationManager.shared.filterSettings.distanceUncertainty)
         
-        // R is a (numAnchors + 2) x (numAnchors + 2) covariance matrix for the measurement noise
+        // R is a numAnchors x numAnchors covariance matrix for the measurement noise
         R.removeAll()
-        for i in 0..<anchors.count + 2 {
-            for j in 0..<anchors.count + 2 {
+        for i in 0..<anchors.count {
+            for j in 0..<anchors.count {
                 if (i == j && i < anchors.count) {
                     R.append(pos_sig)
-                } else if (i == j && i >= anchors.count) {
-                    R.append(acc_sig)
                 } else {
                     R.append(0)
                 }
