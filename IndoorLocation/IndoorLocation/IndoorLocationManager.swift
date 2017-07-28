@@ -220,7 +220,8 @@ class IndoorLocationManager {
             acceleration.append(0)
         }
         if let yAcc = measurementDict["yAcc"] {
-            acceleration.append(yAcc / 10)
+            // Adding yAcc negative because Pozyx has a right coordinate system while we have a left coordinate system here
+            acceleration.append(-yAcc / 10)
         } else {
             acceleration.append(0)
         }
