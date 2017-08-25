@@ -18,7 +18,7 @@ class FilterSettings {
     var accelerationUncertainty: Int = 25
     var distanceUncertainty: Int = 50
     var processingUncertainty: Int = 40
-    var numberOfParticles: Int = 500
+    var numberOfParticles: Int = 800
 
     let updateTime: Float = 0.2
 }

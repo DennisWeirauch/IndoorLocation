@@ -25,8 +25,8 @@ class NetworkManager {
 
     let port = 8080
     let hostIP = "172.20.10.1"
-    // TODO: Check if hardcoding IP is a good solution here
-    let arduinoIP = "172.20.10.5"
+    // TODO: Add custom ping mechanism to get arduino's IP. (Send message to broadcast address (172.20.10.15) and let arduino respond.)
+    let arduinoIP = "172.20.10.4"
     let session: URLSession
 
     private init() {

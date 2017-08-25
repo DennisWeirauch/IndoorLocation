@@ -10,7 +10,7 @@ import Accelerate
 
 class Particle {
     
-    // State vector containing: [xPos, yPos, xVel, yVel, xAcc, yAcc]
+    // State vector containing: [xPos, yPos, xVel, yVel]
     private(set) var state: [Float]
     var weight: Float
     

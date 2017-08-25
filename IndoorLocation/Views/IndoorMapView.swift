@@ -291,6 +291,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
                 mapView.sendSubview(toBack: particleView)
                 particleViews?.append(particleView)
             }
+            mapView.sendSubview(toBack: floorplanView)
         }
     }
     

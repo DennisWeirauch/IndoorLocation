@@ -13,15 +13,14 @@ class ParticleFilter: BayesianFilter {
     var numberOfParticles: Int
     let stateDim = 4
     
-    internal(set) var particles: [Particle]
+    private(set) var particles: [Particle]
     
     // Matrices
-    internal(set) var F: [Float]
-    internal(set) var A: [Float]
-    internal(set) var G: [Float]
-    internal(set) var Q: [Float]
-    internal(set) var R: [Float]
-    internal(set) var R_inv: [Float]
+    private(set) var F: [Float]
+    private(set) var A: [Float]
+    private(set) var G: [Float]
+    private(set) var R: [Float]
+    private(set) var R_inv: [Float]
     
     var h_opt: Float {
         return 0.5 ^^ 0.1 * Float(numberOfParticles) ^^ -0.1
@@ -82,10 +81,6 @@ class ParticleFilter: BayesianFilter {
         
         var G_t = [Float](repeating: 0, count: G.count)
         vDSP_mtrans(G, 1, &G_t, 1, 2, vDSP_Length(stateDim))
-        
-        // Compute Q from Q = G * G_t. Q is a stateDim x stateDim covariance matrix for the process noise
-        Q = [Float](repeating: 0, count: stateDim * stateDim)
-        vDSP_mmul(G, 1, G_t, 1, &Q, 1, vDSP_Length(stateDim), vDSP_Length(stateDim), 1)
         
         // R is a numAnchors x numAnchors covariance matrix for the measurement noise
         R = [Float]()
@@ -148,14 +143,14 @@ class ParticleFilter: BayesianFilter {
             DispatchQueue.global().async(group: dispatchGroup) {
                 // Draw new state from importance density
                 particle.updateState(u: self.u)
-                self.u = acceleration
                 // Evaluate the importance weight up to a normalizing constant
                 particle.updateWeight(anchors: anchors, measurements: distances)
             }
         }
         
         dispatchGroup.notify(queue: DispatchQueue.global()) {
-            
+            self.u = acceleration
+
             // Rescale weights for numerical stability
             let maxWeight = self.particles.map { $0.weight }.max()!
             self.particles.forEach { $0.weight = $0.weight - maxWeight }

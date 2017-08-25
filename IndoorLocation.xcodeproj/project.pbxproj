@@ -23,7 +23,6 @@
 		959540591F04EBFC0095755D /* EllipseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959540581F04EBFC0095755D /* EllipseView.swift */; };
 		9595405B1F04F3DF0095755D /* TrajectoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9595405A1F04F3DF0095755D /* TrajectoryView.swift */; };
 		959FD16D1F1FA6FA00BFC2DE /* SwitchTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959FD16C1F1FA6FA00BFC2DE /* SwitchTableViewCell.swift */; };
-		959FD1851F223C8700BFC2DE /* RaoBlackwellizedParticleFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959FD1841F223C8700BFC2DE /* RaoBlackwellizedParticleFilter.swift */; };
 		95A19DF71EDC3A81004BC415 /* SettingsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A19DF61EDC3A81004BC415 /* SettingsTableViewController.swift */; };
 		95A19DF91EDC4080004BC415 /* SegmentedControlTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A19DF81EDC4080004BC415 /* SegmentedControlTableViewCell.swift */; };
 		95A19DFB1EDC4889004BC415 /* SliderTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A19DFA1EDC4889004BC415 /* SliderTableViewCell.swift */; };
@@ -77,7 +76,6 @@
 		959540581F04EBFC0095755D /* EllipseView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EllipseView.swift; sourceTree = "<group>"; };
 		9595405A1F04F3DF0095755D /* TrajectoryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrajectoryView.swift; sourceTree = "<group>"; };
 		959FD16C1F1FA6FA00BFC2DE /* SwitchTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SwitchTableViewCell.swift; path = Cells/SwitchTableViewCell.swift; sourceTree = "<group>"; };
-		959FD1841F223C8700BFC2DE /* RaoBlackwellizedParticleFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RaoBlackwellizedParticleFilter.swift; sourceTree = "<group>"; };
 		95A19DF61EDC3A81004BC415 /* SettingsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SettingsTableViewController.swift; path = ViewControllers/SettingsTableViewController.swift; sourceTree = "<group>"; };
 		95A19DF81EDC4080004BC415 /* SegmentedControlTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SegmentedControlTableViewCell.swift; path = Cells/SegmentedControlTableViewCell.swift; sourceTree = "<group>"; };
 		95A19DFA1EDC4889004BC415 /* SliderTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SliderTableViewCell.swift; path = Cells/SliderTableViewCell.swift; sourceTree = "<group>"; };
@@ -274,7 +272,6 @@
 				95C3C1AD1ECC3C5100704437 /* KalmanFilter.swift */,
 				956227C91E965F2700288A1A /* ParticleFilter.swift */,
 				95BDB2FC1F1CF14900EF2BC9 /* Particle.swift */,
-				959FD1841F223C8700BFC2DE /* RaoBlackwellizedParticleFilter.swift */,
 			);
 			path = IndoorLocation;
 			sourceTree = "<group>";
@@ -480,7 +477,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				95A19DFF1EDD724C004BC415 /* ButtonTableViewCell.swift in Sources */,
-				959FD1851F223C8700BFC2DE /* RaoBlackwellizedParticleFilter.swift in Sources */,
 				9595405B1F04F3DF0095755D /* TrajectoryView.swift in Sources */,
 				95A1F6201E8BB5C700D2CDD2 /* MapViewController.swift in Sources */,
 				95E3DCBB1E9D2F0E006D6C08 /* FilterSettings.swift in Sources */,

@@ -31,16 +31,22 @@ class IndoorLocationManager {
     var delegate: IndoorLocationManagerDelegate?
     
     var anchors: [Anchor]?
-    var filter: BayesianFilter?
-    var filterSettings = FilterSettings()
+    var filter: BayesianFilter
+    var filterSettings: FilterSettings
     
     var position: CGPoint?
     var initialDistances: [Float]?
     
-    var isCalibrated = false
-    var isRanging = false
+    var isCalibrated: Bool
+    var isRanging: Bool
     
-    private init() {}
+    private init() {
+        filter = BayesianFilter()
+        filterSettings = FilterSettings()
+        
+        isCalibrated = false
+        isRanging = false
+    }
     
     //MARK: Private API
     private func parseData(_ stringData: String) throws -> [String : Float] {
@@ -120,21 +126,6 @@ class IndoorLocationManager {
             addAnchorWithID(Int("6F21", radix: 16)!, x: 390, y: 335)
             addAnchorWithID(Int("6F59", radix: 16)!, x: 95, y: 130)
             addAnchorWithID(Int("6F51", radix: 16)!, x: 195, y: 335)
-            // Not even existing anchors
-            addAnchorWithID(Int("1111", radix: 16)!, x: 0, y: 0)
-            addAnchorWithID(Int("1112", radix: 16)!, x: 345, y: 624)
-            addAnchorWithID(Int("1113", radix: 16)!, x: 234, y: 0)
-            addAnchorWithID(Int("1114", radix: 16)!, x: 250, y: 250)
-            addAnchorWithID(Int("1115", radix: 16)!, x: 0, y: 654)
-            //                addAnchorWithID(Int("1116", radix: 16)!, x: 123, y: 12)
-            //                addAnchorWithID(Int("1117", radix: 16)!, x: 753, y: 54)
-            //                addAnchorWithID(Int("1118", radix: 16)!, x: 938, y: 834)
-            //                addAnchorWithID(Int("1119", radix: 16)!, x: 45, y: 234)
-            //                addAnchorWithID(Int("1120", radix: 16)!, x: 65, y: 7)
-            //                addAnchorWithID(Int("1121", radix: 16)!, x: 453, y: 24)
-            //                addAnchorWithID(Int("1122", radix: 16)!, x: 653, y: 983)
-            //                addAnchorWithID(Int("1123", radix: 16)!, x: 1453, y: 1038)
-            //                addAnchorWithID(Int("1124", radix: 16)!, x: 45, y: 1250)
         }
         
         guard let anchors = anchors else { return }
@@ -226,7 +217,7 @@ class IndoorLocationManager {
             acceleration.append(0)
         }
         
-        filter?.computeAlgorithm(anchors: anchors.filter({ $0.isActive }), distances: distances, acceleration: acceleration) { position in
+        filter.computeAlgorithm(anchors: anchors.filter({ $0.isActive }), distances: distances, acceleration: acceleration) { position in
             self.position = position
             
             self.delegate?.updatePosition(position)
