@@ -24,6 +24,9 @@ protocol IndoorLocationManagerDelegate {
     func updateParticles(_ particles: [Particle])
 }
 
+/**
+ Class for managing positioning. It interacts with the NetworkManager and the ViewControllers to perform all essential tasks.
+ */
 class IndoorLocationManager {
     
     static let shared = IndoorLocationManager()
@@ -37,18 +40,21 @@ class IndoorLocationManager {
     var position: CGPoint?
     var initialDistances: [Float]?
     
-    var isCalibrated: Bool
-    var isRanging: Bool
+    var isCalibrated = false
+    var isRanging = false
     
     private init() {
         filter = BayesianFilter()
         filterSettings = FilterSettings()
-        
-        isCalibrated = false
-        isRanging = false
     }
     
     //MARK: Private API
+    /**
+     Parse data received from the Arduino.
+     - Parameter stringData: Received data as String
+     - Throws: In the case of a wrong received format
+     - Returns: The received data parsed as dictionary
+     */
     private func parseData(_ stringData: String) throws -> [String : Float] {
         
         // Remove carriage return

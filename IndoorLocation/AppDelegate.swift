@@ -14,6 +14,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
+        
+        // Initialize NetworkManager
+        let _ = NetworkManager.shared
+        
         window = UIWindow(frame: UIScreen.main.bounds)
         let viewController = MapViewController()
         window?.rootViewController = viewController

@@ -87,7 +87,7 @@ void loop() {
   readRestServer();
 
   if (isRanging) {
-    // Make sure measurements are made every 200ms
+    // Make sure measurements are made every 200 ms
     unsigned long currentTime = millis();
     unsigned long timeDiff = currentTime - lastMeasurementTime;
     if (timeDiff < 200) {

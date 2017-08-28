@@ -8,10 +8,13 @@
 
 import Accelerate
 
+/**
+ Class to implement Bayesian filter. Without subclassing, no filter is applied and therefore a linear least squares algorithm is executed.
+ */
 class BayesianFilter {
     
     /**
-     Execute the algorithm of the filter.
+     Execute the algorithm of the filter to determine the agent's position.
      - Parameter anchors: The set of active anchors
      - Parameter distances: A vector containing distances to all active anchors
      - Parameter acceleration: A vector containing the accelerations in x and y direction
