@@ -35,6 +35,7 @@ class Particle {
     //MARK: Public API
     /**
      Update state by drawing a value from the importance density of the particle
+     - Parameter u: Acceleration vector of the last time step
      */
     func updateState(u: [Float]) {
         // Compute mean = F * state + A * u
@@ -52,10 +53,11 @@ class Particle {
     
     /**
      Update the particle's weight according to the measurement
-     - Parameter measurements: The measurements Vector containing distances to the anchors and acceleration values
+     - Parameter anchors: The set of active anchors
+     - Parameter measurements: The measurements vector containing distances to the anchors and acceleration values
      */
     func updateWeight(anchors: [Anchor], measurements: [Float]) {
-        // Compute new weight = weight * p(z|x), where is the transitional prior p(z|x) = N(z; h(x), R)
+        // Compute new weight = weight * p(z|x), with p(z|x) = N(z; h(x), R)
         let normalDist = computeNormalDistribution(x: measurements, m: h(state, anchors: anchors), forTriangularCovariance: filter.R, withInverse: filter.R_inv)
         
         // Multiply weight with transitional prior. As weights are in log domain they have to be added
@@ -64,7 +66,7 @@ class Particle {
     
     /**
      Regularize the particle. The particle's state vector is jittered with some noise according to matrix D.
-     - Parameter D: Matrix D for which D * D_T = S (Covariance matrix for all particles)
+     - Parameter D: Matrix D for which D * D_T = S (Sample covariance matrix of all particles)
      */
     func regularize(D: [Float]) {
         // Draw random sample from Gaussian kernel

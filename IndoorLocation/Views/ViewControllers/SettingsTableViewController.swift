@@ -23,9 +23,9 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
     }
     
     enum SliderType: Int {
-        case accelerationUncertainty = 0
+        case processUncertainty = 0
         case distanceUncertainty
-        case processingUncertainty
+        case accelerationUncertainty
         case numberOfParticles
     }
     
@@ -91,12 +91,16 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
                 if let filter = KalmanFilter(anchors: anchors.filter({ $0.isActive }), distances: initialDistances) {
                     IndoorLocationManager.shared.filter = filter
                 } else {
-                    alertWithTitle("Error", message: "Could not initialize Kalman filter!")
+                    alertWithTitle("Error", message: "Could not initialize Kalman filter! Make sure at least 3 anchors are within range.")
                 }
             case .particle:
                 guard let anchors = IndoorLocationManager.shared.anchors,
                     let initialDistances = IndoorLocationManager.shared.initialDistances else { return }
-                IndoorLocationManager.shared.filter = ParticleFilter(anchors: anchors.filter({ $0.isActive }), distances: initialDistances)
+                if let filter = ParticleFilter(anchors: anchors.filter({ $0.isActive }), distances: initialDistances) {
+                    IndoorLocationManager.shared.filter = filter
+                } else {
+                    alertWithTitle("Error", message: "Could not initialize Particle filter! Make sure at least one anchor is within range.")
+                }
             }
         }
         
@@ -145,10 +149,8 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
             switch filterSettings.filterType {
             case .none:
                 return 1
-            case .kalman:
+            case .kalman, .particle:
                 return 4
-            case .particle:
-                return 5
             }
         }
     }
@@ -219,12 +221,12 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
         }
         
         switch sliderType {
-        case .accelerationUncertainty:
-            filterSettings.accelerationUncertainty = Int(sender.value)
+        case .processUncertainty:
+            filterSettings.processUncertainty = Int(sender.value)
         case .distanceUncertainty:
             filterSettings.distanceUncertainty = Int(sender.value)
-        case .processingUncertainty:
-            filterSettings.processingUncertainty = Int(sender.value)
+        case .accelerationUncertainty:
+            filterSettings.accelerationUncertainty = Int(sender.value)
         case .numberOfParticles:
             filterSettings.numberOfParticles = Int(sender.value)
         }
@@ -321,24 +323,21 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
                 case .kalman:
                     switch indexPath.row {
                     case 1:
-                        cell.setupWithValue(filterSettings.accelerationUncertainty, minValue: 1, maxValue: 100, text: "Acc. uncertainty:", unit: "cm/s²", delegate: self, tag: SliderType.accelerationUncertainty.rawValue)
+                        cell.setupWithValue(filterSettings.processUncertainty, minValue: 0, maxValue: 100, text: "Proc. uncertainty:", unit: "cm/s²", delegate: self, tag: SliderType.processUncertainty.rawValue)
                     case 2:
                         cell.setupWithValue(filterSettings.distanceUncertainty, minValue: 1, maxValue: 100, text: "Dist. uncertainty:", unit: "cm", delegate: self, tag: SliderType.distanceUncertainty.rawValue)
                     case 3:
-                        cell.setupWithValue(filterSettings.processingUncertainty, minValue: 0, maxValue: 100, text: "Proc. uncertainty:", unit: "cm/s²", delegate: self, tag: SliderType.processingUncertainty.rawValue)
+                        cell.setupWithValue(filterSettings.accelerationUncertainty, minValue: 1, maxValue: 100, text: "Acc. uncertainty:", unit: "cm/s²", delegate: self, tag: SliderType.accelerationUncertainty.rawValue)
                     default:
                         break
                     }
                 case .particle:
                     switch indexPath.row {
                     case 1:
-                        //TODO: Remove acceleration uncertainty from particle filter
-                        cell.setupWithValue(0, minValue: 0, maxValue: 0, text: "Acc. uncertainty:", unit: "cm/s²", delegate: self, tag: SliderType.accelerationUncertainty.rawValue)
+                        cell.setupWithValue(filterSettings.processUncertainty, minValue: 0, maxValue: 200, text: "Proc. uncertainty:", unit: "cm/s²", delegate: self, tag: SliderType.processUncertainty.rawValue)
                     case 2:
                         cell.setupWithValue(filterSettings.distanceUncertainty, minValue: 1, maxValue: 100, text: "Dist. uncertainty:", unit: "cm", delegate: self, tag: SliderType.distanceUncertainty.rawValue)
                     case 3:
-                        cell.setupWithValue(filterSettings.processingUncertainty, minValue: 0, maxValue: 200, text: "Proc. uncertainty:", unit: "cm/s²", delegate: self, tag: SliderType.processingUncertainty.rawValue)
-                    case 4:
                         cell.setupWithValue(filterSettings.numberOfParticles, minValue: 1, maxValue: 1000, text: "Particles:", delegate: self, tag: SliderType.numberOfParticles.rawValue)
                     default:
                         break

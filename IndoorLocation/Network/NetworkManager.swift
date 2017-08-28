@@ -118,7 +118,7 @@ class NetworkManager: NSObject, NetServiceDelegate, NetServiceBrowserDelegate {
      - Parameter resultCallback: A closure which is executed after receiving a response from the Arduino
      - Parameter result: The result of the task
      */
-    func pozyxTask(task: TaskType, data: String = "", resultCallback: @escaping (_ result: NetworkResult) -> Void) {
+    func networkTask(task: TaskType, data: String = "", resultCallback: @escaping (_ result: NetworkResult) -> Void) {
         // Check if IP of Arduino has been determined successfully
         if let arduinoIP = arduinoIP {
             let urlString = "http://\(arduinoIP):\(port)/arduino/"

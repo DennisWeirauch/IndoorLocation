@@ -8,14 +8,31 @@
 
 import Accelerate
 
+/**
+ The type of filter that is used.
+ ````
+ case none
+ case kalman
+ case particle
+ ````
+ */
 enum FilterType: Int {
+    /// No filter. A linear least squares algorithm will be executed
     case none = 0
+    
+    /// Extended Kalman filter
     case kalman
+    
+    /// Particle filter
     case particle
 }
 
+/// Structure of an anchor having an id, a position and a flag indicating whether it is currently within range.
 typealias Anchor = (id: Int, position: CGPoint, isActive: Bool)
 
+/**
+ A protocol to be implemented by a ViewController. It informs the delegate about updates for the GUI.
+ */
 protocol IndoorLocationManagerDelegate {
     func setAnchors(_ anchors: [Anchor])
     func updateActiveAnchors(_ anchors: [Anchor], distances: [Float], acceleration: [Float])
@@ -70,6 +87,7 @@ class IndoorLocationManager {
         // Split string at "&" characters
         let splitData = inlineStringData.components(separatedBy: "&")
         
+        // Fill the dictionary
         var parsedData = [String : Float]()
         for component in splitData {
             let key = component.components(separatedBy: "=")[0]
@@ -79,53 +97,12 @@ class IndoorLocationManager {
         return parsedData
     }
     
-    private func receivedCalibrationResult(_ result: NetworkResult) throws {
-        switch result {
-        case .success(let data):
-            guard let data = data else {
-                throw NSError(domain: "Error", code: 0, userInfo: [NSLocalizedDescriptionKey : "No calibration data received!"])
-            }
-            
-            let stringData = String(data: data, encoding: String.Encoding.utf8)!
-            
-            var anchorDict = try self.parseData(stringData)
-            
-            var anchors = [Anchor]()
-            var distances = [Float]()
-            
-            // Iterate from 0 to anchorDict.count / 4 because there are 4 values for every anchor:
-            // ID, xPos, yPos, dist
-            for i in 0..<anchorDict.count / 4 {
-                guard let id = anchorDict["ID\(i)"],
-                    let xPos = anchorDict["xPos\(i)"],
-                    let yPos = anchorDict["yPos\(i)"],
-                    let dist = anchorDict["dist\(i)"] else {
-                        fatalError("Error retrieving data from anchorDict")
-                }
-                
-                if dist != 0 {
-                    anchors.append(Anchor(id: Int(id), position: CGPoint(x: CGFloat(xPos / 10), y: CGFloat(yPos / 10)), isActive: true))
-                    distances.append(dist / 10)
-                } else {
-                    anchors.append(Anchor(id: Int(id), position: CGPoint(x: CGFloat(xPos / 10), y: CGFloat(yPos / 10)), isActive: false))
-                }
-            }
-            
-            self.anchors = anchors
-            
-            self.delegate?.setAnchors(anchors)
-            
-            initialDistances = distances
-            
-            isCalibrated = true
-            
-        case .failure(let error):
-            throw error
-        }
-    }
-    
-    //MARK: Public API
-    func calibrate(resultCallback: @escaping (Error?) -> ()) {
+    /**
+     A function to perform calibration. The calibration data is sent to the Arduino and the response is processed accordingly.
+     - Parameter resultCallback: A closure that is called after calibration is completed or an error occurred
+     - Parameter error: The error that occurred
+     */
+    func calibrate(resultCallback: @escaping (_ error: Error?) -> ()) {
         // Faking anchors as I'm too lazy to enter coordinates every time.
         if (anchors == nil || !(anchors!.count > 0)) {
             addAnchorWithID(Int("666D", radix: 16)!, x: 500, y: 0)
@@ -134,28 +111,82 @@ class IndoorLocationManager {
             addAnchorWithID(Int("6F51", radix: 16)!, x: 195, y: 335)
         }
         
+        // Generate string of calibration data to send to the arduino.
         guard let anchors = anchors else { return }
         var anchorStringData = ""
         for (i, anchor) in anchors.enumerated() {
+            // Multiply coordinates by 10 to convert from cm to mm.
             anchorStringData += "ID\(i)=\(anchor.id)&xPos\(i)=\(Int((anchor.position.x) * 10))&yPos\(i)=\(Int((anchor.position.y) * 10))"
             if (i != anchors.count - 1) {
                 anchorStringData += "&"
             }
         }
-        NetworkManager.shared.pozyxTask(task: .calibrate, data: anchorStringData) { result in
+        
+        // Send calibration data to Arduino to calibrate Pozyx tag
+        NetworkManager.shared.networkTask(task: .calibrate, data: anchorStringData) { result in
             do {
-                try self.receivedCalibrationResult(result)
-                resultCallback(nil)
+                switch result {
+                    
+                case .success(let data):
+                    // Process successful response
+                    guard let data = data else {
+                        throw NSError(domain: "Error", code: 0, userInfo: [NSLocalizedDescriptionKey : "No calibration data received!"])
+                    }
+                    
+                    let stringData = String(data: data, encoding: String.Encoding.utf8)!
+                    
+                    var anchorDict = try self.parseData(stringData)
+                    
+                    var anchors = [Anchor]()
+                    var distances = [Float]()
+                    
+                    // Retrieve data from anchorDict. Iterate from 0 to anchorDict.count / 4 because there are 4 values
+                    // for every anchor: ID, xPos, yPos, dist
+                    for i in 0..<anchorDict.count / 4 {
+                        guard let id = anchorDict["ID\(i)"],
+                            let xPos = anchorDict["xPos\(i)"],
+                            let yPos = anchorDict["yPos\(i)"],
+                            let dist = anchorDict["dist\(i)"] else {
+                                fatalError("Error retrieving data from anchorDict")
+                        }
+                        
+                        if dist != 0 {
+                            // Divide all units by 10 to convert from mm to cm.
+                            anchors.append(Anchor(id: Int(id), position: CGPoint(x: CGFloat(xPos / 10), y: CGFloat(yPos / 10)), isActive: true))
+                            distances.append(dist / 10)
+                        } else {
+                            anchors.append(Anchor(id: Int(id), position: CGPoint(x: CGFloat(xPos / 10), y: CGFloat(yPos / 10)), isActive: false))
+                        }
+                    }
+                    
+                    self.anchors = anchors
+                    
+                    self.delegate?.setAnchors(anchors)
+                    
+                    self.initialDistances = distances
+                    
+                    self.isCalibrated = true
+                    
+                case .failure(let error):
+                    throw error
+                    
+                }
             } catch let error {
                 resultCallback(error)
             }
+            
+            resultCallback(nil)
         }
-        
     }
     
-    func beginRanging(resultCallback: @escaping (Error?) -> ()) {
+    /**
+     Function used to begin ranging on the Arduino.
+     - Parameter resultCallback: A closure that is called after beginning to range is successful or an error occurred
+     - Parameter error: The error that occurred
+     */
+    func beginRanging(resultCallback: @escaping (_ error: Error?) -> ()) {
         if isCalibrated {
-            NetworkManager.shared.pozyxTask(task: .beginRanging) { result in
+            NetworkManager.shared.networkTask(task: .beginRanging) { result in
                 switch result {
                 case .failure(let error):
                     resultCallback(error)
@@ -170,8 +201,13 @@ class IndoorLocationManager {
         }
     }
     
+    /**
+     Function used to stop ranging on the Arduino.
+     - Parameter resultCallback: A closure that is called after stopping to range is successful or an error occurred
+     - Parameter error: The error that occurred
+     */
     func stopRanging(resultCallback: @escaping (Error?) -> ()) {
-        NetworkManager.shared.pozyxTask(task: .stopRanging) { result in
+        NetworkManager.shared.networkTask(task: .stopRanging) { result in
             switch result {
             case .failure(let error):
                 resultCallback(error)
@@ -182,7 +218,14 @@ class IndoorLocationManager {
         }
     }
     
+    /**
+     A function that is called by the NetworkManager when new measurement data from the Arduino is available. This function
+     handles processing of received data, executes the selected filter to determine the position and tells the delegate to
+     update the view accordingly.
+     - Parameter data: The data that is received from the Arduino
+     */
     func newRangingData(_ data: String?) {
+        // Only process data if ranging is currently active. Otherwise discard data
         guard isRanging else {
             stopRanging() { _ in }
             return
@@ -203,6 +246,7 @@ class IndoorLocationManager {
         var distances = [Float]()
         for i in 0..<anchors.count {
             if let distance = measurementDict["dist\(anchors[i].id)"] {
+                // Divide distance by 10 to convert from mm to cm.
                 distances.append(distance / 10)
                 anchors[i].isActive = true
             } else {
@@ -212,22 +256,25 @@ class IndoorLocationManager {
         
         var acceleration = [Float]()
         if let xAcc = measurementDict["xAcc"] {
+            // Divide acceleration by 10 to convert from mm/s^2 to cm/s^2.
             acceleration.append(xAcc / 10)
         } else {
             acceleration.append(0)
         }
         if let yAcc = measurementDict["yAcc"] {
-            // Adding yAcc negative because Pozyx has a right coordinate system while we have a left coordinate system here
+            // Adding yAcc negative because Pozyx has a right coordinate system while we have a left coordinate system here.
+            // Also divide by 10 to convert from mm/s^2 to cm/s^2
             acceleration.append(-yAcc / 10)
         } else {
             acceleration.append(0)
         }
         
-        filter.computeAlgorithm(anchors: anchors.filter({ $0.isActive }), distances: distances, acceleration: acceleration) { position in
+        // Execute the algorithm of the selected filter
+        filter.executeAlgorithm(anchors: anchors.filter({ $0.isActive }), distances: distances, acceleration: acceleration) { position in
             self.position = position
             
+            // Inform delegate about UI changes
             self.delegate?.updatePosition(position)
-            
             self.delegate?.updateActiveAnchors(anchors, distances: distances, acceleration: acceleration)
             
             switch (self.filterSettings.filterType) {
@@ -246,6 +293,12 @@ class IndoorLocationManager {
         }
     }
     
+    /**
+     Function to add an anchor with specified parameters.
+     - Parameter id: ID of the anchor as Int
+     - Parameter x: x-Coordinate of the anchor
+     - Parameter y: y-Coordinate of the anchor
+     */
     func addAnchorWithID(_ id: Int, x: Int, y: Int) {
         if anchors != nil {
             anchors?.append(Anchor(id: id, position: CGPoint(x: x, y: y), isActive: false))
@@ -254,6 +307,10 @@ class IndoorLocationManager {
         }
     }
     
+    /**
+     Removes the anchor with the specified ID.
+     - Parameter id: The id of the anchor to be removed
+     */
     func removeAnchorWithID(_ id: Int) {
         anchors = anchors?.filter({ $0.id != id })
     }

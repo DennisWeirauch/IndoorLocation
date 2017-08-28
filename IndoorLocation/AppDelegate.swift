@@ -18,6 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Initialize NetworkManager
         let _ = NetworkManager.shared
         
+        // Assign MapViewController as rootViewController and show it
         window = UIWindow(frame: UIScreen.main.bounds)
         let viewController = MapViewController()
         window?.rootViewController = viewController

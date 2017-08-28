@@ -8,24 +8,63 @@
 
 import Accelerate
 
+/**
+ Class that implements a Particle filter.
+ */
 class ParticleFilter: BayesianFilter {
     
     var numberOfParticles: Int
     let stateDim = 4
     
+    // The set of particles
     private(set) var particles: [Particle]
     
     // Matrices
+    /**
+     Process matrix F representing the physical model:
+     ````
+     |1 0 dt 0 |
+     |0 1 0  dt|
+     |0 0 1  0 |
+     |0 0 0  1 |
+     ````
+     */
     private(set) var F: [Float]
+    
+    /**
+     Process matrix A:
+     ````
+     |dt^2/2   0  |
+     |   0  dt^2/2|
+     |   dt    0  |
+     |   0     dt |
+     ````
+     */
     private(set) var A: [Float]
+    
+    //TODO: Find name for G
     private(set) var G: [Float]
+    
+    /**
+     R is the covariance matrix for the measurement noise. It is a (numAnchors + 2) x (numAnchors + 2) diagonal matrix of the form:
+     ````
+     |D_N 0|
+     | 0  A|, with
+     D_N = dist_sig * I_N, I_N being the identity matrix of order N
+     A = acc_sig * I_2
+     ````
+     */
     private(set) var R: [Float]
+    
+    /// The inverse of matrix R
     private(set) var R_inv: [Float]
     
+    /// The optimal bandwith for the regularization step
     var h_opt: Float {
-        return 0.5 ^^ 0.1 * Float(numberOfParticles) ^^ -0.1
+        return pow(4/(Float(stateDim) + 2), 1/(Float(stateDim) + 4)) * pow(Float(numberOfParticles), -1/(Float(stateDim) + 4))
     }
     
+    /// The acceleration measurement of the previous time step
     private var u: [Float]
     
     var activeAnchors = [Anchor]()
@@ -33,20 +72,20 @@ class ParticleFilter: BayesianFilter {
     // Using a semaphore to make sure that only one thread can execute the algorithm at each time instance
     let semaphore = DispatchSemaphore(value: 1)
     
-    init(anchors: [Anchor], distances: [Float]) {
+    init?(anchors: [Anchor], distances: [Float]) {
+        // Make sure at least one anchor is within range. Otherwise initialization is not possible.
+        guard anchors.count > 0 else { return nil }
+
         activeAnchors = anchors
         
         let settings = IndoorLocationManager.shared.filterSettings
         
-        let pos_sig = Float(settings.distanceUncertainty)
-        var proc_fac = sqrt(Float(settings.processingUncertainty))
-        let dt = settings.updateTime
+        let proc_sig = Float(settings.processUncertainty)
+        let dist_sig = Float(settings.distanceUncertainty)
         numberOfParticles = settings.numberOfParticles
-        
-        u = [0, 0]
+        let dt = settings.updateTime
         
         // Initialize matrices
-        // F is a stateDim x stateDim matrix representing the physical model
         F = [Float]()
         for i in 0..<stateDim {
             for j in 0..<stateDim {
@@ -60,34 +99,29 @@ class ParticleFilter: BayesianFilter {
             }
         }
         
-        // G is a stateDim x 2 matrix with '(dt^2)/2's in main diagonal, 'dt's in second negative side diagonal and '1's in fourth negative side diagonal
-        G = [Float]()
+        A = [Float]()
         for i in 0..<stateDim {
             for j in 0..<2 {
                 if (i == j) {
-                    G.append(dt ^^ 2 / 2)
+                    A.append(dt ^^ 2 / 2)
                 } else if (i == j + 2) {
-                    G.append(dt)
+                    A.append(dt)
                 } else {
-                    G.append(0)
+                    A.append(0)
                 }
             }
         }
         
-        A = G
+        // Compute G = A * sqrt(proc_sig)
+        G = [Float](repeating: 0, count: A.count)
+        var sqrtProcSig = sqrt(proc_sig)
+        vDSP_vsmul(A, 1, &sqrtProcSig, &G, 1, vDSP_Length(A.count))
         
-        // Multiply G with the square root of processing factor
-        vDSP_vsmul(G, 1, &proc_fac, &G, 1, vDSP_Length(G.count))
-        
-        var G_t = [Float](repeating: 0, count: G.count)
-        vDSP_mtrans(G, 1, &G_t, 1, 2, vDSP_Length(stateDim))
-        
-        // R is a numAnchors x numAnchors covariance matrix for the measurement noise
         R = [Float]()
         for i in 0..<anchors.count {
             for j in 0..<anchors.count {
                 if (i == j && i < anchors.count) {
-                    R.append(pos_sig)
+                    R.append(dist_sig)
                 } else {
                     R.append(0)
                 }
@@ -99,19 +133,21 @@ class ParticleFilter: BayesianFilter {
         
         particles = [Particle]()
         
+        u = [0, 0]
+        
         super.init()
         
+        // If at least 3 anchors are active for the linear least squares algorithm to work, we use it to initialize all particles around that position.
         if let position = leastSquares(anchors: activeAnchors.map { $0.position }, distances: distances) {
-            // If a least squares estimate is available, use it to initialize all particles around that position.
             for _ in 0..<numberOfParticles {
                 let (r1, r2) = Float.randomGaussian()
-                let randomizedPosition = [Float(position.x) + pos_sig * r1, Float(position.y) + pos_sig * r2]
+                let randomizedPosition = [Float(position.x) + dist_sig * r1, Float(position.y) + dist_sig * r2]
                 let randomizedState = randomizedPosition + [Float](repeating: 0, count: stateDim - 2)
                 let particle = Particle(state: randomizedState, weight: log(1 / Float(numberOfParticles)), filter: self)
                 particles.append(particle)
             }
         } else {
-            // If there were not enough anchors for a least squares estimate, initialize all particles on a circle around one anchor.
+            // If there were not enough anchors for the linear least squares algorithm, all particles are initialized on a circle around one anchor.
             // Determine the nearest distance and the associated anchor
             let nearestDistance = distances.min()!
             let nearestAnchor = activeAnchors[distances.index(of: nearestDistance)!]
@@ -119,7 +155,7 @@ class ParticleFilter: BayesianFilter {
             for _ in 0..<numberOfParticles {
                 let phi = Float.random(upperBound: 2 * Float.pi)
                 let (r1, _) = Float.randomGaussian()
-                let radius = nearestDistance + pos_sig * r1
+                let radius = nearestDistance + dist_sig * r1
                 let randomizedPosition = [cos(phi) * radius + Float(nearestAnchor.position.x), sin(phi) * radius + Float(nearestAnchor.position.y)]
                 let randomizedState = randomizedPosition + [Float](repeating: 0, count: stateDim - 2)
                 let particle = Particle(state: randomizedState, weight: log(1 / Float(numberOfParticles)), filter: self)
@@ -128,10 +164,11 @@ class ParticleFilter: BayesianFilter {
         }
     }
     
-    override func computeAlgorithm(anchors: [Anchor], distances: [Float], acceleration: [Float], successCallback: @escaping (_ position: CGPoint) -> Void) {
+    override func executeAlgorithm(anchors: [Anchor], distances: [Float], acceleration: [Float], successCallback: @escaping (_ position: CGPoint) -> Void) {
         // Request semaphore. Wait in case the algorithm is still in execution
         semaphore.wait()
         
+        // Determine whether the active anchors have changed
         if (activeAnchors.map { $0.id } != anchors.map { $0.id }) {
             didChangeAnchors(anchors)
         }
@@ -139,16 +176,18 @@ class ParticleFilter: BayesianFilter {
         // Using a DispatchGroup to continue execution of algorithm only after the functions on each particle were executed
         let dispatchGroup = DispatchGroup()
         for particle in particles {
-            // Execute functions on particles concurrently
+            // Execute the following functions on all particles concurrently
             DispatchQueue.global().async(group: dispatchGroup) {
-                // Draw new state from importance density
+                // Execute prediction step
                 particle.updateState(u: self.u)
-                // Evaluate the importance weight up to a normalizing constant
+                // Execute update step
                 particle.updateWeight(anchors: anchors, measurements: distances)
             }
         }
         
+        // Execute the following code after the previous 2 steps have been executed on all particles
         dispatchGroup.notify(queue: DispatchQueue.global()) {
+            // Store current acceleration for next iteration
             self.u = acceleration
 
             // Rescale weights for numerical stability
@@ -187,8 +226,6 @@ class ParticleFilter: BayesianFilter {
 
             var D = S.computeCholeskyDecomposition()
             if D == nil {
-                print("Making matrix positive definite")
-                S.pprint(numRows: 4, numCols: 4)
                 // Algorithm could not be executed because matrix was not positive definite. Make matrix positive definite and execute algorithm again
                 let A = S.positiveDefiniteMatrix()
                 D = A.computeCholeskyDecomposition()
@@ -264,7 +301,6 @@ class ParticleFilter: BayesianFilter {
         
         let pos_sig = Float(IndoorLocationManager.shared.filterSettings.distanceUncertainty)
         
-        // R is a numAnchors x numAnchors covariance matrix for the measurement noise
         R.removeAll()
         for i in 0..<anchors.count {
             for j in 0..<anchors.count {

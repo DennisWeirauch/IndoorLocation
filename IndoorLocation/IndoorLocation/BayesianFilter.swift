@@ -9,7 +9,7 @@
 import Accelerate
 
 /**
- Class to implement Bayesian filter. Without subclassing, no filter is applied and therefore a linear least squares algorithm is executed.
+ Class to implement a Bayesian filter. Without subclassing, no filter is applied and therefore a linear least squares algorithm is executed.
  */
 class BayesianFilter {
     
@@ -21,7 +21,7 @@ class BayesianFilter {
      - Parameter successCallback: A closure which is called when the function returns successfully
      - Parameter position: The position determined by the algorithm
      */
-    func computeAlgorithm(anchors: [Anchor], distances: [Float], acceleration: [Float], successCallback: @escaping (_ position: CGPoint) -> Void) {
+    func executeAlgorithm(anchors: [Anchor], distances: [Float], acceleration: [Float], successCallback: @escaping (_ position: CGPoint) -> Void) {
         // Compute least squares algorithm
         if let position = leastSquares(anchors: anchors.map { $0.position }, distances: distances) {
             successCallback(position)

@@ -8,37 +8,71 @@
 
 import Accelerate
 
+/**
+ Class that implements an Extended Kalman filter.
+ */
 class KalmanFilter: BayesianFilter {
     
-    // State vector containing: [xPos, yPos, xVel, yVel, xAcc, yAcc]
+    /// State vector containing: [xPos, yPos, xVel, yVel, xAcc, yAcc]
     private var state: [Float]
+    
+    var position: CGPoint {
+        return CGPoint(x: CGFloat(state[0]), y: CGFloat(state[1]))
+    }
 
     // Matrices
-    private var F: [Float]
-    private var Q: [Float]
-    private var R: [Float]
+    /// P is the covariance matrix for the state
     private(set) var P: [Float]
+    
+    /**
+     Process matrix F representing the physical model:
+     ````
+     |1 0 dt 0 dt^2/2   0  |
+     |0 1 0  dt  0   dt^2/2|
+     |0 0 1  0   dt     0  |
+     |0 0 0  1   0      dt |
+     |0 0 0  0   1      0  |
+     |0 0 0  0   0      1  |
+     ````
+     */
+    private var F: [Float]
+    
+    /// Q is the covariance matrix for the process noise
+    private var Q: [Float]
+    
+    /**
+     R is the covariance matrix for the measurement noise. It is a (numAnchors + 2) x (numAnchors + 2) diagonal matrix of the form:
+     ````
+     |D_N 0|
+     | 0  A|, with
+     D_N = dist_sig * I_N, I_N being the identity matrix of order N
+     A = acc_sig * I_2
+     ````
+     */
+    private var R: [Float]
     
     var activeAnchors = [Anchor]()
     
     init?(anchors: [Anchor], distances: [Float]) {
+        // Make sure at least 3 anchors are provided to determine the initial position.
+        guard anchors.count >= 3 else { return nil }
         
         activeAnchors = anchors
         
-        // Compute least squares algorithm
+        // Compute linear least squares algorithm to get initial position
         guard let position = leastSquares(anchors: anchors.map { $0.position }, distances: distances) else { return nil }
         
         let settings = IndoorLocationManager.shared.filterSettings
 
-        let pos_sig = Float(settings.distanceUncertainty)
+        var proc_sig = Float(settings.processUncertainty)
+        let dist_sig = Float(settings.distanceUncertainty)
         let acc_sig = Float(settings.accelerationUncertainty)
-        var proc_fac = sqrt(Float(settings.processingUncertainty))
         let dt = settings.updateTime
         
+        // Initialize state vector with position from linear least squares algorithm and no motion.
         state = [Float(position.x), Float(position.y), 0, 0, 0, 0]
         
         // Initialize matrices
-        // F is a stateDim x stateDim matrix representing the physical model
         F = [Float]()
         for i in 0..<state.count {
             for j in 0..<state.count {
@@ -54,7 +88,18 @@ class KalmanFilter: BayesianFilter {
             }
         }
 
-        // G is a stateDim x 2 matrix with '(dt^2)/2's in main diagonal, 'dt's in second negative side diagonal and '1's in fourth negative side diagonal
+        /**
+         //TODO: Find better description. What is this matrix called?
+         G is a matrix such that G * G' * proc_sig = Q. Q is the covariance matrix of the process noise. G:
+         ````
+         |dt^2/2   0  |
+         |0     dt^2/2|
+         |dt       0  |
+         |0        dt |
+         |1        0  |
+         |0        1  |
+         ````
+         */
         var G = [Float]()
         for i in 0..<state.count {
             for j in 0..<2 {
@@ -70,22 +115,20 @@ class KalmanFilter: BayesianFilter {
             }
         }
         
-        // Multiply G with the square root of processing factor
-        vDSP_vsmul(G, 1, &proc_fac, &G, 1, vDSP_Length(G.count))
-        
+        // Transpose G
         var G_t = [Float](repeating: 0, count: G.count)
         vDSP_mtrans(G, 1, &G_t, 1, 2, vDSP_Length(state.count))
         
-        // Compute Q from Q = G * G_t. Q is a stateDim x stateDim covariance matrix for the process noise
+        // Compute Q from Q = G * G_t * proc_sig
         Q = [Float](repeating: 0, count: state.count * state.count)
         vDSP_mmul(G, 1, G_t, 1, &Q, 1, vDSP_Length(state.count), vDSP_Length(state.count), 1)
+        vDSP_vsmul(Q, 1, &proc_sig, &Q, 1, vDSP_Length(Q.count))
         
-        // R is a (numAnchors + 2) x (numAnchors + 2) covariance matrix for the measurement noise
         R = [Float]()
         for i in 0..<anchors.count + 2 {
             for j in 0..<anchors.count + 2 {
                 if (i == j && i < anchors.count) {
-                    R.append(pos_sig)
+                    R.append(dist_sig)
                 } else if (i == j && i >= anchors.count) {
                     R.append(acc_sig)
                 } else {
@@ -94,12 +137,12 @@ class KalmanFilter: BayesianFilter {
             }
         }
         
-        // P is a stateDim x stateDim covariance matrix for the current state. It is initialized with the selected distance uncertainty
+        // Initialize matrix P with the selected distance uncertainty
         P = [Float]()
         for i in 0..<state.count {
             for j in 0..<state.count {
                 if (i == j) {
-                    P.append(pos_sig)
+                    P.append(dist_sig)
                 } else {
                     P.append(0)
                 }
@@ -107,8 +150,9 @@ class KalmanFilter: BayesianFilter {
         }
     }
     
-    override func computeAlgorithm(anchors: [Anchor], distances: [Float], acceleration: [Float], successCallback: @escaping (_ position: CGPoint) -> Void) {
+    override func executeAlgorithm(anchors: [Anchor], distances: [Float], acceleration: [Float], successCallback: @escaping (_ position: CGPoint) -> Void) {
         
+        // Determine whether the active anchors have changed
         if (activeAnchors.map { $0.id } != anchors.map { $0.id }) {
             didChangeAnchors(anchors)
         }
@@ -118,7 +162,7 @@ class KalmanFilter: BayesianFilter {
         
         // Execute the update step of the algorithm
         let measurements = distances + acceleration
-        let position = update(anchors: anchors, measurements: measurements)
+        update(anchors: anchors, measurements: measurements)
         
         successCallback(position)
     }
@@ -147,7 +191,7 @@ class KalmanFilter: BayesianFilter {
      - Parameter anchors: The current set of active anchors
      - Parameter measurements: The new measurement vector
      */
-    private func update(anchors: [Anchor], measurements: [Float]) -> CGPoint {
+    private func update(anchors: [Anchor], measurements: [Float]) {
         
         let H = H_j(state, anchors: anchors)
         
@@ -183,14 +227,12 @@ class KalmanFilter: BayesianFilter {
         vDSP_mmul(cov_update, 1, P, 1, &cov_update, 1, vDSP_Length(state.count), vDSP_Length(state.count), vDSP_Length(state.count))
         
         vDSP_vsub(cov_update, 1, P, 1, &P, 1, vDSP_Length(P.count))
-        
-        return CGPoint(x: CGFloat(state[0]), y: CGFloat(state[1]))
     }
     
     /**
      Evaluates the measurement equation
      - Parameter state: The current state to evaluate
-     - Parameter anchors: The currently active anchors
+     - Parameter anchors: The set of anchors that are currently active
      - Returns: A vector containing the distances to all anchors and the accelerations in format: [dist0, ..., distN, xAcc, yAcc]
      */
     private func h(_ state: [Float], anchors: [Anchor]) -> [Float] {
