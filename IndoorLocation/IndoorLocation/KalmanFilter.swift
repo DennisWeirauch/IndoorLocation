@@ -60,7 +60,7 @@ class KalmanFilter: BayesianFilter {
         activeAnchors = anchors
         
         // Compute linear least squares algorithm to get initial position
-        guard let position = leastSquares(anchors: anchors.map { $0.position }, distances: distances) else { return nil }
+        guard let position = linearLeastSquares(anchors: anchors.map { $0.position }, distances: distances) else { return nil }
         
         let settings = IndoorLocationManager.shared.filterSettings
 

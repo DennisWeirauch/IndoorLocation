@@ -12,6 +12,9 @@ protocol SwitchTableViewCellDelegate: class {
     func onSwitchTapped(_ sender: UISwitch)
 }
 
+/**
+ A cell that contains a switch.
+ */
 class SwitchTableViewCell: UITableViewCell {
     
     weak var delegate: SwitchTableViewCellDelegate?
@@ -20,6 +23,12 @@ class SwitchTableViewCell: UITableViewCell {
     var switcher: UISwitch!
     
     //MARK: Public API
+    /**
+     Sets up the cell with the provided data
+     - Parameter text: The description of the switch
+     - Parameter delegate: The cell's delegate
+     - Parameter tag: The tag of the cell
+     */
     func setupWithText(_ text: String, isOn: Bool, delegate: SwitchTableViewCellDelegate, tag: Int) {
         
         for subview in contentView.subviews {
@@ -41,6 +50,9 @@ class SwitchTableViewCell: UITableViewCell {
         contentView.addSubview(switcher)
     }
     
+    /**
+     Function that is called when the switch is tapped. The delegate is informed about this event.
+     */
     func onSwitchTapped(_ sender: UISwitch) {
         delegate?.onSwitchTapped(sender)
     }

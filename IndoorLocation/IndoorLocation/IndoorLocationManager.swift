@@ -37,7 +37,7 @@ protocol IndoorLocationManagerDelegate {
     func setAnchors(_ anchors: [Anchor])
     func updateActiveAnchors(_ anchors: [Anchor], distances: [Float], acceleration: [Float])
     func updatePosition(_ position: CGPoint)
-    func updateCovariance(eigenValue1: Float, eigenValue2: Float, angle: Float)
+    func updateCovariance(eigenvalue1: Float, eigenvalue2: Float, angle: Float)
     func updateParticles(_ particles: [Particle])
 }
 
@@ -283,7 +283,7 @@ class IndoorLocationManager {
                 let positionCovariance = [filter.P[0], filter.P[1], filter.P[6], filter.P[7]]
                 let (eigenvalues, eigenvectors) = positionCovariance.computeEigenvalueDecomposition()
                 let angle = atan(eigenvectors[2] / eigenvectors[0])
-                self.delegate?.updateCovariance(eigenValue1: eigenvalues[0], eigenValue2: eigenvalues[1], angle: angle)
+                self.delegate?.updateCovariance(eigenvalue1: eigenvalues[0], eigenvalue2: eigenvalues[1], angle: angle)
             case .particle:
                 guard let filter = self.filter as? ParticleFilter else { return }
                 self.delegate?.updateParticles(filter.particles)

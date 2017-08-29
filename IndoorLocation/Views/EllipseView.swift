@@ -13,6 +13,9 @@ enum EllipseType {
     case distance(radius: CGFloat)
 }
 
+/**
+ View that displays an ellipse
+ */
 class EllipseView: UIView {
     
     let ellipseType: EllipseType
@@ -21,6 +24,7 @@ class EllipseView: UIView {
     init(ellipseType: EllipseType, position: CGPoint) {
         self.ellipseType = ellipseType
         
+        // Set the frame of the view
         var width: CGFloat
         var height: CGFloat
         var rotationAngle: CGFloat?
@@ -51,11 +55,13 @@ class EllipseView: UIView {
     }
     
     override func draw(_ rect: CGRect) {
+        // Draw the ellipse within the frame's bounds
         let ellipsePath = UIBezierPath(ovalIn: CGRect(x: 0, y: 0, width: rect.width, height: rect.height))
         
         ellipseLayer = CAShapeLayer()
         ellipseLayer.path = ellipsePath.cgPath
         ellipseLayer.fillColor = UIColor.clear.cgColor
+        // Choose the line color depending on the ellipse type
         switch ellipseType {
         case .covariance(_):
             ellipseLayer.strokeColor = UIColor.orange.cgColor
@@ -68,6 +74,9 @@ class EllipseView: UIView {
         layer.addSublayer(ellipseLayer)
     }
     
+    /**
+     A function to update the shape and position of the ellipse. 
+     */
     func updateEllipse(withEllipseType ellipseType: EllipseType, position: CGPoint? = nil) {
         
         var width: CGFloat

@@ -23,57 +23,105 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
         
         setupView()
         
+        // Receive updates from IndoorLocationManager
         IndoorLocationManager.shared.delegate = self
     }
     
     //MARK: UIPopoverPresentationConrollerDelegate
+    // Necessary for popup style of SettingsTableViewController
     func adaptivePresentationStyle(for controller: UIPresentationController) -> UIModalPresentationStyle {
         return UIModalPresentationStyle.none
     }
     
     //MARK: IndoorLocationManagerDelegate
+    /**
+     IndoorLocationManagerDelegate function that is called when a new position is available
+     - Parameter position: The new position
+     */
     func updatePosition(_ position: CGPoint) {
         indoorMapView.position = position
     }
     
+    /**
+     IndoorLocationManagerDelegate function that is called after new anchors have been calibrated.
+     - Parameter anchors: The new anchors
+     */
     func setAnchors(_ anchors: [Anchor]) {
         indoorMapView.anchors = anchors
     }
     
+    /**
+     IndoorLocationManagerDelegate function that is called when the set of active anchors has changed or new measurements are available.
+     - Parameter anchors: The set of calibrated anchors
+     - Parameter distances: The distance measurements of each anchor
+     - Parameter acceleration: The acceleration measurements
+     */
     func updateActiveAnchors(_ anchors: [Anchor], distances: [Float], acceleration: [Float]) {
+        // Update the set of active anchors in the indoorMapView if necessary
         if (indoorMapView.anchors == nil || (indoorMapView.anchors!.map { $0.isActive } != anchors.map { $0.isActive })) {
             indoorMapView.anchors = anchors
         }
+        // Pass new measurements as CGFloat to indoorMapView
         indoorMapView.anchorDistances = distances.map { CGFloat($0) }
         indoorMapView.acceleration = acceleration.map { CGFloat($0) }
     }
     
-    func updateCovariance(eigenValue1: Float, eigenValue2: Float, angle: Float) {
-        let a = CGFloat(2 * sqrt(5.991) * eigenValue1)
-        let b = CGFloat(2 * sqrt(5.991) * eigenValue2)
+    /**
+     IndoorLocationManagerDelegate function that is called when a new covariance for the Kalman filter is available.
+     - Parameter eigenvalue1: The first eigenvalue of the covariance matrix. It defines the width of the displayed ellipse
+     - Parameter eigenvalue2: The second eigenvalue of the covariance matrix. It defines the height of the displayed ellipse
+     - Parameter angle: The rotation angle of the ellipse
+     */
+    func updateCovariance(eigenvalue1: Float, eigenvalue2: Float, angle: Float) {
+        // Determine the width and height of the ellipse and pass it to the indoorMapView
+        let a = CGFloat(2 * sqrt(5.991) * eigenvalue1)
+        let b = CGFloat(2 * sqrt(5.991) * eigenvalue2)
         indoorMapView.covariance = (a: a, b: b, angle: CGFloat(angle))
     }
     
+    /**
+     IndoorLocationManagerDelegate function that is called when a new state for all particles is available.
+     - Parameter particles: The set of particles
+     */
     func updateParticles(_ particles: [Particle]) {
         indoorMapView.particles = particles
     }
     
     //MARK: SettingsTableViewControllerDelegate
-    func toggleFloorplanVisible(_ isFloorPlanVisible: Bool) {
-        indoorMapView.isFloorPlanVisible = isFloorPlanVisible
+    /**
+     SettingsTableViewControllerDelegate function that is called when the settings for displaying the floorplan have changed.
+     The `isFloorplanVisible` attribute of indoorMapView is changed accordingly.
+     - Parameter isFloorplanVisible: A flag indicating whether the floorplan has to be displayed.
+     */
+    func toggleFloorplanVisible(_ isFloorplanVisible: Bool) {
+        indoorMapView.isFloorplanVisible = isFloorplanVisible
     }
     
+    /**
+     SettingsTableViewControllerDelegate function that is called when the settings for displaying the measurements have changed.
+     The `areMeasurementsVisible` attribute of indoorMapView is changed accordingly.
+     - Parameter areMeasurementsVisible: A flag indicating whether the measurements have to be displayed.
+     */
     func toggleMeasurementsVisible(_ areMeasurementsVisible: Bool) {
         indoorMapView.areMeasurementsVisible = areMeasurementsVisible
     }
     
+    /**
+     SettingsTableViewControllerDelegate function that is called when the settings for the filterType have changed.
+     The `filterType` attribute of indoorMapView is changed accordingly.
+     - Parameter filterType: The selected type of filter
+     */
     func changeFilterType(_ filterType: FilterType) {
         indoorMapView.filterType = filterType
     }
     
     //MARK: IndoorMapViewDelegate
+    /**
+     IndoorMapViewDelegate function that is called when calibration from view is requested by the user.
+     - Parameter newAnchors: The new positions of anchors to be calibrated
+     */
     func didDoCalibrationFromView(newAnchors: [Anchor]) {        
-        // Replace anchors with newAnchors and calibrate
+        // Replace anchors array with newAnchors and perform calibration
         IndoorLocationManager.shared.anchors = newAnchors
         IndoorLocationManager.shared.calibrate() { error in
             if let error = error {
@@ -85,13 +133,16 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
     }
     
     //MARK: Public API
+    /**
+     Function that is called when the settings button is tapped. It presents the SettingsViewController as popover.
+     */
     func onSettingsButtonTapped(_ sender: Any) {
         let settingsVC = SettingsTableViewController()
         
         settingsVC.modalPresentationStyle = .popover
         let frame = self.view.frame
         
-        settingsVC.preferredContentSize = CGSize(width: 200, height: frame.height)
+        settingsVC.preferredContentSize = CGSize(width: 220, height: frame.height)
         settingsVC.settingsDelegate = self
         
         let popoverVC = settingsVC.popoverPresentationController
@@ -103,10 +154,14 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
         self.present(settingsVC, animated: true, completion: nil)
     }
     
+    /**
+     Function that is called when the start button is tapped. It begins and stops ranging and changes its image accordingly.
+     */
     func onStartButtonTapped(_ sender: Any) {
+        // Show activity indicator
         activityIndicatorView.startAnimating()
         view.bringSubview(toFront: activityIndicatorView)
-
+        
         if IndoorLocationManager.shared.isRanging {
             IndoorLocationManager.shared.stopRanging() { error in
                 if let error = error {
@@ -129,6 +184,9 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
     }
     
     //MARK: Private API
+    /**
+     Function to set up the view. The indoorMapView, settingsButton, startButton and its activityIndicatorView are initialized.
+     */
     private func setupView() {
         // Set up indoorMapView
         indoorMapView = IndoorMapView(frame: view.frame)

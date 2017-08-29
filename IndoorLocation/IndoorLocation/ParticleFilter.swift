@@ -138,7 +138,7 @@ class ParticleFilter: BayesianFilter {
         super.init()
         
         // If at least 3 anchors are active for the linear least squares algorithm to work, we use it to initialize all particles around that position.
-        if let position = leastSquares(anchors: activeAnchors.map { $0.position }, distances: distances) {
+        if let position = linearLeastSquares(anchors: activeAnchors.map { $0.position }, distances: distances) {
             for _ in 0..<numberOfParticles {
                 let (r1, r2) = Float.randomGaussian()
                 let randomizedPosition = [Float(position.x) + dist_sig * r1, Float(position.y) + dist_sig * r2]
@@ -201,51 +201,28 @@ class ParticleFilter: BayesianFilter {
             let totalWeight = self.particles.reduce(0, { $0 + $1.weight })
             self.particles.forEach { $0.weight = $0.weight / totalWeight }
             
-            // Determine mean state
-            var meanState = [Float](repeating: 0, count: self.stateDim)
-            for particle in self.particles {
-                var weightedState = [Float](repeating: 0, count: particle.state.count)
-                vDSP_vsmul(particle.state, 1, &particle.weight, &weightedState, 1, vDSP_Length(meanState.count))
-                vDSP_vadd(meanState, 1, weightedState, 1, &meanState, 1, vDSP_Length(meanState.count))
-            }
-            
-            // Determine empirical covariance matrix S
-            var S = [Float]()
-            let sumOfSquaredWeights = self.particles.reduce(0, { $0 + $1.weight ^^ 2 })
-            for j in 0..<meanState.count {
-                for k in 0..<meanState.count {
-                    if k < j {
-                        let s_jk = S[k * meanState.count + j]
-                        S.append(s_jk)
-                    } else {
-                        let s_jk = (1 / 1 - sumOfSquaredWeights) * self.particles.reduce(0, { $0 + $1.weight * ($1.state[j] - meanState[j]) * ($1.state[k] - meanState[k]) })
-                        S.append(s_jk)
-                    }
-                }
+            // Prepare for regularization step
+            var D: [Float]?
+            if (IndoorLocationManager.shared.filterSettings.isRegularizedPF) {
+                D = self.determineDForRegularization()
             }
 
-            var D = S.computeCholeskyDecomposition()
-            if D == nil {
-                // Algorithm could not be executed because matrix was not positive definite. Make matrix positive definite and execute algorithm again
-                let A = S.positiveDefiniteMatrix()
-                D = A.computeCholeskyDecomposition()
-            }
-            
-            //TODO: Check if N_thr should be defined as the algorithm from the book says so
-//            let N_eff = 1 / sumOfSquaredWeights
-//            if N_eff < Float(self.numberOfParticles) / 10 {
+            // Execute resampling if N_eff is below N_thr
+            let N_eff = 1 / self.particles.reduce(0, { $0 + $1.weight ^^ 2 })
+            if N_eff < IndoorLocationManager.shared.filterSettings.N_thr {
                 // Execute resampling algorithm
                 self.resample()
-//            }
-            // Make sure a valid D has been computed and execute regularization
-            if let D = D {
-                // Regularize
+            }
+            
+            // Execute regularization step if necessary
+            if IndoorLocationManager.shared.filterSettings.isRegularizedPF, let D = D {
                 self.particles.forEach { $0.regularize(D: D) }
             }
+            
             // Determine position
             let position = self.particles.reduce((x: Float(0), y: Float(0)), { ($0.x + Float($1.position.x) * $1.weight, $0.y + Float($1.position.y) * $1.weight) })
             
-            // Transform weights to log domain
+            // Transform weights back to log domain
             self.particles.forEach { $0.weight = log($0.weight) }
             
             // Release semaphore
@@ -290,6 +267,59 @@ class ParticleFilter: BayesianFilter {
         }
         
         particles = resampledParticles
+    }
+    
+    /**
+     Determines the matrix D that is necessary for the regularization step.
+     - Returns: Matrix D, such that D * D' = S, with S as sample covariance matrix of all particles
+     */
+    private func determineDForRegularization() -> [Float] {
+        
+        // Determine mean state
+        var meanState = [Float](repeating: 0, count: self.stateDim)
+        for particle in self.particles {
+            var weightedState = [Float](repeating: 0, count: particle.state.count)
+            vDSP_vsmul(particle.state, 1, &particle.weight, &weightedState, 1, vDSP_Length(meanState.count))
+            vDSP_vadd(meanState, 1, weightedState, 1, &meanState, 1, vDSP_Length(meanState.count))
+        }
+        
+        // Determine empirical covariance matrix S
+        var S = [Float]()
+        let sumOfSquaredWeights = self.particles.reduce(0, { $0 + $1.weight ^^ 2 })
+        for j in 0..<meanState.count {
+            for k in 0..<meanState.count {
+                if k < j {
+                    let s_jk = S[k * meanState.count + j]
+                    S.append(s_jk)
+                } else {
+                    let s_jk = (1 / 1 - sumOfSquaredWeights) * self.particles.reduce(0, { $0 + $1.weight * ($1.state[j] - meanState[j]) * ($1.state[k] - meanState[k]) })
+                    S.append(s_jk)
+                }
+            }
+        }
+        
+        // Compute D such that D * D' = S. For this the eigenvalue decomposition of S is determined with S = Q * Λ * Q' = Q * Λ^(1/2) * Λ^(1/2) * Q'.
+        // Such that D = Q * Λ^(1/2)
+        var (eigenvalues, Q) = S.computeEigenvalueDecomposition()
+        
+        // Fix small negative eigenvalues that might occur due to numerical errors
+        eigenvalues = eigenvalues.map { $0 < 0 ? 0 : $0 }
+        
+        var Λ = [Float]()
+        for i in 0..<meanState.count {
+            for j in 0..<meanState.count {
+                if (i == j) {
+                    Λ.append(sqrt(eigenvalues[i]))
+                } else {
+                    Λ.append(0)
+                }
+            }
+        }
+        
+        var D = [Float](repeating: 0, count: Q.count)
+        vDSP_mmul(Q, 1, Λ, 1, &D, 1, vDSP_Length(meanState.count), vDSP_Length(meanState.count), vDSP_Length(meanState.count))
+        
+        return D
     }
     
     /**

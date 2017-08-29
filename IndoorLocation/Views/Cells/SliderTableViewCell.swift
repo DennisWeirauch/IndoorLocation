@@ -12,6 +12,9 @@ protocol SliderTableViewCellDelegate: class {
     func onSliderValueChanged(_ sender: UISlider)
 }
 
+/**
+ A cell that contains a slider.
+ */
 class SliderTableViewCell: UITableViewCell {
 
     weak var delegate: SliderTableViewCellDelegate?
@@ -23,6 +26,16 @@ class SliderTableViewCell: UITableViewCell {
     var labelUnit: String!
     
     //MARK: Public API
+    /**
+     Sets up the cell with the provided data
+     - Parameter value: The current value of the slider
+     - Parameter minValue: The minimum value of the slider
+     - Parameter maxValue: The maximum value of the slider
+     - Parameter text: The description of the slider
+     - Parameter unit: The unit of the value to be displayed
+     - Parameter delegate: The cell's delegate
+     - Parameter tag: The tag of the cell
+     */
     func setupWithValue(_ value: Int, minValue: Int, maxValue: Int, text: String, unit: String = "", delegate: SliderTableViewCellDelegate, tag: Int) {
         
         for subview in contentView.subviews {
@@ -31,6 +44,7 @@ class SliderTableViewCell: UITableViewCell {
         
         self.delegate = delegate
         
+        // Set up label
         labelDescription = text
         labelUnit = unit
                 
@@ -41,6 +55,7 @@ class SliderTableViewCell: UITableViewCell {
         
         contentView.addSubview(label)
         
+        // Set up slider
         slider = UISlider(frame: CGRect(x: 10, y: 24, width: contentView.frame.width - 20, height: 20))
         
         slider.minimumValue = Float(minValue)
@@ -53,6 +68,9 @@ class SliderTableViewCell: UITableViewCell {
         contentView.addSubview(slider)
     }
     
+    /**
+     Function that is called when the value of the slider changes. The delegate is informed about this event.
+     */
     func onSliderValueChanged(_ sender: UISlider) {
         label.text = labelDescription + " \(Int(sender.value)) " + labelUnit
         delegate?.onSliderValueChanged(sender)

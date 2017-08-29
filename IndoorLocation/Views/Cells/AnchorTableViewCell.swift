@@ -13,6 +13,9 @@ protocol AnchorTableViewCellDelegate: class {
     func onRemoveAnchorButtonTapped(_ sender: UIButton, id: Int)
 }
 
+/**
+ A cell that displays data of an anchor. Its ID and coordinates are displayed. Empty cells can be edited.
+ */
 class AnchorTableViewCell: UITableViewCell {
     
     weak var delegate: AnchorTableViewCellDelegate?
@@ -24,6 +27,11 @@ class AnchorTableViewCell: UITableViewCell {
     var button: UIButton!
     
     //MARK: Public API
+    /**
+     Sets up the cell with the provided data
+     - Parameter delegate: The cell's delegate
+     - Parameter anchor: The anchor that is displayed in the cell. If it is `nil`, an empty cell will be displayed
+     */
     func setupWithDelegate(_ delegate: AnchorTableViewCellDelegate, anchor: Anchor? = nil) {
         
         for subview in contentView.subviews {
@@ -31,7 +39,9 @@ class AnchorTableViewCell: UITableViewCell {
         }
         
         self.delegate = delegate
-                
+        
+        // Set up textfields
+        //TODO: Adjust size according to width of cell
         idTextField = UITextField(frame: CGRect(x: 10, y: 0, width: 40, height: frame.height))
         xTextField = UITextField(frame: CGRect(x: idTextField.frame.maxX, y: 0, width: 50, height: frame.height))
         yTextField = UITextField(frame: CGRect(x: xTextField.frame.maxX, y: 0, width: xTextField.frame.width, height: frame.height))
@@ -61,6 +71,7 @@ class AnchorTableViewCell: UITableViewCell {
         contentView.addSubview(xTextField)
         contentView.addSubview(yTextField)
         
+        // Set up button
         let buttonSize: CGFloat = 25
         button = UIButton(frame: CGRect(x: contentView.frame.width - buttonSize - 10, y: (contentView.frame.height - buttonSize) / 2, width: buttonSize, height: buttonSize))
         if anchor != nil {
@@ -73,11 +84,17 @@ class AnchorTableViewCell: UITableViewCell {
         contentView.addSubview(button)
     }
     
+    /**
+     Function that is called when the plus button of the cell is tapped. The entered data is forwarded to the delegate.
+     */
     func onAddAnchorButtonTapped(_ sender: UIButton) {
         guard let id = Int(idTextField.text!, radix: 16), let x = Int(xTextField.text!), let y = Int(yTextField.text!) else { return }
         delegate?.onAddAnchorButtonTapped(sender, id: id, x: x, y: y)
     }
     
+    /**
+     Function that is called when the trash button of the cell is tapped. The ID of the cell is forwarded to the delegate.
+     */
     func onRemoveAnchorButtonTapped(_ sender: UIButton) {
         guard let id = Int(idTextField.text!, radix: 16) else { return }
         delegate?.onRemoveAnchorButtonTapped(sender, id: id)

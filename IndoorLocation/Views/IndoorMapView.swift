@@ -12,12 +12,15 @@ protocol IndoorMapViewDelegate {
     func didDoCalibrationFromView(newAnchors: [Anchor])
 }
 
+/**
+ This class manages the display of the indoor positioning system.
+ */
 class IndoorMapView: UIView, UIGestureRecognizerDelegate {
 
     //MARK: Public variables
-    var isFloorPlanVisible = false {
+    var isFloorplanVisible = false {
         didSet {
-            floorplanView.isHidden = !isFloorPlanVisible
+            floorplanView.isHidden = !isFloorplanVisible
         }
     }
     
@@ -138,9 +141,13 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         fatalError("init(coder:) has not been implemented")
     }
     
+    //MARK: Private API
+    /**
+     Sets up the view. Initializes the mapView, floorplanView and calibrationButtons.
+     */
     private func setupView() {
         // Set up mapView
-        mapView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 10))
+        mapView = UIView(frame: CGRect(x: 0, y: 0, width: 10000, height: 10000))
         addSubview(mapView)
         
         // Set up floorplanView
@@ -179,6 +186,9 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         addSubview(calibrationButton)
     }
     
+    /**
+     Sets up the gesture recognizers for panning, rotating and zooming the map.
+     */
     private func setupGestureRecognizers() {
         let rotationGesture = UIRotationGestureRecognizer(target: self, action: #selector(handleRotation(_:)))
         rotationGesture.delegate = self
@@ -194,17 +204,10 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         addGestureRecognizer(panGesture)
     }
     
-    //MARK: Private API
     // Functions used for zooming, rotating and panning the mapView
-    private func setAnchor(_ anchorPoint: CGPoint, forView view: UIView) {
-        let oldOrigin: CGPoint = view.frame.origin
-        view.layer.anchorPoint = anchorPoint
-        let newOrigin = view.frame.origin
-        let transition = CGPoint(x: newOrigin.x - oldOrigin.x, y: newOrigin.y - oldOrigin.y)
-        let newCenter = CGPoint(x: view.center.x - transition.x, y: view.center.y - transition.y)
-        view.center = newCenter
-    }
-    
+    /**
+     Updates the CGAffineTransform of the mapView.
+     */
     private func updateTransformWithOffset(_ offset: CGPoint) {
         mapView.transform = CGAffineTransform(translationX: offset.x + tx, y: offset.y + ty)
         mapView.transform = mapView.transform.rotated(by: angle)
@@ -219,6 +222,15 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
             let newAnchor = CGPoint(x: (locationInView.x / mapView.bounds.size.width), y: (locationInView.y / mapView.bounds.size.height))
             setAnchor(newAnchor, forView: mapView)
         }
+    }
+    
+    private func setAnchor(_ anchorPoint: CGPoint, forView view: UIView) {
+        let oldOrigin: CGPoint = view.frame.origin
+        view.layer.anchorPoint = anchorPoint
+        let newOrigin = view.frame.origin
+        let transition = CGPoint(x: newOrigin.x - oldOrigin.x, y: newOrigin.y - oldOrigin.y)
+        let newCenter = CGPoint(x: view.center.x - transition.x, y: view.center.y - transition.y)
+        view.center = newCenter
     }
     
     // Functions to show views for indoor location tracking
@@ -237,6 +249,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
             anchorViews?.append(anchorView)
             
             // Add Gesture Recognizer
+            anchorView.isUserInteractionEnabled = true
             let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(draggedAnchor(_:)))
             anchorView.addGestureRecognizer(panGestureRecognizer)
         }
@@ -347,6 +360,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     }
     
     //MARK: User interaction
+    // Functions for rotating, zooming and panning mapView
     func handleRotation(_ recognizer: UIRotationGestureRecognizer) {
         if (recognizer.state == .began) {
             initAngle = angle
@@ -371,6 +385,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         updateTransformWithOffset(translation)
     }
     
+    // Functions for calibration from view
     func draggedAnchor(_ sender: UIPanGestureRecognizer) {
         let translation = sender.translation(in: mapView)
         sender.view?.center = CGPoint(x: (sender.view?.center.x)! + translation.x, y: (sender.view?.center.y)! + translation.y)

@@ -12,7 +12,7 @@ import UIKit
 precedencegroup PowerPrecedence { higherThan: MultiplicationPrecedence }
 infix operator ^^ : PowerPrecedence
 /**
- Implements the power function
+ Implements the power function.
  - Returns: The result of pow(radix, power)
  */
 func ^^ (radix: Float, power: Float) -> Float {
@@ -21,7 +21,7 @@ func ^^ (radix: Float, power: Float) -> Float {
 
 extension Float {
     /**
-     Generate a random sample from a uniform distribution in the range [0, 1]
+     Generate a random sample from a uniform distribution in the range [0, 1].
      - Returns: A random uniform distributed Float in the range [0, 1]
      */
     static func random() -> Float {
@@ -29,7 +29,7 @@ extension Float {
     }
     
     /**
-     Generate a random sample from a uniform distribution in the range [0, upperBound]
+     Generate a random sample from a uniform distribution in the range [0, upperBound].
      - Parameter upperBound: The upperbound for the random sample
      - Returns: A random uniform distributed Float in the range [0, upperBound]
      */
@@ -38,7 +38,7 @@ extension Float {
     }
     
     /**
-     Generate a random sample from a standard normal distribution
+     Generate a random sample from a standard normal distribution.
      - Returns: A pair of random samples from a standard normal distribution
      */
     static func randomGaussian() -> (Float, Float) {
@@ -61,11 +61,12 @@ extension Float {
     }
 }
 
+// Extension for Float Arrays
 extension Array where Iterator.Element == Float {
     /**
-     Generate a random gaussian distributed vector with specified mean and covariance
+     Generate a random gaussian distributed vector with specified mean and covariance.
      - Parameter mean: The mean of the random vector
-     - Parameter A: A matrix for which holds `A` * `A_T` = Covariance matrix
+     - Parameter A: A matrix for which holds `A` * `A_T` = Covariance matrix TODO: Find description for A!
      - Returns: A random gaussian distributed vector with specified mean and covariance
      */
     static func randomGaussianVector(mean: [Float], A: [Float]) -> [Float] {
@@ -82,7 +83,7 @@ extension Array where Iterator.Element == Float {
     }
     
     /**
-      Generate a random normal distributed vector
+      Generate a random normal distributed vector.
      - Parameter dim: The number of dimensions for the vector
      - Returns: A random normal distributed vector of `dim` dimensions
      */
@@ -99,7 +100,7 @@ extension Array where Iterator.Element == Float {
     }
     
     /**
-     Determine the inverse of a matrix
+     Determine the inverse of a matrix.
      - Returns: The inverse of the matrix
      */
     func inverse() -> [Float] {
@@ -125,35 +126,9 @@ extension Array where Iterator.Element == Float {
     }
     
     /**
-     Computes the cholesky decomposition of the matrix
-     - Returns: Returns the cholesky decomposition if the matrix was positive definite. Otherwise returns `nil`
+     Computes the eigenvalue decomposition of a matrix.
+     - Returns: Returns the eigenvalues and eigenvectors
      */
-    func computeCholeskyDecomposition() -> [Float]? {
-        let n = Int(sqrt(Float(self.count)))
-        var L = [Float](repeating: 0, count: self.count)
-        
-        for i in 0..<n {
-            for j in 0..<(i + 1) {
-                var sum: Float = 0
-                for k in 0..<j {
-                    sum += L[i * n + k] * L[j * n + k]
-                }
-                if (i == j) {
-                    // Check if we are trying to compute the square root of a negative number here. If so, the input matrix is not positive definite.
-                    let diagonalEntry = sqrt(self[j * n + j] - sum)
-                    if diagonalEntry.isNaN {
-                        return nil
-                    }
-                    L[i * n + j] = diagonalEntry
-                } else {
-                    L[i * n + j] = (self[i * n + j] - sum) / L[j * n + j]
-                }
-            }
-        }
-        
-        return L
-    }
-    
     func computeEigenvalueDecomposition() -> (eigenvalues: [Float], eigenvectors: [Float]) {
         // Execute eigenvalue decomposition
         let dim = Int(sqrt(Float(self.count)))
@@ -188,39 +163,7 @@ extension Array where Iterator.Element == Float {
     }
     
     /**
-     Compute a positive definite matrix from a positive semidefinite matrix by setting zero eigenvalues to small values
-     - Returns: A positive definite matrix
-     */
-    func positiveDefiniteMatrix() -> [Float] {
-        let dim = Int(sqrt(Float(self.count)))
-
-        let (eigenvalues, eigenvectors) = self.computeEigenvalueDecomposition()
-        
-        // Fix zero or negative eigenvalues
-        let fixedEigenvalues = eigenvalues.map { $0 < 1e-10 ? 1e-6 : $0 }
-        
-        var D = [Float]()
-        for i in 0..<dim {
-            for j in 0..<dim {
-                if (i == j) {
-                    D.append(fixedEigenvalues[i])
-                } else {
-                    D.append(0)
-                }
-            }
-        }
-        
-        // Compute and return A = V * D * inv(V)
-        var A = [Float](repeating: 0, count: eigenvectors.count)
-        vDSP_mmul(eigenvectors, 1, D, 1, &A, 1, vDSP_Length(dim), vDSP_Length(dim), vDSP_Length(dim))
-        
-        vDSP_mmul(A, 1, eigenvectors.inverse(), 1, &A, 1, vDSP_Length(dim), vDSP_Length(dim), vDSP_Length(dim))
-        
-        return A
-    }
-    
-    /**
-     Prints matrices nicely for debugging purposes
+     Prints matrices nicely for debugging purposes.
      - Parameter numRows: Number of rows of the matrix
      - Parameter numCols: Number of colums of the matrix
      */
@@ -232,31 +175,31 @@ extension Array where Iterator.Element == Float {
 }
 
 /**
- Executes the least squares algorithm
+ Executes the linear least squares algorithm.
  - Parameter anchors: The set of active anchors
- - Parameter distances: The raw distances to the anchors
+ - Parameter distances: The distances to the anchors
  - Returns: The position determined by the least squares algorithm or `nil` if too few anchors are available
  */
-func leastSquares(anchors: [CGPoint], distances: [Float]) -> CGPoint? {
+func linearLeastSquares(anchors: [CGPoint], distances: [Float]) -> CGPoint? {
     guard anchors.count > 2 else {
         print("At least 3 anchors are necessary for the least squares algorithm.")
         return nil
     }
     
+    // Set up linear system
     var A = [Float]()
     var b = [Float]()
-    
     for i in 0..<anchors.count - 1 {
         b.append(distances[i] ^^ 2 - Float(anchors[i].x) ^^ 2 - Float(anchors[i].y) ^^ 2 - distances.last! ^^ 2 + Float(anchors.last!.x) ^^ 2 + Float(anchors.last!.y) ^^ 2)
         A.append(-2 * Float(anchors[i].x - anchors.last!.x))
         A.append(-2 * Float(anchors[i].y - anchors.last!.y))
     }
     
+    // Determine inverse of A. If more than 3 anchors are active the Moore-Penrose pseudo-inverse is computed
     var A_inv: [Float]
     if anchors.count == 3 {
         A_inv = A.inverse()
     } else {
-        // Determine the Moore-Penrose Pseudo-Inverse to solve the problem
         var A_T = [Float](repeating: 0, count: A.count)
         vDSP_mtrans(A, 1, &A_T, 1, 2, vDSP_Length(anchors.count - 1))
         
@@ -267,6 +210,7 @@ func leastSquares(anchors: [CGPoint], distances: [Float]) -> CGPoint? {
         vDSP_mmul(A_T_A.inverse(), 1, A_T, 1, &A_inv, 1, 2, vDSP_Length(anchors.count - 1), 2)
     }
     
+    // Determine position pos = inv(A) * b
     var pos: [Float] = [0, 0]
     vDSP_mmul(A_inv, 1, b, 1, &pos, 1, 2, 1, vDSP_Length(anchors.count - 1))
     
@@ -274,10 +218,11 @@ func leastSquares(anchors: [CGPoint], distances: [Float]) -> CGPoint? {
 }
 
 /**
- Computes the value of p(x) where p(X) = N(X, m, P) in a logarithmic scale.
- - Parameter x: Vector x
- - Parameter m: Vector of mean
- - Parameter
+ Computes the value of p(x) where p(x) = N(x, m, P) in a logarithmic scale.
+ - Parameter x: State vector x to be evaluated
+ - Parameter m: Mean of the normal distribution
+ - Parameter P: Covariance of the normal distribution. It has to be a triangular matrix.
+ - Parameter P_inv: Inverse of matrix P
  - Returns: p(x) in logarithmic scale
  */
 func computeNormalDistribution(x: [Float], m: [Float], forTriangularCovariance P: [Float], withInverse P_inv: [Float]) -> Float {
@@ -288,21 +233,28 @@ func computeNormalDistribution(x: [Float], m: [Float], forTriangularCovariance P
     }
     let prefactor = 1 / sqrt((2 * Float.pi) ^^ Float(m.count) * determinant)
     
-    // Compute the exponent = (-0.5 * (x-m)_T * P_inv * (x-m))
+    // Compute the exponent = (-0.5 * (x - m)' * P_inv * (x - m))
     var diff = [Float](repeating: 0, count: x.count)
     vDSP_vsub(m, 1, x, 1, &diff, 1, vDSP_Length(x.count))
     
     var P_diff = [Float](repeating: 0, count: x.count)
     vDSP_mmul(P_inv, 1, diff, 1, &P_diff, 1, vDSP_Length(x.count), 1, vDSP_Length(x.count))
     
-    var diff_P_diff: Float = 0
-    vDSP_dotpr(diff, 1, P_diff, 1, &diff_P_diff, vDSP_Length(x.count))
+    var exponent: Float = 0
+    vDSP_dotpr(diff, 1, P_diff, 1, &exponent, vDSP_Length(x.count))
     
-    let exponent = -0.5 * diff_P_diff
+    exponent = -0.5 * exponent
     
+    // Return log(prefactor * exp(exponent)) = log(prefactor) + exponent
     return log(prefactor) + exponent
 }
 
+/**
+ Present an alert from any point in the code.
+ - Parameter title: The title of the alert
+ - Parameter message: The message of the alert
+ - Parameter actions: The UIAlertActions to display. If no action is passed, a default `OK` action will be added.
+ */
 func alertWithTitle(_ title: String, message: String? = nil, actions: [UIAlertAction]? = nil) {
     let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
     

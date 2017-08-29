@@ -22,8 +22,8 @@ class BayesianFilter {
      - Parameter position: The position determined by the algorithm
      */
     func executeAlgorithm(anchors: [Anchor], distances: [Float], acceleration: [Float], successCallback: @escaping (_ position: CGPoint) -> Void) {
-        // Compute least squares algorithm
-        if let position = leastSquares(anchors: anchors.map { $0.position }, distances: distances) {
+        // Compute linear least squares algorithm
+        if let position = linearLeastSquares(anchors: anchors.map { $0.position }, distances: distances) {
             successCallback(position)
         }
     }

@@ -12,6 +12,9 @@ protocol ButtonTableViewCellDelegate: class {
     func onButtonTapped(_ sender: UIButton)
 }
 
+/**
+ A cell that contains a button.
+ */
 class ButtonTableViewCell: UITableViewCell {
 
     weak var delegate: ButtonTableViewCellDelegate?
@@ -19,6 +22,11 @@ class ButtonTableViewCell: UITableViewCell {
     var button: UIButton!
     
     //MARK: Public API
+    /**
+     Sets up the cell with the provided data
+     - Parameter text: The text of the button
+     - Parameter delegate: The cell's delegate
+     */
     func setupWithText(_ text: String, delegate: ButtonTableViewCellDelegate) {
         
         for subview in contentView.subviews {
@@ -26,7 +34,8 @@ class ButtonTableViewCell: UITableViewCell {
         }
         
         self.delegate = delegate
-                
+        
+        // Set up button
         button = UIButton(frame: contentView.frame)
         
         button.setTitle(text, for: .normal)
@@ -37,6 +46,9 @@ class ButtonTableViewCell: UITableViewCell {
         contentView.addSubview(button)
     }
     
+    /**
+     Function that is called when the button is tapped. The delegate is informed about this event.
+     */
     func onButtonTapped(_ sender: UIButton) {
         delegate?.onButtonTapped(sender)
     }
