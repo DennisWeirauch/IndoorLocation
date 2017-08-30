@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>SettingsTableViewController Class Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Class/SettingsTableViewController" class="dashAnchor"></a>
+    <a title="SettingsTableViewController Class Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../index.html"> Docs</a> (37% documented)</p>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../index.html"> Reference</a>
+        <img id="carat" src="../img/carat.png" />
+        SettingsTableViewController Class Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Classes/AnchorTableViewCell.html">AnchorTableViewCell</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/AppDelegate.html">AppDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/BayesianFilter.html">BayesianFilter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ButtonTableViewCell.html">ButtonTableViewCell</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/EllipseView.html">EllipseView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/FilterSettings.html">FilterSettings</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/IndoorLocationManager.html">IndoorLocationManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/IndoorMapView.html">IndoorMapView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/KalmanFilter.html">KalmanFilter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/MapViewController.html">MapViewController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/NetworkManager.html">NetworkManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Particle.html">Particle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ParticleFilter.html">ParticleFilter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/PointView.html">PointView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SegmentedControlTableViewCell.html">SegmentedControlTableViewCell</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SettingsTableViewController.html">SettingsTableViewController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SettingsTableViewController/SettingsTableViewSection.html">– SettingsTableViewSection</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SettingsTableViewController/SliderType.html">– SliderType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SettingsTableViewController/SwitchType.html">– SwitchType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SliderTableViewCell.html">SliderTableViewCell</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SwitchTableViewCell.html">SwitchTableViewCell</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/TrajectoryView.html">TrajectoryView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/VectorView.html">VectorView</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Enums.html">Enums</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Enums/EllipseType.html">EllipseType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/FilterType.html">FilterType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/NetworkResult.html">NetworkResult</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/PointType.html">PointType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/TaskType.html">TaskType</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Extensions/Array.html">Array</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/Float.html">Float</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Functions.html">Functions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Functions.html#/s:F14IndoorLocationoi2xxFTSfSf_Sf">^^(_:_:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Functions.html#/s:F14IndoorLocation14alertWithTitleFTSS7messageGSqSS_7actionsGSqGSaCSo13UIAlertAction___T_">alertWithTitle(_:message:actions:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Functions.html#/s:F14IndoorLocation25computeNormalDistributionFT1xGSaSf_1mGSaSf_23forTriangularCovarianceGSaSf_11withInverseGSaSf__Sf">computeNormalDistribution(x:m:forTriangularCovariance:withInverse:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Functions.html#/s:F14IndoorLocation18linearLeastSquaresFT7anchorsGSaVSC7CGPoint_9distancesGSaSf__GSqS0__">linearLeastSquares(anchors:distances:)</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Protocols/AnchorTableViewCellDelegate.html">AnchorTableViewCellDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ButtonTableViewCellDelegate.html">ButtonTableViewCellDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/IndoorLocationManagerDelegate.html">IndoorLocationManagerDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/IndoorMapViewDelegate.html">IndoorMapViewDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/SegmentedControlTableViewCellDelegate.html">SegmentedControlTableViewCellDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/SettingsTableViewControllerDelegate.html">SettingsTableViewControllerDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/SliderTableViewCellDelegate.html">SliderTableViewCellDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/SwitchTableViewCellDelegate.html">SwitchTableViewCellDelegate</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Typealiases.html">Typealiases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:14IndoorLocation6Anchor">Anchor</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>SettingsTableViewController</h1>
+              <div class="declaration">
+                <div class="language">
+                  <pre class="highlight"><code><span class="kd">class</span> <span class="kt">SettingsTableViewController</span><span class="p">:</span> <span class="kt">UITableViewController</span><span class="p">,</span> <span class="kt"><a href="../Protocols/AnchorTableViewCellDelegate.html">AnchorTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/ButtonTableViewCellDelegate.html">ButtonTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SegmentedControlTableViewCellDelegate.html">SegmentedControlTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SliderTableViewCellDelegate.html">SliderTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SwitchTableViewCellDelegate.html">SwitchTableViewCellDelegate</a></span></code></pre>
+
+                </div>
+              </div>
+            <p>ViewController for the settings of the application</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:OC14IndoorLocation27SettingsTableViewController24SettingsTableViewSection"></a>
+                    <a name="//apple_ref/swift/Enum/SettingsTableViewSection" class="dashAnchor"></a>
+                    <a class="token" href="#/s:OC14IndoorLocation27SettingsTableViewController24SettingsTableViewSection">SettingsTableViewSection</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                        <a href="../Classes/SettingsTableViewController/SettingsTableViewSection.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">SettingsTableViewController</span><span class="p">:</span> <span class="kt">UITableViewController</span><span class="p">,</span> <span class="kt"><a href="../Protocols/AnchorTableViewCellDelegate.html">AnchorTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/ButtonTableViewCellDelegate.html">ButtonTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SegmentedControlTableViewCellDelegate.html">SegmentedControlTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SliderTableViewCellDelegate.html">SliderTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SwitchTableViewCellDelegate.html">SwitchTableViewCellDelegate</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:OC14IndoorLocation27SettingsTableViewController10SliderType"></a>
+                    <a name="//apple_ref/swift/Enum/SliderType" class="dashAnchor"></a>
+                    <a class="token" href="#/s:OC14IndoorLocation27SettingsTableViewController10SliderType">SliderType</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                        <a href="../Classes/SettingsTableViewController/SliderType.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">SettingsTableViewController</span><span class="p">:</span> <span class="kt">UITableViewController</span><span class="p">,</span> <span class="kt"><a href="../Protocols/AnchorTableViewCellDelegate.html">AnchorTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/ButtonTableViewCellDelegate.html">ButtonTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SegmentedControlTableViewCellDelegate.html">SegmentedControlTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SliderTableViewCellDelegate.html">SliderTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SwitchTableViewCellDelegate.html">SwitchTableViewCellDelegate</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:OC14IndoorLocation27SettingsTableViewController10SwitchType"></a>
+                    <a name="//apple_ref/swift/Enum/SwitchType" class="dashAnchor"></a>
+                    <a class="token" href="#/s:OC14IndoorLocation27SettingsTableViewController10SwitchType">SwitchType</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                        <a href="../Classes/SettingsTableViewController/SwitchType.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">SettingsTableViewController</span><span class="p">:</span> <span class="kt">UITableViewController</span><span class="p">,</span> <span class="kt"><a href="../Protocols/AnchorTableViewCellDelegate.html">AnchorTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/ButtonTableViewCellDelegate.html">ButtonTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SegmentedControlTableViewCellDelegate.html">SegmentedControlTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SliderTableViewCellDelegate.html">SliderTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SwitchTableViewCellDelegate.html">SwitchTableViewCellDelegate</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC14IndoorLocation27SettingsTableViewController17tableViewSectionsGSaSi_"></a>
+                    <a name="//apple_ref/swift/Property/tableViewSections" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC14IndoorLocation27SettingsTableViewController17tableViewSectionsGSaSi_">tableViewSections</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">SettingsTableViewController</span><span class="p">:</span> <span class="kt">UITableViewController</span><span class="p">,</span> <span class="kt"><a href="../Protocols/AnchorTableViewCellDelegate.html">AnchorTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/ButtonTableViewCellDelegate.html">ButtonTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SegmentedControlTableViewCellDelegate.html">SegmentedControlTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SliderTableViewCellDelegate.html">SliderTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SwitchTableViewCellDelegate.html">SwitchTableViewCellDelegate</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC14IndoorLocation27SettingsTableViewController14filterSettingsCS_14FilterSettings"></a>
+                    <a name="//apple_ref/swift/Property/filterSettings" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC14IndoorLocation27SettingsTableViewController14filterSettingsCS_14FilterSettings">filterSettings</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">SettingsTableViewController</span><span class="p">:</span> <span class="kt">UITableViewController</span><span class="p">,</span> <span class="kt"><a href="../Protocols/AnchorTableViewCellDelegate.html">AnchorTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/ButtonTableViewCellDelegate.html">ButtonTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SegmentedControlTableViewCellDelegate.html">SegmentedControlTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SliderTableViewCellDelegate.html">SliderTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SwitchTableViewCellDelegate.html">SwitchTableViewCellDelegate</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC14IndoorLocation27SettingsTableViewController16settingsDelegateGSqPS_35SettingsTableViewControllerDelegate__"></a>
+                    <a name="//apple_ref/swift/Property/settingsDelegate" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC14IndoorLocation27SettingsTableViewController16settingsDelegateGSqPS_35SettingsTableViewControllerDelegate__">settingsDelegate</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">SettingsTableViewController</span><span class="p">:</span> <span class="kt">UITableViewController</span><span class="p">,</span> <span class="kt"><a href="../Protocols/AnchorTableViewCellDelegate.html">AnchorTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/ButtonTableViewCellDelegate.html">ButtonTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SegmentedControlTableViewCellDelegate.html">SegmentedControlTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SliderTableViewCellDelegate.html">SliderTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SwitchTableViewCellDelegate.html">SwitchTableViewCellDelegate</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC14IndoorLocation27SettingsTableViewController18calibrationPendingSb"></a>
+                    <a name="//apple_ref/swift/Property/calibrationPending" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC14IndoorLocation27SettingsTableViewController18calibrationPendingSb">calibrationPending</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">SettingsTableViewController</span><span class="p">:</span> <span class="kt">UITableViewController</span><span class="p">,</span> <span class="kt"><a href="../Protocols/AnchorTableViewCellDelegate.html">AnchorTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/ButtonTableViewCellDelegate.html">ButtonTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SegmentedControlTableViewCellDelegate.html">SegmentedControlTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SliderTableViewCellDelegate.html">SliderTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SwitchTableViewCellDelegate.html">SwitchTableViewCellDelegate</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC14IndoorLocation27SettingsTableViewController17calibratedAnchorsGSqGSaT2idSi8positionVSC7CGPoint8isActiveSb___"></a>
+                    <a name="//apple_ref/swift/Property/calibratedAnchors" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC14IndoorLocation27SettingsTableViewController17calibratedAnchorsGSqGSaT2idSi8positionVSC7CGPoint8isActiveSb___">calibratedAnchors</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">SettingsTableViewController</span><span class="p">:</span> <span class="kt">UITableViewController</span><span class="p">,</span> <span class="kt"><a href="../Protocols/AnchorTableViewCellDelegate.html">AnchorTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/ButtonTableViewCellDelegate.html">ButtonTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SegmentedControlTableViewCellDelegate.html">SegmentedControlTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SliderTableViewCellDelegate.html">SliderTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SwitchTableViewCellDelegate.html">SwitchTableViewCellDelegate</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC14IndoorLocation27SettingsTableViewController27filterInitializationPendingSb"></a>
+                    <a name="//apple_ref/swift/Property/filterInitializationPending" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC14IndoorLocation27SettingsTableViewController27filterInitializationPendingSb">filterInitializationPending</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">SettingsTableViewController</span><span class="p">:</span> <span class="kt">UITableViewController</span><span class="p">,</span> <span class="kt"><a href="../Protocols/AnchorTableViewCellDelegate.html">AnchorTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/ButtonTableViewCellDelegate.html">ButtonTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SegmentedControlTableViewCellDelegate.html">SegmentedControlTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SliderTableViewCellDelegate.html">SliderTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SwitchTableViewCellDelegate.html">SwitchTableViewCellDelegate</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/ViewController%20lifecycle"></a>
+                <a name="//apple_ref/swift/Section/ViewController lifecycle" class="dashAnchor"></a>
+                <a href="#/ViewController%20lifecycle">
+                  <h3 class="section-name">ViewController lifecycle</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC14IndoorLocation27SettingsTableViewController11viewDidLoadFT_T_"></a>
+                    <a name="//apple_ref/swift/Method/viewDidLoad()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC14IndoorLocation27SettingsTableViewController11viewDidLoadFT_T_">viewDidLoad()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">SettingsTableViewController</span><span class="p">:</span> <span class="kt">UITableViewController</span><span class="p">,</span> <span class="kt"><a href="../Protocols/AnchorTableViewCellDelegate.html">AnchorTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/ButtonTableViewCellDelegate.html">ButtonTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SegmentedControlTableViewCellDelegate.html">SegmentedControlTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SliderTableViewCellDelegate.html">SliderTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SwitchTableViewCellDelegate.html">SwitchTableViewCellDelegate</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC14IndoorLocation27SettingsTableViewController16viewDidDisappearFSbT_"></a>
+                    <a name="//apple_ref/swift/Method/viewDidDisappear(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC14IndoorLocation27SettingsTableViewController16viewDidDisappearFSbT_">viewDidDisappear(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">SettingsTableViewController</span><span class="p">:</span> <span class="kt">UITableViewController</span><span class="p">,</span> <span class="kt"><a href="../Protocols/AnchorTableViewCellDelegate.html">AnchorTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/ButtonTableViewCellDelegate.html">ButtonTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SegmentedControlTableViewCellDelegate.html">SegmentedControlTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SliderTableViewCellDelegate.html">SliderTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SwitchTableViewCellDelegate.html">SwitchTableViewCellDelegate</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Table%20view%20data%20source"></a>
+                <a name="//apple_ref/swift/Section/Table view data source" class="dashAnchor"></a>
+                <a href="#/Table%20view%20data%20source">
+                  <h3 class="section-name">Table view data source</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC14IndoorLocation27SettingsTableViewController16numberOfSectionsFT2inCSo11UITableView_Si"></a>
+                    <a name="//apple_ref/swift/Method/numberOfSections(in:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC14IndoorLocation27SettingsTableViewController16numberOfSectionsFT2inCSo11UITableView_Si">numberOfSections(in:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">SettingsTableViewController</span><span class="p">:</span> <span class="kt">UITableViewController</span><span class="p">,</span> <span class="kt"><a href="../Protocols/AnchorTableViewCellDelegate.html">AnchorTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/ButtonTableViewCellDelegate.html">ButtonTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SegmentedControlTableViewCellDelegate.html">SegmentedControlTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SliderTableViewCellDelegate.html">SliderTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SwitchTableViewCellDelegate.html">SwitchTableViewCellDelegate</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC14IndoorLocation27SettingsTableViewController9tableViewFTCSo11UITableView21numberOfRowsInSectionSi_Si"></a>
+                    <a name="//apple_ref/swift/Method/tableView(_:numberOfRowsInSection:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC14IndoorLocation27SettingsTableViewController9tableViewFTCSo11UITableView21numberOfRowsInSectionSi_Si">tableView(_:numberOfRowsInSection:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">SettingsTableViewController</span><span class="p">:</span> <span class="kt">UITableViewController</span><span class="p">,</span> <span class="kt"><a href="../Protocols/AnchorTableViewCellDelegate.html">AnchorTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/ButtonTableViewCellDelegate.html">ButtonTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SegmentedControlTableViewCellDelegate.html">SegmentedControlTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SliderTableViewCellDelegate.html">SliderTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SwitchTableViewCellDelegate.html">SwitchTableViewCellDelegate</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC14IndoorLocation27SettingsTableViewController9tableViewFTCSo11UITableView12cellForRowAtV10Foundation9IndexPath_CSo15UITableViewCell"></a>
+                    <a name="//apple_ref/swift/Method/tableView(_:cellForRowAt:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC14IndoorLocation27SettingsTableViewController9tableViewFTCSo11UITableView12cellForRowAtV10Foundation9IndexPath_CSo15UITableViewCell">tableView(_:cellForRowAt:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">SettingsTableViewController</span><span class="p">:</span> <span class="kt">UITableViewController</span><span class="p">,</span> <span class="kt"><a href="../Protocols/AnchorTableViewCellDelegate.html">AnchorTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/ButtonTableViewCellDelegate.html">ButtonTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SegmentedControlTableViewCellDelegate.html">SegmentedControlTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SliderTableViewCellDelegate.html">SliderTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SwitchTableViewCellDelegate.html">SwitchTableViewCellDelegate</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC14IndoorLocation27SettingsTableViewController9tableViewFTCSo11UITableView23titleForHeaderInSectionSi_GSqSS_"></a>
+                    <a name="//apple_ref/swift/Method/tableView(_:titleForHeaderInSection:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC14IndoorLocation27SettingsTableViewController9tableViewFTCSo11UITableView23titleForHeaderInSectionSi_GSqSS_">tableView(_:titleForHeaderInSection:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">SettingsTableViewController</span><span class="p">:</span> <span class="kt">UITableViewController</span><span class="p">,</span> <span class="kt"><a href="../Protocols/AnchorTableViewCellDelegate.html">AnchorTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/ButtonTableViewCellDelegate.html">ButtonTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SegmentedControlTableViewCellDelegate.html">SegmentedControlTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SliderTableViewCellDelegate.html">SliderTableViewCellDelegate</a></span><span class="p">,</span> <span class="kt"><a href="../Protocols/SwitchTableViewCellDelegate.html">SwitchTableViewCellDelegate</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/AnchorTableViewCellDelegate"></a>
+                <a name="//apple_ref/swift/Section/AnchorTableViewCellDelegate" class="dashAnchor"></a>
+                <a href="#/AnchorTableViewCellDelegate">
+                  <h3 class="section-name">AnchorTableViewCellDelegate</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC14IndoorLocation27SettingsTableViewController23onAddAnchorButtonTappedFTCSo8UIButton2idSi1xSi1ySi_T_"></a>
+                    <a name="//apple_ref/swift/Method/onAddAnchorButtonTapped(_:id:x:y:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC14IndoorLocation27SettingsTableViewController23onAddAnchorButtonTappedFTCSo8UIButton2idSi1xSi1ySi_T_">onAddAnchorButtonTapped(_:id:x:y:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>AnchorTableViewCellDelegate function that is called when a new anchor has to be added.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">func</span> <span class="nf">onAddAnchorButtonTapped</span><span class="p">(</span><span class="n">_</span> <span class="nv">sender</span><span class="p">:</span> <span class="kt">UIButton</span><span class="p">,</span> <span class="nv">id</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="nv">x</span><span class="p">:</span> <span class="kt">Int</span><span class="p">,</span> <span class="nv">y</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>sender</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The UIButton that was tapped</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>id</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The ID of the anchor to be added</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>x</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The x-coordinate of the anchor to be added</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>y</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The y-coordinate of the anchor to be added</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC14IndoorLocation27SettingsTableViewController26onRemoveAnchorButtonTappedFTCSo8UIButton2idSi_T_"></a>
+                    <a name="//apple_ref/swift/Method/onRemoveAnchorButtonTapped(_:id:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC14IndoorLocation27SettingsTableViewController26onRemoveAnchorButtonTappedFTCSo8UIButton2idSi_T_">onRemoveAnchorButtonTapped(_:id:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>AnchorTableViewCellDelegate function that is called when an anchor has to be removed.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">func</span> <span class="nf">onRemoveAnchorButtonTapped</span><span class="p">(</span><span class="n">_</span> <span class="nv">sender</span><span class="p">:</span> <span class="kt">UIButton</span><span class="p">,</span> <span class="nv">id</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>sender</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The UIButton that was tapped</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>id</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The ID of the anchor to be removed</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/ButtonTableViewCellDelegate"></a>
+                <a name="//apple_ref/swift/Section/ButtonTableViewCellDelegate" class="dashAnchor"></a>
+                <a href="#/ButtonTableViewCellDelegate">
+                  <h3 class="section-name">ButtonTableViewCellDelegate</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC14IndoorLocation27SettingsTableViewController14onButtonTappedFCSo8UIButtonT_"></a>
+                    <a name="//apple_ref/swift/Method/onButtonTapped(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC14IndoorLocation27SettingsTableViewController14onButtonTappedFCSo8UIButtonT_">onButtonTapped(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>ButtonTableViewCellDelegate function that is called when the button of a ButtonTableViewCell is tapped.
+The only ButtonTableViewCell that is used here is for calibration. Therefore calibration is initiated.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">func</span> <span class="nf">onButtonTapped</span><span class="p">(</span><span class="n">_</span> <span class="nv">sender</span><span class="p">:</span> <span class="kt">UIButton</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>sender</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The UIButton that was tapped</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/SegmentedControlTableViewCellDelegate"></a>
+                <a name="//apple_ref/swift/Section/SegmentedControlTableViewCellDelegate" class="dashAnchor"></a>
+                <a href="#/SegmentedControlTableViewCellDelegate">
+                  <h3 class="section-name">SegmentedControlTableViewCellDelegate</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC14IndoorLocation27SettingsTableViewController30onSegmentedControlValueChangedFCSo18UISegmentedControlT_"></a>
+                    <a name="//apple_ref/swift/Method/onSegmentedControlValueChanged(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC14IndoorLocation27SettingsTableViewController30onSegmentedControlValueChangedFCSo18UISegmentedControlT_">onSegmentedControlValueChanged(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>SegmentedControlTableViewCellDelegate function that is called when the value of the segmented control of a SegmentedControlTableViewCell
+is changed. The  only SegmentedControlTableViewCell that is used here is for the filter type. Therefore the filter type is changed in the settings.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">func</span> <span class="nf">onSegmentedControlValueChanged</span><span class="p">(</span><span class="n">_</span> <span class="nv">sender</span><span class="p">:</span> <span class="kt">UISegmentedControl</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>sender</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The UISegmentedControl that was changed</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/SliderTableViewCellDelegate"></a>
+                <a name="//apple_ref/swift/Section/SliderTableViewCellDelegate" class="dashAnchor"></a>
+                <a href="#/SliderTableViewCellDelegate">
+                  <h3 class="section-name">SliderTableViewCellDelegate</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC14IndoorLocation27SettingsTableViewController20onSliderValueChangedFCSo8UISliderT_"></a>
+                    <a name="//apple_ref/swift/Method/onSliderValueChanged(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC14IndoorLocation27SettingsTableViewController20onSliderValueChangedFCSo8UISliderT_">onSliderValueChanged(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>SliderTableViewCellDelegate function that is called when the value of the slider of a SliderTableViewCell is changed.
+The type of slider that is used is determined by its tag and the value associated with it is changed in the settings.
+For most settings the filters also have to be reinitialized.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">func</span> <span class="nf">onSliderValueChanged</span><span class="p">(</span><span class="n">_</span> <span class="nv">sender</span><span class="p">:</span> <span class="kt">UISlider</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>sender</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The UISlider that was changed</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/SwitchTableViewCellDelegate"></a>
+                <a name="//apple_ref/swift/Section/SwitchTableViewCellDelegate" class="dashAnchor"></a>
+                <a href="#/SwitchTableViewCellDelegate">
+                  <h3 class="section-name">SwitchTableViewCellDelegate</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC14IndoorLocation27SettingsTableViewController14onSwitchTappedFCSo8UISwitchT_"></a>
+                    <a name="//apple_ref/swift/Method/onSwitchTapped(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC14IndoorLocation27SettingsTableViewController14onSwitchTappedFCSo8UISwitchT_">onSwitchTapped(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>SwitchTableViewCellDelegate function that is called when the switch of a SwitchTableViewCell is tapped.
+The type of switch that is used is determined by its tag and the value associated with it is changed in the settings.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">func</span> <span class="nf">onSwitchTapped</span><span class="p">(</span><span class="n">_</span> <span class="nv">sender</span><span class="p">:</span> <span class="kt">UISwitch</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>sender</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The UISwitch that was tapped</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Private%20API"></a>
+                <a name="//apple_ref/swift/Section/Private API" class="dashAnchor"></a>
+                <a href="#/Private%20API">
+                  <h3 class="section-name">Private API</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC14IndoorLocation27SettingsTableViewController15dismissKeyboardFT_T_"></a>
+                    <a name="//apple_ref/swift/Method/dismissKeyboard()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC14IndoorLocation27SettingsTableViewController15dismissKeyboardFT_T_">dismissKeyboard()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Function to dismiss the keyboard if tapped outside of a UITextField</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">func</span> <span class="nf">dismissKeyboard</span><span class="p">()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external"></a>. All rights reserved. (Last updated: 2017-08-30)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.3</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</div>
+</html>

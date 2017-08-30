@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>IndoorMapView Class Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Class/IndoorMapView" class="dashAnchor"></a>
+    <a title="IndoorMapView Class Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../index.html"> Docs</a> (37% documented)</p>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../index.html"> Reference</a>
+        <img id="carat" src="../img/carat.png" />
+        IndoorMapView Class Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Classes/AnchorTableViewCell.html">AnchorTableViewCell</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/AppDelegate.html">AppDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/BayesianFilter.html">BayesianFilter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ButtonTableViewCell.html">ButtonTableViewCell</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/EllipseView.html">EllipseView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/FilterSettings.html">FilterSettings</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/IndoorLocationManager.html">IndoorLocationManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/IndoorMapView.html">IndoorMapView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/KalmanFilter.html">KalmanFilter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/MapViewController.html">MapViewController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/NetworkManager.html">NetworkManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Particle.html">Particle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ParticleFilter.html">ParticleFilter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/PointView.html">PointView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SegmentedControlTableViewCell.html">SegmentedControlTableViewCell</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SettingsTableViewController.html">SettingsTableViewController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SettingsTableViewController/SettingsTableViewSection.html">– SettingsTableViewSection</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SettingsTableViewController/SliderType.html">– SliderType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SettingsTableViewController/SwitchType.html">– SwitchType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SliderTableViewCell.html">SliderTableViewCell</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SwitchTableViewCell.html">SwitchTableViewCell</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/TrajectoryView.html">TrajectoryView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/VectorView.html">VectorView</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Enums.html">Enums</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Enums/EllipseType.html">EllipseType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/FilterType.html">FilterType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/NetworkResult.html">NetworkResult</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/PointType.html">PointType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/TaskType.html">TaskType</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Extensions/Array.html">Array</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/Float.html">Float</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Functions.html">Functions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Functions.html#/s:F14IndoorLocationoi2xxFTSfSf_Sf">^^(_:_:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Functions.html#/s:F14IndoorLocation14alertWithTitleFTSS7messageGSqSS_7actionsGSqGSaCSo13UIAlertAction___T_">alertWithTitle(_:message:actions:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Functions.html#/s:F14IndoorLocation25computeNormalDistributionFT1xGSaSf_1mGSaSf_23forTriangularCovarianceGSaSf_11withInverseGSaSf__Sf">computeNormalDistribution(x:m:forTriangularCovariance:withInverse:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Functions.html#/s:F14IndoorLocation18linearLeastSquaresFT7anchorsGSaVSC7CGPoint_9distancesGSaSf__GSqS0__">linearLeastSquares(anchors:distances:)</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Protocols/AnchorTableViewCellDelegate.html">AnchorTableViewCellDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ButtonTableViewCellDelegate.html">ButtonTableViewCellDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/IndoorLocationManagerDelegate.html">IndoorLocationManagerDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/IndoorMapViewDelegate.html">IndoorMapViewDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/SegmentedControlTableViewCellDelegate.html">SegmentedControlTableViewCellDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/SettingsTableViewControllerDelegate.html">SettingsTableViewControllerDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/SliderTableViewCellDelegate.html">SliderTableViewCellDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/SwitchTableViewCellDelegate.html">SwitchTableViewCellDelegate</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Typealiases.html">Typealiases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:14IndoorLocation6Anchor">Anchor</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>IndoorMapView</h1>
+              <div class="declaration">
+                <div class="language">
+                  <pre class="highlight"><code><span class="kd">class</span> <span class="kt">IndoorMapView</span><span class="p">:</span> <span class="kt">UIView</span><span class="p">,</span> <span class="kt">UIGestureRecognizerDelegate</span></code></pre>
+
+                </div>
+              </div>
+            <p>This class manages the display of the indoor positioning system.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Public%20variables"></a>
+                <a name="//apple_ref/swift/Section/Public variables" class="dashAnchor"></a>
+                <a href="#/Public%20variables">
+                  <h3 class="section-name">Public variables</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC14IndoorLocation13IndoorMapView18isFloorplanVisibleSb"></a>
+                    <a name="//apple_ref/swift/Property/isFloorplanVisible" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC14IndoorLocation13IndoorMapView18isFloorplanVisibleSb">isFloorplanVisible</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">IndoorMapView</span><span class="p">:</span> <span class="kt">UIView</span><span class="p">,</span> <span class="kt">UIGestureRecognizerDelegate</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC14IndoorLocation13IndoorMapView22areMeasurementsVisibleSb"></a>
+                    <a name="//apple_ref/swift/Property/areMeasurementsVisible" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC14IndoorLocation13IndoorMapView22areMeasurementsVisibleSb">areMeasurementsVisible</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">IndoorMapView</span><span class="p">:</span> <span class="kt">UIView</span><span class="p">,</span> <span class="kt">UIGestureRecognizerDelegate</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC14IndoorLocation13IndoorMapView10filterTypeOS_10FilterType"></a>
+                    <a name="//apple_ref/swift/Property/filterType" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC14IndoorLocation13IndoorMapView10filterTypeOS_10FilterType">filterType</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">IndoorMapView</span><span class="p">:</span> <span class="kt">UIView</span><span class="p">,</span> <span class="kt">UIGestureRecognizerDelegate</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC14IndoorLocation13IndoorMapView8positionGSqVSC7CGPoint_"></a>
+                    <a name="//apple_ref/swift/Property/position" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC14IndoorLocation13IndoorMapView8positionGSqVSC7CGPoint_">position</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">IndoorMapView</span><span class="p">:</span> <span class="kt">UIView</span><span class="p">,</span> <span class="kt">UIGestureRecognizerDelegate</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC14IndoorLocation13IndoorMapView7anchorsGSqGSaT2idSi8positionVSC7CGPoint8isActiveSb___"></a>
+                    <a name="//apple_ref/swift/Property/anchors" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC14IndoorLocation13IndoorMapView7anchorsGSqGSaT2idSi8positionVSC7CGPoint8isActiveSb___">anchors</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">IndoorMapView</span><span class="p">:</span> <span class="kt">UIView</span><span class="p">,</span> <span class="kt">UIGestureRecognizerDelegate</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC14IndoorLocation13IndoorMapView10covarianceGSqT1aV12CoreGraphics7CGFloat1bS2_5angleS2___"></a>
+                    <a name="//apple_ref/swift/Property/covariance" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC14IndoorLocation13IndoorMapView10covarianceGSqT1aV12CoreGraphics7CGFloat1bS2_5angleS2___">covariance</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">IndoorMapView</span><span class="p">:</span> <span class="kt">UIView</span><span class="p">,</span> <span class="kt">UIGestureRecognizerDelegate</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC14IndoorLocation13IndoorMapView9particlesGSqGSaCS_8Particle__"></a>
+                    <a name="//apple_ref/swift/Property/particles" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC14IndoorLocation13IndoorMapView9particlesGSqGSaCS_8Particle__">particles</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">IndoorMapView</span><span class="p">:</span> <span class="kt">UIView</span><span class="p">,</span> <span class="kt">UIGestureRecognizerDelegate</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC14IndoorLocation13IndoorMapView15anchorDistancesGSqGSaV12CoreGraphics7CGFloat__"></a>
+                    <a name="//apple_ref/swift/Property/anchorDistances" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC14IndoorLocation13IndoorMapView15anchorDistancesGSqGSaV12CoreGraphics7CGFloat__">anchorDistances</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">IndoorMapView</span><span class="p">:</span> <span class="kt">UIView</span><span class="p">,</span> <span class="kt">UIGestureRecognizerDelegate</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC14IndoorLocation13IndoorMapView12accelerationGSqGSaV12CoreGraphics7CGFloat__"></a>
+                    <a name="//apple_ref/swift/Property/acceleration" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC14IndoorLocation13IndoorMapView12accelerationGSqGSaV12CoreGraphics7CGFloat__">acceleration</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">IndoorMapView</span><span class="p">:</span> <span class="kt">UIView</span><span class="p">,</span> <span class="kt">UIGestureRecognizerDelegate</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC14IndoorLocation13IndoorMapView8delegateGSqPS_21IndoorMapViewDelegate__"></a>
+                    <a name="//apple_ref/swift/Property/delegate" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC14IndoorLocation13IndoorMapView8delegateGSqPS_21IndoorMapViewDelegate__">delegate</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">IndoorMapView</span><span class="p">:</span> <span class="kt">UIView</span><span class="p">,</span> <span class="kt">UIGestureRecognizerDelegate</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Initialization"></a>
+                <a name="//apple_ref/swift/Section/Initialization" class="dashAnchor"></a>
+                <a href="#/Initialization">
+                  <h3 class="section-name">Initialization</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC14IndoorLocation13IndoorMapViewcFT5frameVSC6CGRect_S0_"></a>
+                    <a name="//apple_ref/swift/Method/init(frame:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC14IndoorLocation13IndoorMapViewcFT5frameVSC6CGRect_S0_">init(frame:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">IndoorMapView</span><span class="p">:</span> <span class="kt">UIView</span><span class="p">,</span> <span class="kt">UIGestureRecognizerDelegate</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC14IndoorLocation13IndoorMapViewcFT5coderCSo7NSCoder_GSqS0__"></a>
+                    <a name="//apple_ref/swift/Method/init(coder:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC14IndoorLocation13IndoorMapViewcFT5coderCSo7NSCoder_GSqS0__">init(coder:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">IndoorMapView</span><span class="p">:</span> <span class="kt">UIView</span><span class="p">,</span> <span class="kt">UIGestureRecognizerDelegate</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/UIGestureRecognizerDelegate"></a>
+                <a name="//apple_ref/swift/Section/UIGestureRecognizerDelegate" class="dashAnchor"></a>
+                <a href="#/UIGestureRecognizerDelegate">
+                  <h3 class="section-name">UIGestureRecognizerDelegate</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC14IndoorLocation13IndoorMapView17gestureRecognizerFTCSo19UIGestureRecognizer33shouldRecognizeSimultaneouslyWithS1__Sb"></a>
+                    <a name="//apple_ref/swift/Method/gestureRecognizer(_:shouldRecognizeSimultaneouslyWith:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC14IndoorLocation13IndoorMapView17gestureRecognizerFTCSo19UIGestureRecognizer33shouldRecognizeSimultaneouslyWithS1__Sb">gestureRecognizer(_:shouldRecognizeSimultaneouslyWith:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">IndoorMapView</span><span class="p">:</span> <span class="kt">UIView</span><span class="p">,</span> <span class="kt">UIGestureRecognizerDelegate</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/User%20interaction"></a>
+                <a name="//apple_ref/swift/Section/User interaction" class="dashAnchor"></a>
+                <a href="#/User%20interaction">
+                  <h3 class="section-name">User interaction</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC14IndoorLocation13IndoorMapView14handleRotationFCSo27UIRotationGestureRecognizerT_"></a>
+                    <a name="//apple_ref/swift/Method/handleRotation(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC14IndoorLocation13IndoorMapView14handleRotationFCSo27UIRotationGestureRecognizerT_">handleRotation(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Function that is called when a rotating gesture is recognized in the mapView. The view is rotated accordingly.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">func</span> <span class="nf">handleRotation</span><span class="p">(</span><span class="n">_</span> <span class="nv">recognizer</span><span class="p">:</span> <span class="kt">UIRotationGestureRecognizer</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC14IndoorLocation13IndoorMapView11handlePinchFCSo24UIPinchGestureRecognizerT_"></a>
+                    <a name="//apple_ref/swift/Method/handlePinch(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC14IndoorLocation13IndoorMapView11handlePinchFCSo24UIPinchGestureRecognizerT_">handlePinch(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Function that is called when a pinch gesture is recognized in the mapView. The view is zoomed accordingly.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">func</span> <span class="nf">handlePinch</span><span class="p">(</span><span class="n">_</span> <span class="nv">recognizer</span><span class="p">:</span> <span class="kt">UIPinchGestureRecognizer</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC14IndoorLocation13IndoorMapView9handlePanFCSo22UIPanGestureRecognizerT_"></a>
+                    <a name="//apple_ref/swift/Method/handlePan(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC14IndoorLocation13IndoorMapView9handlePanFCSo22UIPanGestureRecognizerT_">handlePan(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Function that is called when a pan gesture is recognized in the mapView. The view is translated accordingly.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">func</span> <span class="nf">handlePan</span><span class="p">(</span><span class="n">_</span> <span class="nv">recognizer</span><span class="p">:</span> <span class="kt">UIPanGestureRecognizer</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC14IndoorLocation13IndoorMapView13draggedAnchorFCSo22UIPanGestureRecognizerT_"></a>
+                    <a name="//apple_ref/swift/Method/draggedAnchor(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC14IndoorLocation13IndoorMapView13draggedAnchorFCSo22UIPanGestureRecognizerT_">draggedAnchor(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Function that is called when an anchor is dragged by the user. This initiates calibration from view.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">func</span> <span class="nf">draggedAnchor</span><span class="p">(</span><span class="n">_</span> <span class="nv">sender</span><span class="p">:</span> <span class="kt">UIPanGestureRecognizer</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC14IndoorLocation13IndoorMapView23didTapCalibrationButtonFCSo8UIButtonT_"></a>
+                    <a name="//apple_ref/swift/Method/didTapCalibrationButton(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC14IndoorLocation13IndoorMapView23didTapCalibrationButtonFCSo8UIButtonT_">didTapCalibrationButton(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Function that is called when then calibration button is tapped. The new array of anchors and their positions is passed to the delegate.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">func</span> <span class="nf">didTapCalibrationButton</span><span class="p">(</span><span class="n">_</span> <span class="nv">sender</span><span class="p">:</span> <span class="kt">UIButton</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC14IndoorLocation13IndoorMapView29didTapCancelCalibrationButtonFCSo8UIButtonT_"></a>
+                    <a name="//apple_ref/swift/Method/didTapCancelCalibrationButton(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC14IndoorLocation13IndoorMapView29didTapCancelCalibrationButtonFCSo8UIButtonT_">didTapCancelCalibrationButton(_:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Function that is called when the cancel calibration button is tapped. The view is restored to the previous state.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">func</span> <span class="nf">didTapCancelCalibrationButton</span><span class="p">(</span><span class="n">_</span> <span class="nv">sender</span><span class="p">:</span> <span class="kt">UIButton</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external"></a>. All rights reserved. (Last updated: 2017-08-30)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.3</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</div>
+</html>

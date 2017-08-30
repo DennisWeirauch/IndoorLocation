@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>ParticleFilter Class Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset='utf-8'>
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+  </head>
+  <body>
+    <a name="//apple_ref/swift/Class/ParticleFilter" class="dashAnchor"></a>
+    <a title="ParticleFilter Class Reference"></a>
+    <header>
+      <div class="content-wrapper">
+        <p><a href="../index.html"> Docs</a> (37% documented)</p>
+      </div>
+    </header>
+    <div class="content-wrapper">
+      <p id="breadcrumbs">
+        <a href="../index.html"> Reference</a>
+        <img id="carat" src="../img/carat.png" />
+        ParticleFilter Class Reference
+      </p>
+    </div>
+    <div class="content-wrapper">
+      <nav class="sidebar">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Classes/AnchorTableViewCell.html">AnchorTableViewCell</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/AppDelegate.html">AppDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/BayesianFilter.html">BayesianFilter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ButtonTableViewCell.html">ButtonTableViewCell</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/EllipseView.html">EllipseView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/FilterSettings.html">FilterSettings</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/IndoorLocationManager.html">IndoorLocationManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/IndoorMapView.html">IndoorMapView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/KalmanFilter.html">KalmanFilter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/MapViewController.html">MapViewController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/NetworkManager.html">NetworkManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/Particle.html">Particle</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/ParticleFilter.html">ParticleFilter</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/PointView.html">PointView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SegmentedControlTableViewCell.html">SegmentedControlTableViewCell</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SettingsTableViewController.html">SettingsTableViewController</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SettingsTableViewController/SettingsTableViewSection.html">– SettingsTableViewSection</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SettingsTableViewController/SliderType.html">– SliderType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SettingsTableViewController/SwitchType.html">– SwitchType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SliderTableViewCell.html">SliderTableViewCell</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/SwitchTableViewCell.html">SwitchTableViewCell</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/TrajectoryView.html">TrajectoryView</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Classes/VectorView.html">VectorView</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Enums.html">Enums</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Enums/EllipseType.html">EllipseType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/FilterType.html">FilterType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/NetworkResult.html">NetworkResult</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/PointType.html">PointType</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Enums/TaskType.html">TaskType</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Extensions/Array.html">Array</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Extensions/Float.html">Float</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Functions.html">Functions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Functions.html#/s:F14IndoorLocationoi2xxFTSfSf_Sf">^^(_:_:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Functions.html#/s:F14IndoorLocation14alertWithTitleFTSS7messageGSqSS_7actionsGSqGSaCSo13UIAlertAction___T_">alertWithTitle(_:message:actions:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Functions.html#/s:F14IndoorLocation25computeNormalDistributionFT1xGSaSf_1mGSaSf_23forTriangularCovarianceGSaSf_11withInverseGSaSf__Sf">computeNormalDistribution(x:m:forTriangularCovariance:withInverse:)</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Functions.html#/s:F14IndoorLocation18linearLeastSquaresFT7anchorsGSaVSC7CGPoint_9distancesGSaSf__GSqS0__">linearLeastSquares(anchors:distances:)</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Protocols/AnchorTableViewCellDelegate.html">AnchorTableViewCellDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/ButtonTableViewCellDelegate.html">ButtonTableViewCellDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/IndoorLocationManagerDelegate.html">IndoorLocationManagerDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/IndoorMapViewDelegate.html">IndoorMapViewDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/SegmentedControlTableViewCellDelegate.html">SegmentedControlTableViewCellDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/SettingsTableViewControllerDelegate.html">SettingsTableViewControllerDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/SliderTableViewCellDelegate.html">SliderTableViewCellDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Protocols/SwitchTableViewCellDelegate.html">SwitchTableViewCellDelegate</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a href="../Typealiases.html">Typealiases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a href="../Typealiases.html#/s:14IndoorLocation6Anchor">Anchor</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+        <section>
+          <section class="section">
+            <h1>ParticleFilter</h1>
+              <div class="declaration">
+                <div class="language">
+                  <pre class="highlight"><code><span class="kd">class</span> <span class="kt">ParticleFilter</span><span class="p">:</span> <span class="kt"><a href="../Classes/BayesianFilter.html">BayesianFilter</a></span></code></pre>
+
+                </div>
+              </div>
+            <p>Class that implements a Particle filter.</p>
+
+          </section>
+          <section class="section task-group-section">
+            <div class="task-group">
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC14IndoorLocation14ParticleFilter17numberOfParticlesSi"></a>
+                    <a name="//apple_ref/swift/Property/numberOfParticles" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC14IndoorLocation14ParticleFilter17numberOfParticlesSi">numberOfParticles</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">ParticleFilter</span><span class="p">:</span> <span class="kt"><a href="../Classes/BayesianFilter.html">BayesianFilter</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC14IndoorLocation14ParticleFilter8stateDimSi"></a>
+                    <a name="//apple_ref/swift/Property/stateDim" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC14IndoorLocation14ParticleFilter8stateDimSi">stateDim</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">ParticleFilter</span><span class="p">:</span> <span class="kt"><a href="../Classes/BayesianFilter.html">BayesianFilter</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC14IndoorLocation14ParticleFilter9particlesGSaCS_8Particle_"></a>
+                    <a name="//apple_ref/swift/Property/particles" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC14IndoorLocation14ParticleFilter9particlesGSaCS_8Particle_">particles</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">ParticleFilter</span><span class="p">:</span> <span class="kt"><a href="../Classes/BayesianFilter.html">BayesianFilter</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC14IndoorLocation14ParticleFilter1FGSaSf_"></a>
+                    <a name="//apple_ref/swift/Property/F" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC14IndoorLocation14ParticleFilter1FGSaSf_">F</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Process matrix F representing the physical model:</p>
+<pre class="highlight plaintext"><code>|1 0 dt 0 |
+|0 1 0  dt|
+|0 0 1  0 |
+|0 0 0  1 |
+</code></pre>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">private(set)</span> <span class="k">var</span> <span class="nv">F</span><span class="p">:</span> <span class="p">[</span><span class="kt">Float</span><span class="p">]</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC14IndoorLocation14ParticleFilter1AGSaSf_"></a>
+                    <a name="//apple_ref/swift/Property/A" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC14IndoorLocation14ParticleFilter1AGSaSf_">A</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Process matrix A:</p>
+<pre class="highlight plaintext"><code>|dt^2/2   0  |
+|   0  dt^2/2|
+|   dt    0  |
+|   0     dt |
+</code></pre>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">private(set)</span> <span class="k">var</span> <span class="nv">A</span><span class="p">:</span> <span class="p">[</span><span class="kt">Float</span><span class="p">]</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/TODO:%20Find%20name%20for%20G"></a>
+                <a name="//apple_ref/swift/Section/TODO: Find name for G" class="dashAnchor"></a>
+                <a href="#/TODO:%20Find%20name%20for%20G">
+                  <h3 class="section-name">TODO: Find name for G</h3>
+                </a>
+              </div>
+              <ul>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC14IndoorLocation14ParticleFilter1GGSaSf_"></a>
+                    <a name="//apple_ref/swift/Property/G" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC14IndoorLocation14ParticleFilter1GGSaSf_">G</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">ParticleFilter</span><span class="p">:</span> <span class="kt"><a href="../Classes/BayesianFilter.html">BayesianFilter</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC14IndoorLocation14ParticleFilter1RGSaSf_"></a>
+                    <a name="//apple_ref/swift/Property/R" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC14IndoorLocation14ParticleFilter1RGSaSf_">R</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>R is the covariance matrix for the measurement noise. It is a (numAnchors + 2) x (numAnchors + 2) diagonal matrix of the form:</p>
+<pre class="highlight plaintext"><code>|D_N 0|
+| 0  A|, with
+D_N = dist_sig * I_N, I_N being the identity matrix of order N
+A = acc_sig * I_2
+</code></pre>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">private(set)</span> <span class="k">var</span> <span class="nv">R</span><span class="p">:</span> <span class="p">[</span><span class="kt">Float</span><span class="p">]</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC14IndoorLocation14ParticleFilter5R_invGSaSf_"></a>
+                    <a name="//apple_ref/swift/Property/R_inv" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC14IndoorLocation14ParticleFilter5R_invGSaSf_">R_inv</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The inverse of matrix R</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">private(set)</span> <span class="k">var</span> <span class="nv">R_inv</span><span class="p">:</span> <span class="p">[</span><span class="kt">Float</span><span class="p">]</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC14IndoorLocation14ParticleFilter5h_optSf"></a>
+                    <a name="//apple_ref/swift/Property/h_opt" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC14IndoorLocation14ParticleFilter5h_optSf">h_opt</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The optimal bandwith for the regularization step</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">var</span> <span class="nv">h_opt</span><span class="p">:</span> <span class="kt">Float</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC14IndoorLocation14ParticleFilter13activeAnchorsGSaT2idSi8positionVSC7CGPoint8isActiveSb__"></a>
+                    <a name="//apple_ref/swift/Property/activeAnchors" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC14IndoorLocation14ParticleFilter13activeAnchorsGSaT2idSi8positionVSC7CGPoint8isActiveSb__">activeAnchors</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">ParticleFilter</span><span class="p">:</span> <span class="kt"><a href="../Classes/BayesianFilter.html">BayesianFilter</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:vC14IndoorLocation14ParticleFilter9semaphoreCSo17DispatchSemaphore"></a>
+                    <a name="//apple_ref/swift/Property/semaphore" class="dashAnchor"></a>
+                    <a class="token" href="#/s:vC14IndoorLocation14ParticleFilter9semaphoreCSo17DispatchSemaphore">semaphore</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">ParticleFilter</span><span class="p">:</span> <span class="kt"><a href="../Classes/BayesianFilter.html">BayesianFilter</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC14IndoorLocation14ParticleFiltercFT7anchorsGSaT2idSi8positionVSC7CGPoint8isActiveSb__9distancesGSaSf__GSqS0__"></a>
+                    <a name="//apple_ref/swift/Method/init(anchors:distances:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC14IndoorLocation14ParticleFiltercFT7anchorsGSaT2idSi8positionVSC7CGPoint8isActiveSb__9distancesGSaSf__GSqS0__">init(anchors:distances:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="kd">class</span> <span class="kt">ParticleFilter</span><span class="p">:</span> <span class="kt"><a href="../Classes/BayesianFilter.html">BayesianFilter</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:FC14IndoorLocation14ParticleFilter16executeAlgorithmFT7anchorsGSaT2idSi8positionVSC7CGPoint8isActiveSb__9distancesGSaSf_12accelerationGSaSf_15successCallbackFS1_T__T_"></a>
+                    <a name="//apple_ref/swift/Method/executeAlgorithm(anchors:distances:acceleration:successCallback:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:FC14IndoorLocation14ParticleFilter16executeAlgorithmFT7anchorsGSaT2idSi8positionVSC7CGPoint8isActiveSb__9distancesGSaSf_12accelerationGSaSf_15successCallbackFS1_T__T_">executeAlgorithm(anchors:distances:acceleration:successCallback:)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight"><code><span class="k">override</span> <span class="kd">func</span> <span class="nf">executeAlgorithm</span><span class="p">(</span><span class="nv">anchors</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Typealiases.html#/s:14IndoorLocation6Anchor">Anchor</a></span><span class="p">],</span> <span class="nv">distances</span><span class="p">:</span> <span class="p">[</span><span class="kt">Float</span><span class="p">],</span> <span class="nv">acceleration</span><span class="p">:</span> <span class="p">[</span><span class="kt">Float</span><span class="p">],</span> <span class="nv">successCallback</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="n">_</span> <span class="nv">position</span><span class="p">:</span> <span class="kt">CGPoint</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>anchors</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>distances</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>acceleration</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>successCallback</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>position</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+        </section>
+        <section id="footer">
+          <p>&copy; 2017 <a class="link" href="" target="_blank" rel="external"></a>. All rights reserved. (Last updated: 2017-08-30)</p>
+          <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.8.3</a>, a <a class="link" href="http://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+        </section>
+      </article>
+    </div>
+  </body>
+</div>
+</html>
