@@ -85,6 +85,13 @@
       "warning": "undocumented"
     },
     {
+      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/IndoorLocation/FilterSettings.swift",
+      "line": 36,
+      "symbol": "FilterSettings.isRegularizedPF",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/IndoorLocation/IndoorLocationManager.swift",
       "line": 37,
       "symbol": "IndoorLocationManagerDelegate.setAnchors(_:)",
@@ -108,7 +115,7 @@
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/IndoorLocation/IndoorLocationManager.swift",
       "line": 40,
-      "symbol": "IndoorLocationManagerDelegate.updateCovariance(eigenValue1:eigenValue2:angle:)",
+      "symbol": "IndoorLocationManagerDelegate.updateCovariance(eigenvalue1:eigenvalue2:angle:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
@@ -421,20 +428,6 @@
       "warning": "undocumented"
     },
     {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Supporting Files/Utilities.swift",
-      "line": 157,
-      "symbol": "Array.computeEigenvalueDecomposition()",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Supporting Files/Utilities.swift",
-      "line": 306,
-      "symbol": "alertWithTitle(_:message:actions:)",
-      "symbol_kind": "source.lang.swift.decl.function.free",
-      "warning": "undocumented"
-    },
-    {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/AnchorTableViewCell.swift",
       "line": 11,
       "symbol": "AnchorTableViewCellDelegate",
@@ -457,65 +450,37 @@
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/AnchorTableViewCell.swift",
-      "line": 16,
-      "symbol": "AnchorTableViewCell",
-      "symbol_kind": "source.lang.swift.decl.class",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/AnchorTableViewCell.swift",
-      "line": 18,
+      "line": 21,
       "symbol": "AnchorTableViewCell.delegate",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/AnchorTableViewCell.swift",
-      "line": 20,
+      "line": 23,
       "symbol": "AnchorTableViewCell.idTextField",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/AnchorTableViewCell.swift",
-      "line": 21,
+      "line": 24,
       "symbol": "AnchorTableViewCell.xTextField",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/AnchorTableViewCell.swift",
-      "line": 22,
+      "line": 25,
       "symbol": "AnchorTableViewCell.yTextField",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/AnchorTableViewCell.swift",
-      "line": 24,
+      "line": 27,
       "symbol": "AnchorTableViewCell.button",
       "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/AnchorTableViewCell.swift",
-      "line": 27,
-      "symbol": "AnchorTableViewCell.setupWithDelegate(_:anchor:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/AnchorTableViewCell.swift",
-      "line": 76,
-      "symbol": "AnchorTableViewCell.onAddAnchorButtonTapped(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/AnchorTableViewCell.swift",
-      "line": 81,
-      "symbol": "AnchorTableViewCell.onRemoveAnchorButtonTapped(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
@@ -534,37 +499,16 @@
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/ButtonTableViewCell.swift",
-      "line": 15,
-      "symbol": "ButtonTableViewCell",
-      "symbol_kind": "source.lang.swift.decl.class",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/ButtonTableViewCell.swift",
-      "line": 17,
+      "line": 20,
       "symbol": "ButtonTableViewCell.delegate",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/ButtonTableViewCell.swift",
-      "line": 19,
+      "line": 22,
       "symbol": "ButtonTableViewCell.button",
       "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/ButtonTableViewCell.swift",
-      "line": 22,
-      "symbol": "ButtonTableViewCell.setupWithText(_:delegate:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/ButtonTableViewCell.swift",
-      "line": 40,
-      "symbol": "ButtonTableViewCell.onButtonTapped(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
@@ -583,37 +527,16 @@
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/SegmentedControlTableViewCell.swift",
-      "line": 15,
-      "symbol": "SegmentedControlTableViewCell",
-      "symbol_kind": "source.lang.swift.decl.class",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/SegmentedControlTableViewCell.swift",
-      "line": 18,
+      "line": 21,
       "symbol": "SegmentedControlTableViewCell.delegate",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/SegmentedControlTableViewCell.swift",
-      "line": 20,
+      "line": 23,
       "symbol": "SegmentedControlTableViewCell.segmentedControl",
       "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/SegmentedControlTableViewCell.swift",
-      "line": 23,
-      "symbol": "SegmentedControlTableViewCell.setupWithSegments(_:selectedSegmentIndex:delegate:tag:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/SegmentedControlTableViewCell.swift",
-      "line": 40,
-      "symbol": "SegmentedControlTableViewCell.onSegmentedControlValueChanged(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
@@ -632,58 +555,37 @@
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/SliderTableViewCell.swift",
-      "line": 15,
-      "symbol": "SliderTableViewCell",
-      "symbol_kind": "source.lang.swift.decl.class",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/SliderTableViewCell.swift",
-      "line": 17,
+      "line": 20,
       "symbol": "SliderTableViewCell.delegate",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/SliderTableViewCell.swift",
-      "line": 19,
+      "line": 22,
       "symbol": "SliderTableViewCell.label",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/SliderTableViewCell.swift",
-      "line": 20,
+      "line": 23,
       "symbol": "SliderTableViewCell.slider",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/SliderTableViewCell.swift",
-      "line": 22,
+      "line": 25,
       "symbol": "SliderTableViewCell.labelDescription",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/SliderTableViewCell.swift",
-      "line": 23,
+      "line": 26,
       "symbol": "SliderTableViewCell.labelUnit",
       "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/SliderTableViewCell.swift",
-      "line": 26,
-      "symbol": "SliderTableViewCell.setupWithValue(_:minValue:maxValue:text:unit:delegate:tag:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/SliderTableViewCell.swift",
-      "line": 56,
-      "symbol": "SliderTableViewCell.onSliderValueChanged(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
@@ -702,44 +604,23 @@
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/SwitchTableViewCell.swift",
-      "line": 15,
-      "symbol": "SwitchTableViewCell",
-      "symbol_kind": "source.lang.swift.decl.class",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/SwitchTableViewCell.swift",
-      "line": 17,
+      "line": 20,
       "symbol": "SwitchTableViewCell.delegate",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/SwitchTableViewCell.swift",
-      "line": 19,
+      "line": 22,
       "symbol": "SwitchTableViewCell.label",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/SwitchTableViewCell.swift",
-      "line": 20,
+      "line": 23,
       "symbol": "SwitchTableViewCell.switcher",
       "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/SwitchTableViewCell.swift",
-      "line": 23,
-      "symbol": "SwitchTableViewCell.setupWithText(_:isOn:delegate:tag:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/Cells/SwitchTableViewCell.swift",
-      "line": 44,
-      "symbol": "SwitchTableViewCell.onSwitchTapped(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
@@ -765,43 +646,29 @@
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/EllipseView.swift",
-      "line": 16,
-      "symbol": "EllipseView",
-      "symbol_kind": "source.lang.swift.decl.class",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/EllipseView.swift",
-      "line": 18,
+      "line": 21,
       "symbol": "EllipseView.ellipseType",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/EllipseView.swift",
-      "line": 21,
+      "line": 24,
       "symbol": "EllipseView.init(ellipseType:position:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/EllipseView.swift",
-      "line": 49,
+      "line": 53,
       "symbol": "EllipseView.init(coder:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/EllipseView.swift",
-      "line": 53,
+      "line": 57,
       "symbol": "EllipseView.draw(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/EllipseView.swift",
-      "line": 71,
-      "symbol": "EllipseView.updateEllipse(withEllipseType:position:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
@@ -821,141 +688,92 @@
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/IndoorMapView.swift",
-      "line": 15,
-      "symbol": "IndoorMapView",
-      "symbol_kind": "source.lang.swift.decl.class",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/IndoorMapView.swift",
-      "line": 18,
-      "symbol": "IndoorMapView.isFloorPlanVisible",
+      "line": 21,
+      "symbol": "IndoorMapView.isFloorplanVisible",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/IndoorMapView.swift",
-      "line": 24,
+      "line": 27,
       "symbol": "IndoorMapView.areMeasurementsVisible",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/IndoorMapView.swift",
-      "line": 35,
+      "line": 38,
       "symbol": "IndoorMapView.filterType",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/IndoorMapView.swift",
-      "line": 53,
+      "line": 56,
       "symbol": "IndoorMapView.position",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/IndoorMapView.swift",
-      "line": 65,
+      "line": 68,
       "symbol": "IndoorMapView.anchors",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/IndoorMapView.swift",
-      "line": 71,
+      "line": 74,
       "symbol": "IndoorMapView.covariance",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/IndoorMapView.swift",
-      "line": 77,
+      "line": 80,
       "symbol": "IndoorMapView.particles",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/IndoorMapView.swift",
-      "line": 83,
+      "line": 86,
       "symbol": "IndoorMapView.anchorDistances",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/IndoorMapView.swift",
-      "line": 91,
+      "line": 94,
       "symbol": "IndoorMapView.acceleration",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/IndoorMapView.swift",
-      "line": 99,
+      "line": 102,
       "symbol": "IndoorMapView.delegate",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/IndoorMapView.swift",
-      "line": 128,
+      "line": 131,
       "symbol": "IndoorMapView.init(frame:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/IndoorMapView.swift",
-      "line": 137,
+      "line": 140,
       "symbol": "IndoorMapView.init(coder:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/IndoorMapView.swift",
-      "line": 339,
+      "line": 371,
       "symbol": "IndoorMapView.gestureRecognizer(_:shouldRecognizeSimultaneouslyWith:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/IndoorMapView.swift",
-      "line": 350,
-      "symbol": "IndoorMapView.handleRotation(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/IndoorMapView.swift",
-      "line": 359,
-      "symbol": "IndoorMapView.handlePinch(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/IndoorMapView.swift",
-      "line": 368,
-      "symbol": "IndoorMapView.handlePan(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/IndoorMapView.swift",
-      "line": 374,
-      "symbol": "IndoorMapView.draggedAnchor(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/IndoorMapView.swift",
-      "line": 382,
-      "symbol": "IndoorMapView.didTapCalibrationButton(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/IndoorMapView.swift",
-      "line": 403,
-      "symbol": "IndoorMapView.didTapCancelCalibrationButton(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
@@ -989,134 +807,92 @@
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/PointView.swift",
-      "line": 17,
-      "symbol": "PointView",
-      "symbol_kind": "source.lang.swift.decl.class",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/PointView.swift",
-      "line": 19,
+      "line": 22,
       "symbol": "PointView.pointSize",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/PointView.swift",
-      "line": 20,
+      "line": 23,
       "symbol": "PointView.pointType",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/PointView.swift",
-      "line": 22,
+      "line": 25,
       "symbol": "PointView.init(pointType:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/PointView.swift",
-      "line": 49,
+      "line": 53,
       "symbol": "PointView.init(coder:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/PointView.swift",
-      "line": 53,
+      "line": 57,
       "symbol": "PointView.draw(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/PointView.swift",
-      "line": 83,
-      "symbol": "PointView.updatePoint(withPointType:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/TrajectoryView.swift",
-      "line": 11,
-      "symbol": "TrajectoryView",
-      "symbol_kind": "source.lang.swift.decl.class",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/TrajectoryView.swift",
-      "line": 13,
+      "line": 16,
       "symbol": "TrajectoryView.trajectory",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/TrajectoryView.swift",
-      "line": 17,
+      "line": 20,
       "symbol": "TrajectoryView.init(trajectory:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/TrajectoryView.swift",
-      "line": 34,
+      "line": 38,
       "symbol": "TrajectoryView.init(coder:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/TrajectoryView.swift",
-      "line": 38,
+      "line": 42,
       "symbol": "TrajectoryView.draw(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/TrajectoryView.swift",
-      "line": 53,
-      "symbol": "TrajectoryView.updateTrajectory(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/VectorView.swift",
-      "line": 11,
-      "symbol": "VectorView",
-      "symbol_kind": "source.lang.swift.decl.class",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/VectorView.swift",
-      "line": 13,
+      "line": 16,
       "symbol": "VectorView.pointSize",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/VectorView.swift",
-      "line": 16,
+      "line": 19,
       "symbol": "VectorView.init(origin:vector:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/VectorView.swift",
-      "line": 37,
+      "line": 41,
       "symbol": "VectorView.init(coder:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/VectorView.swift",
-      "line": 41,
+      "line": 45,
       "symbol": "VectorView.draw(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/VectorView.swift",
-      "line": 53,
-      "symbol": "VectorView.updateVector(withOrigin:vector:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
@@ -1164,85 +940,8 @@
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/MapViewController.swift",
-      "line": 30,
+      "line": 32,
       "symbol": "MapViewController.adaptivePresentationStyle(for:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/MapViewController.swift",
-      "line": 35,
-      "symbol": "MapViewController.updatePosition(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/MapViewController.swift",
-      "line": 39,
-      "symbol": "MapViewController.setAnchors(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/MapViewController.swift",
-      "line": 43,
-      "symbol": "MapViewController.updateActiveAnchors(_:distances:acceleration:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/MapViewController.swift",
-      "line": 51,
-      "symbol": "MapViewController.updateCovariance(eigenValue1:eigenValue2:angle:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/MapViewController.swift",
-      "line": 57,
-      "symbol": "MapViewController.updateParticles(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/MapViewController.swift",
-      "line": 62,
-      "symbol": "MapViewController.toggleFloorplanVisible(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/MapViewController.swift",
-      "line": 66,
-      "symbol": "MapViewController.toggleMeasurementsVisible(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/MapViewController.swift",
-      "line": 70,
-      "symbol": "MapViewController.changeFilterType(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/MapViewController.swift",
-      "line": 75,
-      "symbol": "MapViewController.didDoCalibrationFromView(newAnchors:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/MapViewController.swift",
-      "line": 88,
-      "symbol": "MapViewController.onSettingsButtonTapped(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/MapViewController.swift",
-      "line": 106,
-      "symbol": "MapViewController.onStartButtonTapped(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
@@ -1276,225 +975,183 @@
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 17,
-      "symbol": "SettingsTableViewController",
-      "symbol_kind": "source.lang.swift.decl.class",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 19,
+      "line": 22,
       "symbol": "SettingsTableViewController.SettingsTableViewSection",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 20,
+      "line": 23,
       "symbol": "SettingsTableViewController.SettingsTableViewSection.view",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 21,
+      "line": 24,
       "symbol": "SettingsTableViewController.SettingsTableViewSection.calibration",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 22,
+      "line": 25,
       "symbol": "SettingsTableViewController.SettingsTableViewSection.filter",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 25,
+      "line": 28,
       "symbol": "SettingsTableViewController.SliderType",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 26,
+      "line": 29,
       "symbol": "SettingsTableViewController.SliderType.processUncertainty",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 27,
+      "line": 30,
       "symbol": "SettingsTableViewController.SliderType.distanceUncertainty",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 28,
+      "line": 31,
       "symbol": "SettingsTableViewController.SliderType.accelerationUncertainty",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 29,
+      "line": 32,
       "symbol": "SettingsTableViewController.SliderType.numberOfParticles",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 32,
+      "line": 33,
+      "symbol": "SettingsTableViewController.SliderType.N_thr",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
+      "line": 36,
       "symbol": "SettingsTableViewController.SwitchType",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 33,
+      "line": 37,
       "symbol": "SettingsTableViewController.SwitchType.isFloorplanVisible",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 34,
+      "line": 38,
       "symbol": "SettingsTableViewController.SwitchType.areMeasurementsVisible",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 37,
+      "line": 39,
+      "symbol": "SettingsTableViewController.SwitchType.isRegularizedPF",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
+      "line": 42,
       "symbol": "SettingsTableViewController.tableViewSections",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 41,
+      "line": 46,
       "symbol": "SettingsTableViewController.filterSettings",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 42,
+      "line": 47,
       "symbol": "SettingsTableViewController.settingsDelegate",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 44,
+      "line": 49,
       "symbol": "SettingsTableViewController.calibrationPending",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 45,
+      "line": 50,
       "symbol": "SettingsTableViewController.calibratedAnchors",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 47,
+      "line": 52,
       "symbol": "SettingsTableViewController.filterInitializationPending",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 50,
+      "line": 55,
       "symbol": "SettingsTableViewController.viewDidLoad()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 82,
+      "line": 88,
       "symbol": "SettingsTableViewController.viewDidDisappear(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 127,
+      "line": 134,
       "symbol": "SettingsTableViewController.numberOfSections(in:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 131,
+      "line": 138,
       "symbol": "SettingsTableViewController.tableView(_:numberOfRowsInSection:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 158,
+      "line": 168,
       "symbol": "SettingsTableViewController.tableView(_:cellForRowAt:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 192,
+      "line": 206,
       "symbol": "SettingsTableViewController.tableView(_:titleForHeaderInSection:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 209,
-      "symbol": "SettingsTableViewController.onSegmentedControlValueChanged(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 217,
-      "symbol": "SettingsTableViewController.onSliderValueChanged(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 238,
-      "symbol": "SettingsTableViewController.onButtonTapped(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 251,
-      "symbol": "SettingsTableViewController.onAddAnchorButtonTapped(_:id:x:y:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 257,
-      "symbol": "SettingsTableViewController.onRemoveAnchorButtonTapped(_:id:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 264,
-      "symbol": "SettingsTableViewController.onSwitchTapped(_:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/Dennis/Documents/IndoorLocation/IndoorLocation/Views/ViewControllers/SettingsTableViewController.swift",
-      "line": 353,
-      "symbol": "SettingsTableViewController.dismissKeyboard()",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     }
