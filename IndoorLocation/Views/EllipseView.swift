@@ -14,7 +14,7 @@ enum EllipseType {
 }
 
 /**
- View that displays an ellipse
+ View that displays an ellipse. This can be the measured distances of an anchor or the covariance of the Kalman filter.
  */
 class EllipseView: UIView {
     
@@ -75,7 +75,7 @@ class EllipseView: UIView {
     }
     
     /**
-     A function to update the shape and position of the ellipse. 
+     Updates the shape and position of the ellipse. 
      */
     func updateEllipse(withEllipseType ellipseType: EllipseType, position: CGPoint? = nil) {
         

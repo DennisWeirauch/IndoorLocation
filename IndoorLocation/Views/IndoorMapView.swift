@@ -112,7 +112,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     private var covarianceView: EllipseView?
     private var trajectoryView: TrajectoryView?
     private var distanceViews: [EllipseView]?
-    private var vectorViews: [VectorView]?
+    private var accelerationViews: [VectorView]?
     
     private var calibrationButton: UIButton!
     private var cancelCalibrationButton: UIButton!
@@ -166,7 +166,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
             ctx.cgContext.drawPDFPage(pdfPage);
         }
         floorplanView = UIImageView(image: floorplan)
-        floorplanView.isHidden = true
+        floorplanView.isHidden = !isFloorplanVisible
         mapView.addSubview(floorplanView)
         
         // Set up cancelCalibrationButton
@@ -205,9 +205,6 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     }
     
     // Functions used for zooming, rotating and panning the mapView
-    /**
-     Updates the CGAffineTransform of the mapView.
-     */
     private func updateTransformWithOffset(_ offset: CGPoint) {
         mapView.transform = CGAffineTransform(translationX: offset.x + tx, y: offset.y + ty)
         mapView.transform = mapView.transform.rotated(by: angle)
@@ -234,15 +231,19 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     }
     
     // Functions to show views for indoor location tracking
+    /**
+     Function that is called when the set of anchors was changed. The anchorViews array is replaced with new views.
+     */
     private func setAnchors() {
         guard let anchors = anchors else { return }
         
+        // Clear anchorViews
         if let anchorViews = anchorViews {
             anchorViews.forEach { $0.removeFromSuperview() }
         }
-        
         anchorViews = [PointView]()
         
+        // Create new PointViews and add them to anchorViews
         for anchor in anchors {
             let anchorView = PointView(pointType: .anchor(anchor))
             mapView.addSubview(anchorView)
@@ -255,9 +256,13 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         }
     }
     
+    /**
+     Function that is called when the position of the agent has changed. The positionView and the trajectoryView are updated.
+     */
     private func updatePosition() {
         guard let position = position else { return }
         
+        // Update position
         if let positionView = positionView {
             positionView.updatePoint(withPointType: .position(position))
         } else {
@@ -276,6 +281,9 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         }
     }
     
+    /**
+     Function that is called when the covariance of the Kalman filter has changed. The covarianceView is updated.
+     */
     private func updateCovariance() {
         guard let position = position, let covariance = covariance else { return }
         
@@ -287,14 +295,19 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         }
     }
     
+    /**
+     Function that is called when the set of particles has changed. All particleViews are updated.
+     */
     private func updateParticles() {
         guard let particles = particles else { return }
         
+        // Check if the amount of particles has changed. If not, update all views
         if particles.count == particleViews?.count {
             for i in 0..<particles.count {
                 particleViews?[i].updatePoint(withPointType: .particle(particles[i]))
             }
         } else {
+            // If the number of particles is different from the number of views for them, all views are redrawn
             particleViews?.forEach { $0.removeFromSuperview() }
             particleViews = [PointView]()
             
@@ -308,6 +321,9 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         }
     }
     
+    /**
+     Function that is called when the distance measurements for active anchors have changed. The distanceViews are updated.
+     */
     private func updateAnchorDistances() {
         guard let anchorDistances = anchorDistances,
             let anchors = anchors?.filter({ $0.isActive }) else { return }
@@ -328,15 +344,18 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         }
     }
     
+    /**
+     Function that is called when the acceleration measurements have changed. The accelerationViews are updated.
+     */
     private func updateAcceleration() {
         guard let acceleration = acceleration,
             let position = position else { return }
         
-        if vectorViews != nil {
-            vectorViews?[0].updateVector(withOrigin: position, vector: CGSize(width: acceleration[0], height: 0))
-            vectorViews?[1].updateVector(withOrigin: position, vector: CGSize(width: 0, height: acceleration[1]))
+        if accelerationViews != nil {
+            accelerationViews?[0].updateVector(withOrigin: position, vector: CGSize(width: acceleration[0], height: 0))
+            accelerationViews?[1].updateVector(withOrigin: position, vector: CGSize(width: 0, height: acceleration[1]))
         } else {
-            vectorViews?.forEach { $0.removeFromSuperview() }
+            accelerationViews?.forEach { $0.removeFromSuperview() }
             
             // Initialize vectors with unit vectors
             let xVector = VectorView(origin: position, vector: CGSize(width: 1, height: 0))
@@ -344,7 +363,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
             mapView.addSubview(xVector)
             mapView.addSubview(yVector)
             
-            vectorViews = [xVector, yVector]
+            accelerationViews = [xVector, yVector]
         }
     }
     
@@ -360,7 +379,10 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     }
     
     //MARK: User interaction
-    // Functions for rotating, zooming and panning mapView
+    // Functions used for zooming, rotating and panning the mapView
+    /**
+     Function that is called when a rotating gesture is recognized in the mapView. The view is rotated accordingly.
+     */
     func handleRotation(_ recognizer: UIRotationGestureRecognizer) {
         if (recognizer.state == .began) {
             initAngle = angle
@@ -370,6 +392,9 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         updateTransformWithOffset(CGPoint.zero)
     }
     
+    /**
+     Function that is called when a pinch gesture is recognized in the mapView. The view is zoomed accordingly.
+     */
     func handlePinch(_ recognizer: UIPinchGestureRecognizer) {
         if recognizer.state == .began {
             initScale = scale
@@ -379,6 +404,9 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         updateTransformWithOffset(CGPoint.zero)
     }
     
+    /**
+     Function that is called when a pan gesture is recognized in the mapView. The view is translated accordingly.
+     */
     func handlePan(_ recognizer: UIPanGestureRecognizer) {
         let translation = recognizer.translation(in: mapView.superview)
         adjustAnchorPointForGestureRecognizer(recognizer)
@@ -386,14 +414,23 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     }
     
     // Functions for calibration from view
+    /**
+     Function that is called when an anchor is dragged by the user. This initiates calibration from view.
+     */
     func draggedAnchor(_ sender: UIPanGestureRecognizer) {
+        // Move anchor on mapView
         let translation = sender.translation(in: mapView)
         sender.view?.center = CGPoint(x: (sender.view?.center.x)! + translation.x, y: (sender.view?.center.y)! + translation.y)
         sender.setTranslation(CGPoint.zero, in: mapView)
+        
+        // Show calibration buttons
         calibrationButton.isHidden = false
         cancelCalibrationButton.isHidden = false
     }
     
+    /**
+     Function that is called when then calibration button is tapped. The new array of anchors and their positions is passed to the delegate.
+     */
     func didTapCalibrationButton(_ sender: UIButton) {
         // Determine anchor positions
         guard let anchorViews = anchorViews else { return }
@@ -409,16 +446,22 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
             }
         }
         
+        // Tell the delegate that calibration was initiated
         delegate?.didDoCalibrationFromView(newAnchors: newAnchors)
         
+        // Hide calibration buttons
         calibrationButton.isHidden = true
         cancelCalibrationButton.isHidden = true
     }
     
+    /**
+     Function that is called when the cancel calibration button is tapped. The view is restored to the previous state.
+     */
     func didTapCancelCalibrationButton(_ sender: UIButton) {
         // Restore view from stored anchors
         setAnchors()
         
+        // Hide calibration buttons
         calibrationButton.isHidden = true
         cancelCalibrationButton.isHidden = true
     }

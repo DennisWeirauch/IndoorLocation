@@ -14,6 +14,9 @@ enum PointType {
     case particle(Particle)
 }
 
+/**
+ View that displays a point. This can be the position of the agent, the anchors or the particles.
+ */
 class PointView: UIView {
     
     private(set) var pointSize: CGFloat
@@ -22,6 +25,7 @@ class PointView: UIView {
     init(pointType: PointType) {
         self.pointType = pointType
         
+        // Set the frame of the view
         var width: CGFloat
         var pointPosition: CGPoint
         
@@ -51,7 +55,7 @@ class PointView: UIView {
     }
     
     override func draw(_ rect: CGRect) {
-        
+        // Draw the point with the specified point size
         let pointPath = UIBezierPath(ovalIn: CGRect(x: 0, y: 0, width: pointSize, height: pointSize))
         
         let pointLayer = CAShapeLayer()
@@ -64,7 +68,7 @@ class PointView: UIView {
         case .anchor(let anchor):
             pointLayer.fillColor = anchor.isActive ? UIColor.red.cgColor : UIColor.gray.cgColor
             
-            // Label
+            // Draw the ID Label of an anchor
             let attributes = [
                 NSFontAttributeName: UIFont.systemFont(ofSize: pointSize),
                 NSForegroundColorAttributeName: anchor.isActive ? UIColor.red : UIColor.gray,
@@ -80,6 +84,9 @@ class PointView: UIView {
         layer.addSublayer(pointLayer)
     }
     
+    /**
+     Updates the position of the point.
+     */
     func updatePoint(withPointType pointType: PointType) {
         var pointPosition: CGPoint
         

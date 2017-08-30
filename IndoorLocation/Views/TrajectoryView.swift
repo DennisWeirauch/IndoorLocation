@@ -8,6 +8,9 @@
 
 import UIKit
 
+/**
+ View that displays the trajectory.
+ */
 class TrajectoryView: UIView {
     
     var trajectory: [CGPoint]
@@ -17,6 +20,7 @@ class TrajectoryView: UIView {
     init(trajectory: [CGPoint]) {
         self.trajectory = trajectory
         
+        // Set the frame of the view
         var width: CGFloat = 0
         var height: CGFloat = 0
         if !trajectory.isEmpty {
@@ -37,6 +41,7 @@ class TrajectoryView: UIView {
     
     override func draw(_ rect: CGRect) {
         
+        // Draw the trajectory by drawing lines between the last positions
         let trajectoryPath = UIBezierPath()
         trajectoryPath.move(to: trajectory[0])
         trajectory.forEach { trajectoryPath.addLine(to: $0) }
@@ -50,6 +55,9 @@ class TrajectoryView: UIView {
         layer.addSublayer(trajectoryLayer)
     }
     
+    /**
+     Redraws the trajectory with a new array of positions.
+     */
     func updateTrajectory(_ trajectory: [CGPoint]) {
         let width = trajectory.map { $0.x }.max()! - trajectory.map { $0.x }.min()!
         let height = trajectory.map { $0.y }.max()! - trajectory.map { $0.y }.min()!

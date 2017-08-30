@@ -8,6 +8,9 @@
 
 import UIKit
 
+/**
+ View that displays simple vectors in x and y directions. It is used to display the current acceleration vectors in x and y direction.
+ */
 class VectorView: UIView {
     
     let pointSize: CGFloat = 6
@@ -18,6 +21,7 @@ class VectorView: UIView {
         var frameOrigin: CGPoint
         var frameSize: CGSize
         
+        // Check whether the vector is in x or y direction and set the frame accordingly
         if vector.height == 0 {
             frameOrigin = CGPoint(x: origin.x, y: origin.y - pointSize / 2)
             frameSize = CGSize(width: 10, height: pointSize)
@@ -40,6 +44,7 @@ class VectorView: UIView {
     
     override func draw(_ rect: CGRect) {
         
+        // Draw the vector with a simple rounded rectangle
         let vectorPath = UIBezierPath(roundedRect: CGRect(origin: CGPoint.zero, size: rect.size), cornerRadius: pointSize / 2)
         
         vectorLayer = CAShapeLayer()
@@ -50,6 +55,9 @@ class VectorView: UIView {
         layer.addSublayer(vectorLayer)
     }
     
+    /**
+     Updates the origin, direction and length of the vector.
+     */
     func updateVector(withOrigin origin: CGPoint, vector: CGSize) {
 
         var frameOrigin: CGPoint
