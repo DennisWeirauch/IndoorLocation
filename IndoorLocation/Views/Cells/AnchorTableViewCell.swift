@@ -41,10 +41,11 @@ class AnchorTableViewCell: UITableViewCell {
         self.delegate = delegate
         
         // Set up textfields
-        //TODO: Adjust size according to width of cell
-        idTextField = UITextField(frame: CGRect(x: 10, y: 0, width: 40, height: frame.height))
-        xTextField = UITextField(frame: CGRect(x: idTextField.frame.maxX, y: 0, width: 50, height: frame.height))
-        yTextField = UITextField(frame: CGRect(x: xTextField.frame.maxX, y: 0, width: xTextField.frame.width, height: frame.height))
+        let idWidth = contentView.frame.width / 3 - 25
+        let coordinateWidth = idWidth + 10
+        idTextField = UITextField(frame: CGRect(x: 10, y: 0, width: idWidth, height: frame.height))
+        xTextField = UITextField(frame: CGRect(x: idTextField.frame.maxX, y: 0, width: coordinateWidth, height: frame.height))
+        yTextField = UITextField(frame: CGRect(x: xTextField.frame.maxX, y: 0, width: coordinateWidth, height: frame.height))
         
         idTextField.font = UIFont.systemFont(ofSize: 12)
         xTextField.font = UIFont.systemFont(ofSize: 12)

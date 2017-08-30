@@ -142,7 +142,7 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
         settingsVC.modalPresentationStyle = .popover
         let frame = self.view.frame
         
-        settingsVC.preferredContentSize = CGSize(width: 220, height: frame.height)
+        settingsVC.preferredContentSize = CGSize(width: min(250, 2 * frame.width / 3), height: frame.height)
         settingsVC.settingsDelegate = self
         
         let popoverVC = settingsVC.popoverPresentationController
