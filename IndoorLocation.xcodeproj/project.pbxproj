@@ -633,6 +633,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = 4HG5879524;
 				INFOPLIST_FILE = "$(SRCROOT)/IndoorLocation/Supporting Files/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Hirschgaenger.IndoorLocation;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -649,6 +650,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				DEVELOPMENT_TEAM = 4HG5879524;
 				INFOPLIST_FILE = "$(SRCROOT)/IndoorLocation/Supporting Files/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Hirschgaenger.IndoorLocation;
 				PRODUCT_NAME = "$(TARGET_NAME)";
