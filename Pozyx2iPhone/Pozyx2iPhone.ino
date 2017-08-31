@@ -84,7 +84,9 @@ void setup() {
 }
 
 void loop() {
+  Serial.println("-----------------Beginning of loop-----------------");
   readRestServer();
+  Serial.println("---------After read server---------");
 
   if (isRanging) {
     // Make sure measurements are made every 200 ms
@@ -93,7 +95,9 @@ void loop() {
     if (timeDiff < 200) {
       delay(200 - timeDiff);
     }
+    Serial.println("---------Before sending data---------");
     sendRangingData();
+    Serial.println("---------After sending data---------");
     lastMeasurementTime = currentTime;
   }
 }

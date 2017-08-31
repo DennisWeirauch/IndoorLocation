@@ -39,6 +39,7 @@
 		95E3DCC31EA0E014006D6C08 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E3DCC21EA0E014006D6C08 /* NetworkManager.swift */; };
 		95E3DCC81EA103A5006D6C08 /* IndoorLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E3DCC71EA103A5006D6C08 /* IndoorLocationManager.swift */; };
 		95E3DCCA1EA10817006D6C08 /* BayesianFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E3DCC91EA10817006D6C08 /* BayesianFilter.swift */; };
+		95F3C17A1F587765007D9571 /* closeIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 95F3C1791F587765007D9571 /* closeIcon.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -98,6 +99,7 @@
 		95E3DCC21EA0E014006D6C08 /* NetworkManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		95E3DCC71EA103A5006D6C08 /* IndoorLocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IndoorLocationManager.swift; sourceTree = "<group>"; };
 		95E3DCC91EA10817006D6C08 /* BayesianFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BayesianFilter.swift; sourceTree = "<group>"; };
+		95F3C1791F587765007D9571 /* closeIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = closeIcon.png; sourceTree = "<group>"; };
 		B931549E1B39047972B00CF5 /* Pods-IndoorLocation.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IndoorLocation.release.xcconfig"; path = "Pods/Target Support Files/Pods-IndoorLocation/Pods-IndoorLocation.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -140,6 +142,7 @@
 			children = (
 				953B71761F263F2F00978648 /* addIcon.png */,
 				953B71801F2640D800978648 /* cancelIcon.png */,
+				95F3C1791F587765007D9571 /* closeIcon.png */,
 				9507696F1E8D419B00233FF8 /* room_10_blueprint.pdf */,
 				953B71771F263F2F00978648 /* settingsIcon.png */,
 				953B71781F263F2F00978648 /* startIcon.png */,
@@ -398,6 +401,7 @@
 			files = (
 				953B71811F2640D800978648 /* cancelIcon.png in Resources */,
 				95A1F6251E8BB5C700D2CDD2 /* Assets.xcassets in Resources */,
+				95F3C17A1F587765007D9571 /* closeIcon.png in Resources */,
 				953B717C1F263F2F00978648 /* settingsIcon.png in Resources */,
 				953B717F1F263F2F00978648 /* trashIcon.png in Resources */,
 				953B717B1F263F2F00978648 /* addIcon.png in Resources */,

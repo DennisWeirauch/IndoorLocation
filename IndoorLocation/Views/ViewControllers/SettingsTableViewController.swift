@@ -55,15 +55,14 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Set up tableView
-        let headerView = UIView(frame: CGRect(x: 0, y: 0, width: 200, height: 50))
-        let titleLabel = UILabel(frame: CGRect(x: 0, y: 12.5, width: 200, height: 25))
+        // Set up tableView        
+        let headerView = UIView(frame: CGRect(x: 0, y: 0, width: tableView.frame.width, height: 50))
+        let titleLabel = UILabel(frame: CGRect(x: 20, y: 12.5, width: headerView.frame.width - 20, height: 25))
         titleLabel.text = "Settings"
-        titleLabel.font = UIFont.systemFont(ofSize: 20)
-        titleLabel.textAlignment = .center
+        titleLabel.font = UIFont.boldSystemFont(ofSize: 20)
         headerView.addSubview(titleLabel)
-        
         tableView.tableHeaderView = headerView
+
         tableView.bounces = false
         tableView.showsVerticalScrollIndicator = false
         
@@ -83,6 +82,14 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
         
         calibrationPending = false
         filterInitializationPending = false
+    }
+    
+    override func viewWillLayoutSubviews() {
+        // Set up close button
+        let closeButton = UIButton(frame: CGRect(x: view.frame.width - 35, y: 15, width: 20, height: 20))
+        closeButton.setImage(UIImage(named: "closeIcon"), for: .normal)
+        closeButton.addTarget(self, action: #selector(didTapCloseButton(_:)), for: .touchUpInside)
+        view.addSubview(closeButton)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -434,6 +441,10 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
      Function to dismiss the keyboard if tapped outside of a UITextField
      */
     func dismissKeyboard() {
-        self.view.endEditing(true)
+        view.endEditing(true)
+    }
+    
+    func didTapCloseButton(_ sender: UIButton) {
+        self.dismiss(animated: true)
     }
 }
