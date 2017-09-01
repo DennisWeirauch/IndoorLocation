@@ -151,7 +151,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         addSubview(mapView)
         
         // Set up floorplanView
-        guard let url = Bundle.main.url(forResource: "room_10_blueprint", withExtension: "pdf") else { return }
+        guard let url = Bundle.main.url(forResource: "floorplan", withExtension: "pdf") else { return }
         guard let pdfPage = CGPDFDocument(url as CFURL)?.page(at: 1) else { return }
         
         let pageRect = pdfPage.getBoxRect(.trimBox)

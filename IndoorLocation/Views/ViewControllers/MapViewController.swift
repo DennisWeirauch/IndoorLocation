@@ -127,7 +127,7 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
             if let error = error {
                 alertWithTitle("Error", message: error.localizedDescription)
             } else {
-                alertWithTitle("Success", message: "Calibration Successful!")
+                alertWithTitle("Success", message: "Calibration was successful!")
             }
         }
     }

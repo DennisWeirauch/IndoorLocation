@@ -128,7 +128,7 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
                     if let error = error {
                         alertWithTitle("Error", message: error.localizedDescription)
                     } else {
-                        alertWithTitle("Success", message: "Calibration Successful!")
+                        alertWithTitle("Success", message: "Calibration was successful!")
                     }
                 }
             }
@@ -262,7 +262,7 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
             if let error = error {
                 alertWithTitle("Error", message: error.localizedDescription)
             } else {
-                alertWithTitle("Success", message: "Calibration Successful!")
+                alertWithTitle("Success", message: "Calibration was successful!")
                 self.calibrationPending = false
                 self.calibratedAnchors = IndoorLocationManager.shared.anchors
             }

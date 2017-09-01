@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		2ECE5A137F6ADE0660D36EAB /* Pods_IndoorLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3460003184CBBC145DB92FF5 /* Pods_IndoorLocation.framework */; };
 		950769641E8D3F0400233FF8 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950769631E8D3F0400233FF8 /* Utilities.swift */; };
-		950769701E8D419B00233FF8 /* room_10_blueprint.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9507696F1E8D419B00233FF8 /* room_10_blueprint.pdf */; };
 		953AFC2F1F026C5B00FAD3D8 /* PointView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953AFC2E1F026C5B00FAD3D8 /* PointView.swift */; };
 		953B717B1F263F2F00978648 /* addIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 953B71761F263F2F00978648 /* addIcon.png */; };
 		953B717C1F263F2F00978648 /* settingsIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 953B71771F263F2F00978648 /* settingsIcon.png */; };
@@ -32,6 +31,7 @@
 		95A1F6251E8BB5C700D2CDD2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 95A1F6241E8BB5C700D2CDD2 /* Assets.xcassets */; };
 		95A1F6331E8BB5C800D2CDD2 /* IndoorLocationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A1F6321E8BB5C800D2CDD2 /* IndoorLocationTests.swift */; };
 		95A1F63E1E8BB5C800D2CDD2 /* IndoorLocationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A1F63D1E8BB5C800D2CDD2 /* IndoorLocationUITests.swift */; };
+		95B013F61F599C52005A5FB8 /* floorplan.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 95B013F51F599C52005A5FB8 /* floorplan.pdf */; };
 		95BC59AE1F28A35000519C23 /* VectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BC59AD1F28A35000519C23 /* VectorView.swift */; };
 		95BDB2FD1F1CF14900EF2BC9 /* Particle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BDB2FC1F1CF14900EF2BC9 /* Particle.swift */; };
 		95C3C1AE1ECC3C5100704437 /* KalmanFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C3C1AD1ECC3C5100704437 /* KalmanFilter.swift */; };
@@ -63,7 +63,6 @@
 		3460003184CBBC145DB92FF5 /* Pods_IndoorLocation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_IndoorLocation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		43D0588909E4EB6D4B2293BA /* Pods-IndoorLocation.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IndoorLocation.debug.xcconfig"; path = "Pods/Target Support Files/Pods-IndoorLocation/Pods-IndoorLocation.debug.xcconfig"; sourceTree = "<group>"; };
 		950769631E8D3F0400233FF8 /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
-		9507696F1E8D419B00233FF8 /* room_10_blueprint.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = room_10_blueprint.pdf; sourceTree = "<group>"; };
 		953AFC2E1F026C5B00FAD3D8 /* PointView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PointView.swift; sourceTree = "<group>"; };
 		953B71761F263F2F00978648 /* addIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = addIcon.png; sourceTree = "<group>"; };
 		953B71771F263F2F00978648 /* settingsIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settingsIcon.png; sourceTree = "<group>"; };
@@ -92,6 +91,7 @@
 		95A1F6391E8BB5C800D2CDD2 /* IndoorLocationUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IndoorLocationUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		95A1F63D1E8BB5C800D2CDD2 /* IndoorLocationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndoorLocationUITests.swift; sourceTree = "<group>"; };
 		95A1F63F1E8BB5C800D2CDD2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		95B013F51F599C52005A5FB8 /* floorplan.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = floorplan.pdf; sourceTree = "<group>"; };
 		95BC59AD1F28A35000519C23 /* VectorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VectorView.swift; sourceTree = "<group>"; };
 		95BDB2FC1F1CF14900EF2BC9 /* Particle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Particle.swift; sourceTree = "<group>"; };
 		95C3C1AD1ECC3C5100704437 /* KalmanFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KalmanFilter.swift; sourceTree = "<group>"; };
@@ -143,7 +143,7 @@
 				953B71761F263F2F00978648 /* addIcon.png */,
 				953B71801F2640D800978648 /* cancelIcon.png */,
 				95F3C1791F587765007D9571 /* closeIcon.png */,
-				9507696F1E8D419B00233FF8 /* room_10_blueprint.pdf */,
+				95B013F51F599C52005A5FB8 /* floorplan.pdf */,
 				953B71771F263F2F00978648 /* settingsIcon.png */,
 				953B71781F263F2F00978648 /* startIcon.png */,
 				953B71791F263F2F00978648 /* stopIcon.png */,
@@ -403,9 +403,9 @@
 				95A1F6251E8BB5C700D2CDD2 /* Assets.xcassets in Resources */,
 				95F3C17A1F587765007D9571 /* closeIcon.png in Resources */,
 				953B717C1F263F2F00978648 /* settingsIcon.png in Resources */,
+				95B013F61F599C52005A5FB8 /* floorplan.pdf in Resources */,
 				953B717F1F263F2F00978648 /* trashIcon.png in Resources */,
 				953B717B1F263F2F00978648 /* addIcon.png in Resources */,
-				950769701E8D419B00233FF8 /* room_10_blueprint.pdf in Resources */,
 				953B717E1F263F2F00978648 /* stopIcon.png in Resources */,
 				953B717D1F263F2F00978648 /* startIcon.png in Resources */,
 			);
