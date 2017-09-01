@@ -368,7 +368,7 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
         case .calibration:
             if let cell = cell as? ButtonTableViewCell {
                 // Calibration button
-                cell.setupWithText("Calibrate!", delegate: self)
+                cell.setupWithText("Calibrate", delegate: self)
             } else if let cell = cell as? AnchorTableViewCell {
                 if let anchors = IndoorLocationManager.shared.anchors {
                     let index = indexPath.row
@@ -402,13 +402,13 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
                     switch indexPath.row {
                     case 1:
                         // Process uncertainty slider
-                        cell.setupWithValue(filterSettings.processUncertainty, minValue: 0, maxValue: 100, text: "Proc. uncertainty:", unit: "cm/s²", delegate: self, tag: SliderType.processUncertainty.rawValue)
+                        cell.setupWithValue(filterSettings.processUncertainty, minValue: 0, maxValue: 100, text: "Proc. uncertainty:", unit: "(cm/s²)²", delegate: self, tag: SliderType.processUncertainty.rawValue)
                     case 2:
                         // Distance uncertainty slider
-                        cell.setupWithValue(filterSettings.distanceUncertainty, minValue: 1, maxValue: 100, text: "Dist. uncertainty:", unit: "cm", delegate: self, tag: SliderType.distanceUncertainty.rawValue)
+                        cell.setupWithValue(filterSettings.distanceUncertainty, minValue: 1, maxValue: 100, text: "Dist. uncertainty:", unit: "cm²", delegate: self, tag: SliderType.distanceUncertainty.rawValue)
                     case 3:
                         // Acceleration uncertainty slider
-                        cell.setupWithValue(filterSettings.accelerationUncertainty, minValue: 1, maxValue: 100, text: "Acc. uncertainty:", unit: "cm/s²", delegate: self, tag: SliderType.accelerationUncertainty.rawValue)
+                        cell.setupWithValue(filterSettings.accelerationUncertainty, minValue: 1, maxValue: 100, text: "Acc. uncertainty:", unit: "(cm/s²)²", delegate: self, tag: SliderType.accelerationUncertainty.rawValue)
                     default:
                         break
                     }
@@ -417,10 +417,10 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
                     switch indexPath.row {
                     case 2:
                         // Process uncertainty slider
-                        cell.setupWithValue(filterSettings.processUncertainty, minValue: 0, maxValue: 200, text: "Proc. uncertainty:", unit: "cm/s²", delegate: self, tag: SliderType.processUncertainty.rawValue)
+                        cell.setupWithValue(filterSettings.processUncertainty, minValue: 0, maxValue: 200, text: "Proc. uncertainty:", unit: "(cm/s²)²", delegate: self, tag: SliderType.processUncertainty.rawValue)
                     case 3:
                         // Distance uncertainty slider
-                        cell.setupWithValue(filterSettings.distanceUncertainty, minValue: 1, maxValue: 100, text: "Dist. uncertainty:", unit: "cm", delegate: self, tag: SliderType.distanceUncertainty.rawValue)
+                        cell.setupWithValue(filterSettings.distanceUncertainty, minValue: 1, maxValue: 100, text: "Dist. uncertainty:", unit: "cm²", delegate: self, tag: SliderType.distanceUncertainty.rawValue)
                     case 4:
                         // Number of particles slider
                         cell.setupWithValue(filterSettings.numberOfParticles, minValue: 1, maxValue: 1000, text: "No. Particles:", delegate: self, tag: SliderType.numberOfParticles.rawValue)

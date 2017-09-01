@@ -19,13 +19,13 @@ class FilterSettings {
     var filterType: FilterType = .none
 
     /// This models the uncertainty of the applied physical model. As the acceleration within one time step is not constant, the physical model is
-    /// not perfectly precise. Its unit is in cm/s^2.
+    /// not perfectly precise. Its unit is in (cm/s^2)^2.
     var processUncertainty: Int = 40
     
-    /// This models the uncertainty of the distance measurements. Its unit is in cm.
+    /// This models the uncertainty of the distance measurements. Its unit is in cm^2.
     var distanceUncertainty: Int = 50
     
-    /// This models the uncertainty of the acceleration measurements. Its unit is in cm/s^2.
+    /// This models the uncertainty of the acceleration measurements. Its unit is in (cm/s^2)^2.
     var accelerationUncertainty: Int = 25
     
     var numberOfParticles: Int = 750

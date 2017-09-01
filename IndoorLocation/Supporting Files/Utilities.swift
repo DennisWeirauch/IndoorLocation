@@ -182,7 +182,6 @@ extension Array where Iterator.Element == Float {
  */
 func linearLeastSquares(anchors: [CGPoint], distances: [Float]) -> CGPoint? {
     guard anchors.count > 2 else {
-        print("At least 3 anchors are necessary for the least squares algorithm.")
         return nil
     }
     
