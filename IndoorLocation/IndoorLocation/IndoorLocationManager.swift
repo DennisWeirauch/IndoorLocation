@@ -105,10 +105,10 @@ class IndoorLocationManager {
     func calibrate(resultCallback: @escaping (_ error: Error?) -> ()) {
         // Faking anchors as I'm too lazy to enter coordinates every time.
         if (anchors == nil || !(anchors!.count > 0)) {
-            addAnchorWithID(Int("666D", radix: 16)!, x: 500, y: 0)
-            addAnchorWithID(Int("6F21", radix: 16)!, x: 390, y: 335)
-            addAnchorWithID(Int("6F59", radix: 16)!, x: 95, y: 130)
-            addAnchorWithID(Int("6F51", radix: 16)!, x: 195, y: 335)
+            addAnchorWithID(Int("666D", radix: 16)!, x: 425, y: 0)
+            addAnchorWithID(Int("6F21", radix: 16)!, x: 345, y: 320)
+            addAnchorWithID(Int("6F59", radix: 16)!, x: 0, y: 115)
+            addAnchorWithID(Int("6F51", radix: 16)!, x: 140, y: 345)
         }
         
         // Generate string of calibration data to send to the arduino.

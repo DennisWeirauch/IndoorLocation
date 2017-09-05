@@ -92,15 +92,16 @@ class EllipseView: UIView {
             width = 2 * radius
             height = 2 * radius
         }
-        
-        let frameCenter = position ?? center
-        frame = CGRect(x: frameCenter.x - width / 2, y: frameCenter.y - height / 2, width: width, height: height)
-        
-        let ellipsePath = UIBezierPath(ovalIn: CGRect(x: 0, y: 0, width: width, height: height))
-        ellipseLayer.path = ellipsePath.cgPath
+
+        bounds.size = CGSize(width: width, height: height)
+
+        center = position ?? center
         
         if let rotationAngle = rotationAngle {
-            transform = CGAffineTransform(rotationAngle: rotationAngle)
+            transform.rotated(by: rotationAngle)
         }
+        
+        let ellipsePath = UIBezierPath(ovalIn: CGRect(x: 0, y: 0, width: bounds.width, height: bounds.height))
+        ellipseLayer.path = ellipsePath.cgPath
     }
 }
