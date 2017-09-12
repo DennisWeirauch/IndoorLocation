@@ -45,6 +45,7 @@ class SwitchTableViewCell: UITableViewCell {
         // Set up switch
         switcher = UISwitch(frame: CGRect(x: contentView.frame.maxX - 60, y: 5, width: 50, height: 30))
         switcher.isOn = isOn
+        switcher.onTintColor = UIColor.Application.lightGreen
         switcher.tag = tag
         switcher.addTarget(self, action: #selector(onSwitchTapped(_:)), for: .valueChanged)
         contentView.addSubview(switcher)

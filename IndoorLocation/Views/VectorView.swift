@@ -50,7 +50,7 @@ class VectorView: UIView {
         vectorLayer = CAShapeLayer()
         vectorLayer.path = vectorPath.cgPath
         
-        vectorLayer.fillColor = UIColor.blue.cgColor
+        vectorLayer.fillColor = UIColor.Application.darkBlue.cgColor
         
         layer.addSublayer(vectorLayer)
     }

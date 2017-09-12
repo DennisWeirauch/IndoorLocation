@@ -39,7 +39,7 @@ class ButtonTableViewCell: UITableViewCell {
         button = UIButton(frame: contentView.frame)
         
         button.setTitle(text, for: .normal)
-        button.setTitleColor(button.tintColor, for: .normal)
+        button.setTitleColor(UIColor.Application.darkBlue, for: .normal)
         
         button.addTarget(self, action: #selector(onButtonTapped(_:)), for: .touchUpInside)
         

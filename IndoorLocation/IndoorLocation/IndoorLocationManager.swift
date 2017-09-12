@@ -256,15 +256,13 @@ class IndoorLocationManager {
         
         var acceleration = [Float]()
         if let xAcc = measurementDict["xAcc"] {
-            // Divide acceleration by 10 to convert from mm/s^2 to cm/s^2.
-            acceleration.append(xAcc / 10)
+            acceleration.append(xAcc)
         } else {
             acceleration.append(0)
         }
         if let yAcc = measurementDict["yAcc"] {
             // Adding yAcc negative because Pozyx has a right coordinate system while we have a left coordinate system here.
-            // Also divide by 10 to convert from mm/s^2 to cm/s^2
-            acceleration.append(-yAcc / 10)
+            acceleration.append(-yAcc)
         } else {
             acceleration.append(0)
         }

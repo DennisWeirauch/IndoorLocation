@@ -20,6 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Assign MapViewController as rootViewController and show it
         window = UIWindow(frame: UIScreen.main.bounds)
+        window?.tintColor = UIColor.Application.darkBlue
         let viewController = MapViewController()
         window?.rootViewController = viewController
         window?.makeKeyAndVisible()

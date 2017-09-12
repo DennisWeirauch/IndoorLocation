@@ -64,10 +64,10 @@ class EllipseView: UIView {
         // Choose the line color depending on the ellipse type
         switch ellipseType {
         case .covariance(_):
-            ellipseLayer.strokeColor = UIColor.orange.cgColor
+            ellipseLayer.strokeColor = UIColor.Application.orange.cgColor
             ellipseLayer.lineWidth = 2
         case .distance(_):
-            ellipseLayer.strokeColor = UIColor.red.cgColor
+            ellipseLayer.strokeColor = UIColor.Application.darkRed.cgColor
             ellipseLayer.lineWidth = 1
         }
         

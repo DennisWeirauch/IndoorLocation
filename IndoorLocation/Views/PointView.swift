@@ -63,22 +63,22 @@ class PointView: UIView {
         
         switch pointType {
         case .position:
-            pointLayer.fillColor = UIColor.blue.cgColor
+            pointLayer.fillColor = UIColor.Application.darkBlue.cgColor
             
         case .anchor(let anchor):
-            pointLayer.fillColor = anchor.isActive ? UIColor.red.cgColor : UIColor.gray.cgColor
+            pointLayer.fillColor = anchor.isActive ? UIColor.Application.darkRed.cgColor : UIColor.gray.cgColor
             
             // Draw the ID Label of an anchor
             let attributes = [
                 NSFontAttributeName: UIFont.systemFont(ofSize: pointSize),
-                NSForegroundColorAttributeName: anchor.isActive ? UIColor.red : UIColor.gray,
+                NSForegroundColorAttributeName: anchor.isActive ? UIColor.Application.darkRed : UIColor.gray,
                 ] as [String : Any]
             
             let idString = NSString(format: "%2X", anchor.id)
             idString.draw(at: CGPoint(x: 1.25 * pointSize, y: 0), withAttributes: attributes)
             
         case .particle:
-            pointLayer.fillColor = UIColor.orange.cgColor
+            pointLayer.fillColor = UIColor.Application.orange.cgColor
         }
         
         layer.addSublayer(pointLayer)

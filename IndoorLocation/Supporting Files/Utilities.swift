@@ -174,6 +174,30 @@ extension Array where Iterator.Element == Float {
     }
 }
 
+extension UIColor {
+    struct Application {
+        static var darkBlue: UIColor {
+            return UIColor(red: 0.0/255.0, green: 69.0/255.0, blue: 138.0/255.0, alpha: 1.0)
+        }
+        
+        static var darkGreen: UIColor {
+            return UIColor(red: 25.0/255.0, green: 122.0/255.0, blue: 132.0/255.0, alpha: 1.0)
+        }
+        
+        static var lightGreen: UIColor {
+            return UIColor(red: 87.0/255.0, green: 189.0/255.0, blue: 195.0/255.0, alpha: 1.0)
+        }
+        
+        static var orange: UIColor {
+            return UIColor(red: 236.0/255.0, green: 110.0/255.0, blue: 0.0/255.0, alpha: 1.0)
+        }
+        
+        static var darkRed: UIColor {
+            return UIColor(red: 192.0/255.0, green: 0.0/255.0, blue: 0.0/255.0, alpha: 1.0)
+        }
+    }
+}
+
 /**
  Executes the linear least squares algorithm.
  - Parameter anchors: The set of active anchors
