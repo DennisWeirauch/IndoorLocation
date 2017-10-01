@@ -1,12 +1,12 @@
 PODS:
-  - Embassy (3.1.0)
+  - Embassy (4.0.0)
 
 DEPENDENCIES:
-  - Embassy
+  - Embassy (~> 4.0)
 
 SPEC CHECKSUMS:
-  Embassy: 00408403423e4d9d5f21057bec13b1e96e838a32
+  Embassy: a01efce4e30c1c6a3c19e6aa27e1b75ca0e1efd3
 
-PODFILE CHECKSUM: f1b2a4e4503249b49596865b5f49d6b362be9365
+PODFILE CHECKSUM: 9c43ef3948e122cbfa6dfa8d7a64ffb3d21e787a
 
-COCOAPODS: 1.2.1
+COCOAPODS: 1.3.1

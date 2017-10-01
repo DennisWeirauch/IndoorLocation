@@ -1,9 +1,11 @@
 # Embassy
 
 [![Build Status](https://travis-ci.org/envoy/Embassy.svg?branch=master)](https://travis-ci.org/envoy/Embassy)
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-brightgreen.svg)](https://github.com/Carthage/Carthage)
+[![SwiftPM compatible](https://img.shields.io/badge/SwiftPM-compatible-brightgreen.svg)](https://github.com/apple/swift-package-manager)
 [![CocoaPods](https://img.shields.io/cocoapods/v/Embassy.svg)]()
-[![Code Climate](https://codeclimate.com/github/envoy/Embassy/badges/gpa.svg)](https://codeclimate.com/github/envoy/Embassy)
-[![Issue Count](https://codeclimate.com/github/envoy/Embassy/badges/issue_count.svg)](https://codeclimate.com/github/envoy/Embassy)
+![Swift Version](https://img.shields.io/badge/Swift-4.0-orange.svg)
+![Plaform](https://img.shields.io/badge/Platform-macOS|iOS|Linux-lightgrey.svg)
 [![GitHub license](https://img.shields.io/github/license/envoy/Embassy.svg)](https://github.com/envoy/Embassy/blob/master/LICENSE)
 
 Super lightweight async HTTP server in pure Swift.
@@ -14,7 +16,8 @@ Super lightweight async HTTP server in pure Swift.
 
 ## Features
 
- - Supports Swift 3
+ - Swift 4
+ - iOS / MacOS / Linux
  - Super lightweight, only 1.5 K of lines
  - Zero third-party dependency
  - Async event loop based HTTP server, makes long-polling, delay and bandwidth throttling all possible
@@ -191,7 +194,7 @@ sendBody(Data())
 To install with CocoaPod, add Embassy to your Podfile:
 
 ```
-pod 'Embassy', '~> 3.1'
+pod 'Embassy', '~> 4.0'
 ```
 
 ### Carthage
@@ -199,5 +202,23 @@ pod 'Embassy', '~> 3.1'
 To install with Carthage, add Embassy to your Cartfile:
 
 ```
-github "envoy/Embassy" ~> 3.1
+github "envoy/Embassy" ~> 4.0
 ```
+
+### Package Manager
+
+Add it this Embassy repo in `Package.swift`, like this
+
+```swift
+import PackageDescription
+
+let package = Package(
+    name: "EmbassyExample",
+    dependencies: [
+        .Package(url: "https://github.com/envoy/Embassy.git",
+                 majorVersion: 4),
+    ]
+)
+```
+
+You can read this [example project](https://github.com/envoy/example-embassy) here.

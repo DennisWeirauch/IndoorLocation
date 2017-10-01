@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		2ECE5A137F6ADE0660D36EAB /* Pods_IndoorLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3460003184CBBC145DB92FF5 /* Pods_IndoorLocation.framework */; };
 		950769641E8D3F0400233FF8 /* Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = 950769631E8D3F0400233FF8 /* Utilities.swift */; };
+		9512291B1F750591006F643A /* floorplan.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 9512291A1F750591006F643A /* floorplan.pdf */; };
 		953AFC2F1F026C5B00FAD3D8 /* PointView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 953AFC2E1F026C5B00FAD3D8 /* PointView.swift */; };
 		953B717C1F263F2F00978648 /* settingsIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 953B71771F263F2F00978648 /* settingsIcon.png */; };
 		954B55F11EF0251C00AE923F /* IndoorMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 954B55F01EF0251C00AE923F /* IndoorMapView.swift */; };
@@ -26,7 +27,6 @@
 		95A1F6251E8BB5C700D2CDD2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 95A1F6241E8BB5C700D2CDD2 /* Assets.xcassets */; };
 		95A1F6331E8BB5C800D2CDD2 /* IndoorLocationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A1F6321E8BB5C800D2CDD2 /* IndoorLocationTests.swift */; };
 		95A1F63E1E8BB5C800D2CDD2 /* IndoorLocationUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95A1F63D1E8BB5C800D2CDD2 /* IndoorLocationUITests.swift */; };
-		95B013F61F599C52005A5FB8 /* floorplan.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 95B013F51F599C52005A5FB8 /* floorplan.pdf */; };
 		95BC59AE1F28A35000519C23 /* VectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BC59AD1F28A35000519C23 /* VectorView.swift */; };
 		95BCE3B41F67D38600F944B4 /* cancelIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 95BCE3AF1F67D38600F944B4 /* cancelIcon.png */; };
 		95BCE3B51F67D38600F944B4 /* startIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 95BCE3B01F67D38600F944B4 /* startIcon.png */; };
@@ -63,6 +63,7 @@
 		3460003184CBBC145DB92FF5 /* Pods_IndoorLocation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_IndoorLocation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		43D0588909E4EB6D4B2293BA /* Pods-IndoorLocation.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IndoorLocation.debug.xcconfig"; path = "Pods/Target Support Files/Pods-IndoorLocation/Pods-IndoorLocation.debug.xcconfig"; sourceTree = "<group>"; };
 		950769631E8D3F0400233FF8 /* Utilities.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Utilities.swift; sourceTree = "<group>"; };
+		9512291A1F750591006F643A /* floorplan.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = floorplan.pdf; sourceTree = "<group>"; };
 		953AFC2E1F026C5B00FAD3D8 /* PointView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PointView.swift; sourceTree = "<group>"; };
 		953B71771F263F2F00978648 /* settingsIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = settingsIcon.png; sourceTree = "<group>"; };
 		954B55F01EF0251C00AE923F /* IndoorMapView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = IndoorMapView.swift; path = IndoorLocation/Views/IndoorMapView.swift; sourceTree = SOURCE_ROOT; };
@@ -86,7 +87,6 @@
 		95A1F6391E8BB5C800D2CDD2 /* IndoorLocationUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IndoorLocationUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		95A1F63D1E8BB5C800D2CDD2 /* IndoorLocationUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IndoorLocationUITests.swift; sourceTree = "<group>"; };
 		95A1F63F1E8BB5C800D2CDD2 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		95B013F51F599C52005A5FB8 /* floorplan.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = floorplan.pdf; sourceTree = "<group>"; };
 		95BC59AD1F28A35000519C23 /* VectorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VectorView.swift; sourceTree = "<group>"; };
 		95BCE3AF1F67D38600F944B4 /* cancelIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cancelIcon.png; sourceTree = "<group>"; };
 		95BCE3B01F67D38600F944B4 /* startIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = startIcon.png; sourceTree = "<group>"; };
@@ -143,7 +143,6 @@
 				95BCE3B81F67DB7400F944B4 /* addIcon.png */,
 				95BCE3AF1F67D38600F944B4 /* cancelIcon.png */,
 				95F3C1791F587765007D9571 /* closeIcon.png */,
-				95B013F51F599C52005A5FB8 /* floorplan.pdf */,
 				953B71771F263F2F00978648 /* settingsIcon.png */,
 				95BCE3B01F67D38600F944B4 /* startIcon.png */,
 				95BCE3B11F67D38600F944B4 /* stopIcon.png */,
@@ -239,6 +238,7 @@
 		95AEABB91EBC796F005249FC /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				9512291A1F750591006F643A /* floorplan.pdf */,
 				959C84D61E97BCAA00EB4AA4 /* Images */,
 				95A1F6291E8BB5C700D2CDD2 /* Info.plist */,
 				950769631E8D3F0400233FF8 /* Utilities.swift */,
@@ -354,21 +354,24 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0820;
-				LastUpgradeCheck = 0820;
+				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = Hirschgaenger;
 				TargetAttributes = {
 					95A1F6191E8BB5C700D2CDD2 = {
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = 4HG5879524;
+						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
 					95A1F62D1E8BB5C800D2CDD2 = {
 						CreatedOnToolsVersion = 8.2.1;
+						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 95A1F6191E8BB5C700D2CDD2;
 					};
 					95A1F6381E8BB5C800D2CDD2 = {
 						CreatedOnToolsVersion = 8.2.1;
+						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 95A1F6191E8BB5C700D2CDD2;
 					};
@@ -402,11 +405,11 @@
 				95BCE3BA1F67DB7400F944B4 /* addIcon.png in Resources */,
 				95A1F6251E8BB5C700D2CDD2 /* Assets.xcassets in Resources */,
 				95F3C17A1F587765007D9571 /* closeIcon.png in Resources */,
+				9512291B1F750591006F643A /* floorplan.pdf in Resources */,
 				95BCE3B41F67D38600F944B4 /* cancelIcon.png in Resources */,
 				95BCE3BB1F67DB7400F944B4 /* trashIcon.png in Resources */,
 				953B717C1F263F2F00978648 /* settingsIcon.png in Resources */,
 				95BCE3B51F67D38600F944B4 /* startIcon.png in Resources */,
-				95B013F61F599C52005A5FB8 /* floorplan.pdf in Resources */,
 				95BCE3B61F67D38600F944B4 /* stopIcon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -434,13 +437,16 @@
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-IndoorLocation-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		3438C6CA0D73F73AB677855E /* [CP] Copy Pods Resources */ = {
@@ -464,9 +470,12 @@
 			files = (
 			);
 			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-IndoorLocation/Pods-IndoorLocation-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Embassy/Embassy.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Embassy.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -545,7 +554,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -553,7 +564,11 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -595,7 +610,9 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
@@ -603,7 +620,11 @@
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -642,6 +663,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = Hirschgaenger.IndoorLocation;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -659,6 +681,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = Hirschgaenger.IndoorLocation;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
@@ -672,6 +695,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Hirschgaenger.IndoorLocationTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/IndoorLocation.app/IndoorLocation";
 			};
@@ -686,6 +710,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Hirschgaenger.IndoorLocationTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/IndoorLocation.app/IndoorLocation";
 			};
@@ -699,6 +724,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Hirschgaenger.IndoorLocationUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = IndoorLocation;
 			};
@@ -712,6 +738,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = Hirschgaenger.IndoorLocationUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_SWIFT3_OBJC_INFERENCE = On;
 				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = IndoorLocation;
 			};

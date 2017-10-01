@@ -220,7 +220,13 @@ class ParticleFilter: BayesianFilter {
             }
             
             // Determine position
-            let position = self.particles.reduce((x: Float(0), y: Float(0)), { ($0.x + Float($1.position.x) * $1.weight, $0.y + Float($1.position.y) * $1.weight) })
+//            let position = self.particles.reduce((x: Float(0), y: Float(0)), { ($0.x + Float($1.position.x) * $1.weight, $0.y + Float($1.position.y) * $1.weight) })
+            // Fix for line above as compiler is complaining:
+            var position = (x: Float(0), y: Float(0))
+            for particle in self.particles {
+                position.x += Float(particle.position.x) * particle.weight
+                position.y += Float(particle.position.y) * particle.weight
+            }
             
             // Transform weights back to log domain
             self.particles.forEach { $0.weight = log($0.weight) }
@@ -292,7 +298,13 @@ class ParticleFilter: BayesianFilter {
                     let s_jk = S[k * meanState.count + j]
                     S.append(s_jk)
                 } else {
-                    let s_jk = (1 / 1 - sumOfSquaredWeights) * self.particles.reduce(0, { $0 + $1.weight * ($1.state[j] - meanState[j]) * ($1.state[k] - meanState[k]) })
+//                    let s_jk = (1 / 1 - sumOfSquaredWeights) * self.particles.reduce(0, { $0 + $1.weight * ($1.state[j] - meanState[j]) * ($1.state[k] - meanState[k]) })
+                    // Fix for line above as compiler is complaining:
+                    var s_jk = Float(0)
+                    for particle in self.particles {
+                        s_jk += particle.weight * (particle.state[j] - meanState[j] * (particle.state[k] - meanState[k]))
+                    }
+                    s_jk *= (1 / 1 - sumOfSquaredWeights)
                     S.append(s_jk)
                 }
             }

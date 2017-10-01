@@ -3,5 +3,5 @@ platform :ios, '10.0'
 use_frameworks!
 
 target 'IndoorLocation' do
-		pod 'Embassy'
+		pod 'Embassy', '~> 4.0'
 end
