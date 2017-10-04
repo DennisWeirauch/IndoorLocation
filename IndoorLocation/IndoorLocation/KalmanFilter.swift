@@ -54,13 +54,50 @@ class KalmanFilter: BayesianFilter {
     var activeAnchors = [Anchor]()
     
     init?(anchors: [Anchor], distances: [Float]) {
-        // Make sure at least 3 anchors are provided to determine the initial position.
-        guard anchors.count >= 3 else { return nil }
-        
         activeAnchors = anchors
         
-        // Compute linear least squares algorithm to get initial position
-        guard let position = linearLeastSquares(anchors: anchors.map { $0.position }, distances: distances) else { return nil }
+        var position: CGPoint
+        switch anchors.count {
+        case 1:
+            // Determine initial position by taking a value from circle around anchor
+            let anchorPosition = anchors[0].position
+            position = CGPoint(x: anchorPosition.x + CGFloat(distances[0]), y: anchorPosition.y)
+        case 2:
+            // Determine initial position by looking for intersections of circles. Solution is based on http://paulbourke.net/geometry/circlesphere/
+            let x_0 = Float(anchors[0].position.x)
+            let y_0 = Float(anchors[0].position.y)
+            let r_0 = distances[0]
+            let x_1 = Float(anchors[1].position.x)
+            let y_1 = Float(anchors[1].position.y)
+            let r_1 = distances[1]
+            
+            // Distance between anchor points
+            let d = sqrt((x_0 - x_1)^^2 + (y_0 - y_1)^^2)
+            
+            // Check if intersection exists
+            if (r_0 + r_1 < d) {
+                // Circles not intersecting. Assign value on one circle in between anchor points
+                position = CGPoint(x: CGFloat(x_0 + r_0 * (x_1 - x_0) / d), y: CGFloat(y_0 + r_0 * (y_1 - y_0) / d))
+                break
+            } else if (abs(r_0 - r_1) > d) {
+                // One circle lies within the other circle. Assign random value one circle
+                position = CGPoint(x: CGFloat(x_0 + r_0), y: CGFloat(y_0))
+                break
+            }
+            
+            // Two right triangles are constructed for which hold: a^2 + h^2 = r_0^2 and (d-a)^2 + h^2 = r_1^2
+            let a = (r_0^^2 - r_1^^2 + d^^2) / (2 * d)
+            
+            let h = sqrt(r_0^^2 - a^^2)
+            
+            let x_2 = x_0 + a * (x_1 - x_0) / d
+            let y_2 = y_0 + a * (y_1 - y_0) / d
+            
+            position = CGPoint(x: CGFloat(x_2 + h * (y_1 - y_0) / d), y: CGFloat(y_2 - h * (x_1 - x_0) / d))
+        default:
+            // Determine initial position by linear least squares estimate
+            position = linearLeastSquares(anchors: anchors.map { $0.position }, distances: distances)!
+        }
         
         let settings = IndoorLocationManager.shared.filterSettings
 
