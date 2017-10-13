@@ -32,7 +32,7 @@ class ParticleFilter: BayesianFilter {
     private(set) var F: [Float]
     
     /**
-     Process matrix A:
+     Control input matrix B:
      ````
      |dt^2/2   0  |
      |   0  dt^2/2|
@@ -40,18 +40,14 @@ class ParticleFilter: BayesianFilter {
      |   0     dt |
      ````
      */
-    private(set) var A: [Float]
+    private(set) var B: [Float]
     
-    //TODO: Find name for G
+    /// G is the factorization of the covariance matrix for the process noise Q
     private(set) var G: [Float]
     
     /**
-     R is the covariance matrix for the measurement noise. It is a (numAnchors + 2) x (numAnchors + 2) diagonal matrix of the form:
-     ````
-     |D_N 0|
-     | 0  A|, with
-     D_N = dist_sig * I_N, I_N being the identity matrix of order N
-     A = acc_sig * I_2
+     R is the covariance matrix for the measurement noise. It is a numAnchors x numAnchors
+     diagonal matrix with dist_sig entries on diagonal
      ````
      */
     private(set) var R: [Float]
@@ -67,6 +63,7 @@ class ParticleFilter: BayesianFilter {
     /// The acceleration measurement of the previous time step
     private var u: [Float]
     
+    /// The set of active anchors
     var activeAnchors = [Anchor]()
     
     // Using a semaphore to make sure that only one thread can execute the algorithm at each time instance
@@ -99,23 +96,23 @@ class ParticleFilter: BayesianFilter {
             }
         }
         
-        A = [Float]()
+        B = [Float]()
         for i in 0..<stateDim {
             for j in 0..<2 {
                 if (i == j) {
-                    A.append(dt ^^ 2 / 2)
+                    B.append(dt ^^ 2 / 2)
                 } else if (i == j + 2) {
-                    A.append(dt)
+                    B.append(dt)
                 } else {
-                    A.append(0)
+                    B.append(0)
                 }
             }
         }
         
-        // Compute G = A * sqrt(proc_sig)
-        G = [Float](repeating: 0, count: A.count)
+        // Compute G = B * sqrt(proc_sig)
+        G = [Float](repeating: 0, count: B.count)
         var sqrtProcSig = sqrt(proc_sig)
-        vDSP_vsmul(A, 1, &sqrtProcSig, &G, 1, vDSP_Length(A.count))
+        vDSP_vsmul(B, 1, &sqrtProcSig, &G, 1, vDSP_Length(B.count))
         
         R = [Float]()
         for i in 0..<anchors.count {
@@ -201,9 +198,16 @@ class ParticleFilter: BayesianFilter {
             let totalWeight = self.particles.reduce(0, { $0 + $1.weight })
             self.particles.forEach { $0.weight = $0.weight / totalWeight }
             
+            // Determine position before resampling
+            var position = (x: Float(0), y: Float(0))
+            for particle in self.particles {
+                position.x += Float(particle.position.x) * particle.weight
+                position.y += Float(particle.position.y) * particle.weight
+            }
+            
             // Prepare for regularization step
             var D: [Float]?
-            if (IndoorLocationManager.shared.filterSettings.isRegularizedPF) {
+            if (IndoorLocationManager.shared.filterSettings.particleFilterType == .regularized) {
                 D = self.determineDForRegularization()
             }
 
@@ -215,17 +219,8 @@ class ParticleFilter: BayesianFilter {
             }
             
             // Execute regularization step if necessary
-            if IndoorLocationManager.shared.filterSettings.isRegularizedPF, let D = D {
+            if IndoorLocationManager.shared.filterSettings.particleFilterType == .regularized, let D = D {
                 self.particles.forEach { $0.regularize(D: D) }
-            }
-            
-            // Determine position
-//            let position = self.particles.reduce((x: Float(0), y: Float(0)), { ($0.x + Float($1.position.x) * $1.weight, $0.y + Float($1.position.y) * $1.weight) })
-            // Fix for line above as compiler is complaining:
-            var position = (x: Float(0), y: Float(0))
-            for particle in self.particles {
-                position.x += Float(particle.position.x) * particle.weight
-                position.y += Float(particle.position.y) * particle.weight
             }
             
             // Transform weights back to log domain
@@ -295,14 +290,13 @@ class ParticleFilter: BayesianFilter {
         for j in 0..<meanState.count {
             for k in 0..<meanState.count {
                 if k < j {
+                    // As covariance matrix is symmetric, take already determined value
                     let s_jk = S[k * meanState.count + j]
                     S.append(s_jk)
                 } else {
-//                    let s_jk = (1 / 1 - sumOfSquaredWeights) * self.particles.reduce(0, { $0 + $1.weight * ($1.state[j] - meanState[j]) * ($1.state[k] - meanState[k]) })
-                    // Fix for line above as compiler is complaining:
                     var s_jk = Float(0)
                     for particle in self.particles {
-                        s_jk += particle.weight * (particle.state[j] - meanState[j] * (particle.state[k] - meanState[k]))
+                        s_jk += particle.weight * (particle.state[j] - meanState[j]) * (particle.state[k] - meanState[k])
                     }
                     s_jk *= (1 / 1 - sumOfSquaredWeights)
                     S.append(s_jk)

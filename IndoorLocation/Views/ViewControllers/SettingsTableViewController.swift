@@ -28,7 +28,6 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
     enum SliderType: Int {
         case processUncertainty = 0
         case distanceUncertainty
-        case accelerationUncertainty
         case numberOfParticles
         case N_thr
     }
@@ -36,7 +35,11 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
     enum SwitchType: Int {
         case isFloorplanVisible = 0
         case areMeasurementsVisible
-        case isRegularizedPF
+    }
+    
+    enum SegmentedControlType: Int {
+        case filterType = 0
+        case particleFilterType
     }
     
     let tableViewSections = [SettingsTableViewSection.view.rawValue,
@@ -165,7 +168,7 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
             case .none:
                 return 1
             case .kalman:
-                return 4
+                return 3
             case .particle:
                 return 6
             }
@@ -198,7 +201,7 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
             if (indexPath.row == 0) {
                 cell = tableView.dequeueReusableCell(withIdentifier: String(describing: SegmentedControlTableViewCell.self), for: indexPath)
             } else if (filterSettings.filterType == .particle) && (indexPath.row == 1) {
-                cell = tableView.dequeueReusableCell(withIdentifier: String(describing: SwitchTableViewCell.self), for: indexPath)
+                cell = tableView.dequeueReusableCell(withIdentifier: String(describing: SegmentedControlTableViewCell.self), for: indexPath)
             } else {
                 cell = tableView.dequeueReusableCell(withIdentifier: String(describing: SliderTableViewCell.self), for: indexPath)
             }
@@ -276,10 +279,21 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
      - Parameter sender: The UISegmentedControl that was changed
      */
     func onSegmentedControlValueChanged(_ sender: UISegmentedControl) {
-        filterSettings.filterType = FilterType(rawValue: sender.selectedSegmentIndex) ?? .none
-        tableView.reloadData()
-        settingsDelegate?.changeFilterType(filterSettings.filterType)
-        filterInitializationPending = true
+        
+        guard let segmentedControlType = SegmentedControlType(rawValue: sender.tag) else {
+            fatalError("Could not retrieve segmented control type")
+        }
+        
+        // Determine which segmented control has changed and edit its value in the settings accordingly
+        switch segmentedControlType {
+        case .filterType:
+            filterSettings.filterType = FilterType(rawValue: sender.selectedSegmentIndex) ?? .none
+            tableView.reloadData()
+            settingsDelegate?.changeFilterType(filterSettings.filterType)
+            filterInitializationPending = true
+        case .particleFilterType:
+            filterSettings.particleFilterType = ParticleFilterType(rawValue: sender.selectedSegmentIndex) ?? .bootstrap
+        }
     }
     
     //MARK: SliderTableViewCellDelegate
@@ -302,9 +316,6 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
             filterInitializationPending = true
         case .distanceUncertainty:
             filterSettings.distanceUncertainty = Int(sender.value)
-            filterInitializationPending = true
-        case .accelerationUncertainty:
-            filterSettings.accelerationUncertainty = Int(sender.value)
             filterInitializationPending = true
         case .numberOfParticles:
             filterSettings.numberOfParticles = Int(sender.value)
@@ -333,8 +344,6 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
         case .areMeasurementsVisible:
             filterSettings.areMeasurementsVisible = sender.isOn
             settingsDelegate?.toggleMeasurementsVisible(sender.isOn)
-        case .isRegularizedPF:
-            filterSettings.isRegularizedPF = sender.isOn
         }
     }
     
@@ -387,14 +396,20 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
             
         case .filter:
             if let cell = cell as? SegmentedControlTableViewCell {
-                // Filter type segmented control
-                let selectedSegmentIndex = filterSettings.filterType.rawValue
-                cell.setupWithSegments(["None", "Kalman", "Particle"], selectedSegmentIndex: selectedSegmentIndex, delegate: self, tag: tableViewSection.rawValue)
+                switch indexPath.row {
+                case 0:
+                    // Filter type segmented control
+                    let selectedSegmentIndex = filterSettings.filterType.rawValue
+                    cell.setupWithSegments(["None", "Kalman", "Particle"], selectedSegmentIndex: selectedSegmentIndex, delegate: self, tag: SegmentedControlType.filterType.rawValue)
+                case 1:
+                    // Particle filter type segmented control
+                    let selectedSegmentIndex = filterSettings.particleFilterType.rawValue
+                    cell.setupWithSegments(["Bootstrap", "Regularized"], selectedSegmentIndex: selectedSegmentIndex, delegate: self, tag: SegmentedControlType.particleFilterType.rawValue)
+                default:
+                    break
+                }
                 
-            } else if let cell = cell as? SwitchTableViewCell {
-                // Regularized particle filter switch
-                cell.setupWithText("Regularized", isOn: filterSettings.isRegularizedPF, delegate: self, tag: SwitchType.isRegularizedPF.rawValue)
-                
+
             } else if let cell = cell as? SliderTableViewCell {
                 switch filterSettings.filterType {
                 // Kalman filter sliders
@@ -406,9 +421,6 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
                     case 2:
                         // Distance uncertainty slider
                         cell.setupWithValue(filterSettings.distanceUncertainty, minValue: 1, maxValue: 100, text: "Dist. uncertainty:", unit: "cm²", delegate: self, tag: SliderType.distanceUncertainty.rawValue)
-                    case 3:
-                        // Acceleration uncertainty slider
-                        cell.setupWithValue(filterSettings.accelerationUncertainty, minValue: 1, maxValue: 100, text: "Acc. uncertainty:", unit: "mg²", delegate: self, tag: SliderType.accelerationUncertainty.rawValue)
                     default:
                         break
                     }

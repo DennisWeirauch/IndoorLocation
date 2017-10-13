@@ -64,26 +64,7 @@ extension Float {
 // Extension for Float Arrays
 extension Array where Iterator.Element == Float {
     /**
-     Generate a random gaussian distributed vector with specified mean and covariance.
-     - Parameter mean: The mean of the random vector
-     - Parameter A: A matrix for which holds `A` * `A_T` = Covariance matrix TODO: Find description for A!
-     - Returns: A random gaussian distributed vector with specified mean and covariance
-     */
-    static func randomGaussianVector(mean: [Float], A: [Float]) -> [Float] {
-        let dim = A.count / mean.count
-        let z = randomGaussianVector(dim: dim)
-        
-        // Compute and return result = mean + A * z
-        var result = [Float](repeating: 0, count: mean.count)
-        vDSP_mmul(A, 1, z, 1, &result, 1, vDSP_Length(mean.count), 1, vDSP_Length(dim))
-        
-        vDSP_vadd(mean, 1, result, 1, &result, 1, vDSP_Length(mean.count))
-        
-        return result
-    }
-    
-    /**
-      Generate a random normal distributed vector.
+     Generate a random normal distributed vector.
      - Parameter dim: The number of dimensions for the vector
      - Returns: A random normal distributed vector of `dim` dimensions
      */
@@ -97,6 +78,25 @@ extension Array where Iterator.Element == Float {
             }
         }
         return rand
+    }
+    
+    /**
+     Generate a random gaussian distributed vector with specified mean and covariance.
+     - Parameter mean: The mean of the random vector
+     - Parameter A: The cholesky decomposition of the covariance matrix. It holds A * A' = Cov
+     - Returns: A random gaussian distributed vector with specified mean and covariance
+     */
+    static func randomGaussianVector(mean: [Float], A: [Float]) -> [Float] {
+        let dim = A.count / mean.count
+        let z = randomGaussianVector(dim: dim)
+        
+        // Compute and return result = mean + A * z
+        var result = [Float](repeating: 0, count: mean.count)
+        vDSP_mmul(A, 1, z, 1, &result, 1, vDSP_Length(mean.count), 1, vDSP_Length(dim))
+        
+        vDSP_vadd(mean, 1, result, 1, &result, 1, vDSP_Length(mean.count))
+        
+        return result
     }
     
     /**

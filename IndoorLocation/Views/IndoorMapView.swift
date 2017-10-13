@@ -179,7 +179,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
         // Set up calibrationButton
         calibrationButton = UIButton(frame: CGRect(x: cancelCalibrationButton.frame.maxX + 5, y: frame.maxY - 120, width: 3 * frame.width / 4 - 55, height: 50))
         calibrationButton.layer.cornerRadius = calibrationButton.frame.height / 2
-        calibrationButton.backgroundColor = .blue
+        calibrationButton.backgroundColor = UIColor.Application.darkBlue
         calibrationButton.setTitle("Calibrate from view", for: .normal)
         calibrationButton.addTarget(self, action: #selector(didTapCalibrationButton(_:)), for: .touchUpInside)
         calibrationButton.isHidden = true

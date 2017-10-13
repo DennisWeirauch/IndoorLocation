@@ -34,21 +34,25 @@ class Particle {
     
     //MARK: Public API
     /**
-     Update state by drawing a value from the importance density of the particle
+     Update state by drawing a value from the importance density of the particle.
+     Here the transitional prior is implemented as importance density.
      - Parameter u: Acceleration vector of the last time step
      */
     func updateState(u: [Float]) {
-        // Compute mean = F * state + A * u
-        var A_u = [Float](repeating: 0, count: state.count)
-        vDSP_mmul(filter.A, 1, u, 1, &A_u, 1, vDSP_Length(state.count), 1, 2)
+        // Compute mean = F * state + B * u
+        var B_u = [Float](repeating: 0, count: state.count)
+        vDSP_mmul(filter.B, 1, u, 1, &B_u, 1, vDSP_Length(state.count), 1, 2)
         
         var mean = [Float](repeating: 0, count: state.count)
         vDSP_mmul(filter.F, 1, state, 1, &mean, 1, vDSP_Length(state.count), 1, vDSP_Length(state.count))
         
-        vDSP_vadd(mean, 1, A_u, 1, &mean, 1, vDSP_Length(state.count))
+        vDSP_vadd(mean, 1, B_u, 1, &mean, 1, vDSP_Length(state.count))
         
-        // Draw new state from specified Gaussian distribution
-        state = [Float].randomGaussianVector(mean: mean, A: filter.G)
+        // Generate process noise sample
+        let processNoise = [Float].randomGaussianVector(mean: [Float](repeating: 0, count: state.count), A: filter.G)
+        
+        // Calculate new state from state = mean + processNoise
+        vDSP_vadd(mean, 1, processNoise, 1, &state, 1, vDSP_Length(state.count))
     }
     
     /**
@@ -92,14 +96,11 @@ class Particle {
      */
     private func h(_ state: [Float], anchors: [Anchor]) -> [Float] {
         let anchorPositions = anchors.map { $0.position }
-        
-        let xPos = state[0]
-        let yPos = state[1]
-        
+
         var h = [Float]()
         for i in 0..<anchors.count {
             // Determine the euclidean distance to each anchor point
-            h.append(sqrt((Float(anchorPositions[i].x) - xPos) ^^ 2 + (Float(anchorPositions[i].y) - yPos) ^^ 2))
+            h.append(sqrt((Float(anchorPositions[i].x) - state[0]) ^^ 2 + (Float(anchorPositions[i].y) - state[1]) ^^ 2))
         }
         
         return h

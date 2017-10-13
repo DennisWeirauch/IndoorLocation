@@ -27,6 +27,21 @@ enum FilterType: Int {
     case particle
 }
 
+/**
+ The type of particle filter that is used
+ ````
+ case bootstrap
+ case regularized
+ ````
+ */
+enum ParticleFilterType: Int {
+    /// Bootstrap filter. Plain SIR algorithm is executed
+    case bootstrap = 0
+    
+    /// Regularized particle filter
+    case regularized
+}
+
 /// Structure of an anchor having an id, a position and a flag indicating whether it is currently within range.
 typealias Anchor = (id: Int, position: CGPoint, isActive: Bool)
 
@@ -115,8 +130,8 @@ class IndoorLocationManager {
         guard let anchors = anchors else { return }
         var anchorStringData = ""
         for (i, anchor) in anchors.enumerated() {
-            // Multiply coordinates by 10 to convert from cm to mm.
-            anchorStringData += "ID\(i)=\(anchor.id)&xPos\(i)=\(Int((anchor.position.x) * 10))&yPos\(i)=\(Int((anchor.position.y) * 10))"
+            // Multiply coordinates by 10 to convert from cm to mm. Also mirror y axis.
+            anchorStringData += "ID\(i)=\(anchor.id)&xPos\(i)=\(Int((anchor.position.x) * 10))&yPos\(i)=\(Int((-anchor.position.y) * 10))"
             if (i != anchors.count - 1) {
                 anchorStringData += "&"
             }
@@ -151,11 +166,11 @@ class IndoorLocationManager {
                         }
                         
                         if dist != 0 {
-                            // Divide all units by 10 to convert from mm to cm.
-                            anchors.append(Anchor(id: Int(id), position: CGPoint(x: CGFloat(xPos / 10), y: CGFloat(yPos / 10)), isActive: true))
+                            // Divide all units by 10 to convert from mm to cm. Also mirror y axis
+                            anchors.append(Anchor(id: Int(id), position: CGPoint(x: CGFloat(xPos / 10), y: CGFloat(-yPos / 10)), isActive: true))
                             distances.append(dist / 10)
                         } else {
-                            anchors.append(Anchor(id: Int(id), position: CGPoint(x: CGFloat(xPos / 10), y: CGFloat(yPos / 10)), isActive: false))
+                            anchors.append(Anchor(id: Int(id), position: CGPoint(x: CGFloat(xPos / 10), y: CGFloat(-yPos / 10)), isActive: false))
                         }
                     }
                     
@@ -254,6 +269,11 @@ class IndoorLocationManager {
             }
         }
         
+        // Check if distance measurements are available
+        guard distances.count > 0 else {
+            return
+        }
+        
         var acceleration = [Float]()
         if let xAcc = measurementDict["xAcc"] {
             acceleration.append(xAcc)
@@ -261,8 +281,7 @@ class IndoorLocationManager {
             acceleration.append(0)
         }
         if let yAcc = measurementDict["yAcc"] {
-            // Adding yAcc negative because Pozyx has a right coordinate system while we have a left coordinate system here.
-            acceleration.append(-yAcc)
+            acceleration.append(yAcc)
         } else {
             acceleration.append(0)
         }
