@@ -66,7 +66,7 @@ class IndoorLocationManager {
     var delegate: IndoorLocationManagerDelegate?
     
     var anchors: [Anchor]?
-    var filter: BayesianFilter
+    var filter: BayesianFilter?
     var filterSettings: FilterSettings
     
     var position: CGPoint?
@@ -75,8 +75,9 @@ class IndoorLocationManager {
     var isCalibrated = false
     var isRanging = false
     
+    var beginningOfMeasurement = Date()
+    
     private init() {
-        filter = BayesianFilter()
         filterSettings = FilterSettings()
     }
     
@@ -120,10 +121,15 @@ class IndoorLocationManager {
     func calibrate(resultCallback: @escaping (_ error: Error?) -> ()) {
         // Faking anchors as I'm too lazy to enter coordinates every time.
         if (anchors == nil || !(anchors!.count > 0)) {
+            // Home anchors
             addAnchorWithID(Int("666D", radix: 16)!, x: 425, y: 0)
             addAnchorWithID(Int("6F21", radix: 16)!, x: 345, y: 320)
             addAnchorWithID(Int("6F59", radix: 16)!, x: 0, y: 115)
             addAnchorWithID(Int("6F51", radix: 16)!, x: 140, y: 345)
+            // Evaluation anchors
+//            addAnchorWithID(Int("6F3B", radix: 16)!, x: 0, y: 185)
+//            addAnchorWithID(Int("6F0D", radix: 16)!, x: 0, y: -160)
+//            addAnchorWithID(Int("6F44", radix: 16)!, x: 175, y: 0)
         }
         
         // Generate string of calibration data to send to the arduino.
@@ -207,6 +213,7 @@ class IndoorLocationManager {
                     resultCallback(error)
                 case .success(_):
                     self.isRanging = true
+                    self.beginningOfMeasurement = Date()
                     resultCallback(nil)
                 }
             }
@@ -287,29 +294,45 @@ class IndoorLocationManager {
         }
         
         // Execute the algorithm of the selected filter
-        filter.executeAlgorithm(anchors: anchors.filter({ $0.isActive }), distances: distances, acceleration: acceleration) { position in
-            self.position = position
-            
-            // Inform delegate about UI changes
-            self.delegate?.updatePosition(position)
-            self.delegate?.updateActiveAnchors(anchors, distances: distances, acceleration: acceleration)
-            
-            switch (self.filterSettings.filterType) {
-            case .kalman:
-                guard let filter = self.filter as? KalmanFilter else { return }
-                let positionCovariance = [filter.P[0], filter.P[1], filter.P[6], filter.P[7]]
-                let (eigenvalues, eigenvectors) = positionCovariance.computeEigenvalueDecomposition()
-                let angle = atan(eigenvectors[2] / eigenvectors[0])
-                self.delegate?.updateCovariance(eigenvalue1: eigenvalues[0], eigenvalue2: eigenvalues[1], angle: angle)
-            case .particle:
-                guard let filter = self.filter as? ParticleFilter else { return }
-                self.delegate?.updateParticles(filter.particles)
-            default:
-                break
+        if let filter = filter {
+            filter.executeAlgorithm(anchors: anchors.filter({ $0.isActive }), distances: distances, acceleration: acceleration) { position in
+                self.processResultWithPosition(position, anchors: anchors, distances: distances, acceleration: acceleration)
+            }
+        } else {
+            if let position = linearLeastSquares(anchors: anchors.filter({ $0.isActive }).map { $0.position }, distances: distances) {
+                processResultWithPosition(position, anchors: anchors, distances: distances, acceleration: acceleration)
             }
         }
     }
+
     
+    private func processResultWithPosition(_ position: CGPoint, anchors: [Anchor], distances: [Float], acceleration: [Float]) {
+        //            // Print estimated position with timestamp
+        //            let timestamp = Date().timeIntervalSince(self.beginningOfMeasurement)
+        //            print("\(timestamp),\(position.x/100),\(position.y/100);")
+        
+        self.position = position
+        
+        // Inform delegate about UI changes
+        self.delegate?.updatePosition(position)
+        self.delegate?.updateActiveAnchors(anchors, distances: distances, acceleration: acceleration)
+        
+        switch (self.filterSettings.filterType) {
+        case .kalman:
+            guard let filter = self.filter as? ExtendedKalmanFilter else { return }
+            let positionCovariance = [filter.P[0], filter.P[1], filter.P[6], filter.P[7]]
+            let (eigenvalues, eigenvectors) = positionCovariance.computeEigenvalueDecomposition()
+            let angle = atan(eigenvectors[2] / eigenvectors[0])
+            self.delegate?.updateCovariance(eigenvalue1: eigenvalues[0], eigenvalue2: eigenvalues[1], angle: angle)
+        case .particle:
+            guard let filter = self.filter as? ParticleFilter else { return }
+            self.delegate?.updateParticles(filter.particles)
+        default:
+            break
+        }
+    }
+    
+    //MARK: Public API
     /**
      Function to add an anchor with specified parameters.
      - Parameter id: ID of the anchor as Int

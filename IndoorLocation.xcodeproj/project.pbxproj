@@ -34,7 +34,7 @@
 		95BCE3BA1F67DB7400F944B4 /* addIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 95BCE3B81F67DB7400F944B4 /* addIcon.png */; };
 		95BCE3BB1F67DB7400F944B4 /* trashIcon.png in Resources */ = {isa = PBXBuildFile; fileRef = 95BCE3B91F67DB7400F944B4 /* trashIcon.png */; };
 		95BDB2FD1F1CF14900EF2BC9 /* Particle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95BDB2FC1F1CF14900EF2BC9 /* Particle.swift */; };
-		95C3C1AE1ECC3C5100704437 /* KalmanFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C3C1AD1ECC3C5100704437 /* KalmanFilter.swift */; };
+		95C3C1AE1ECC3C5100704437 /* ExtendedKalmanFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95C3C1AD1ECC3C5100704437 /* ExtendedKalmanFilter.swift */; };
 		95E3DCBB1E9D2F0E006D6C08 /* FilterSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E3DCBA1E9D2F0E006D6C08 /* FilterSettings.swift */; };
 		95E3DCC31EA0E014006D6C08 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E3DCC21EA0E014006D6C08 /* NetworkManager.swift */; };
 		95E3DCC81EA103A5006D6C08 /* IndoorLocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E3DCC71EA103A5006D6C08 /* IndoorLocationManager.swift */; };
@@ -94,7 +94,7 @@
 		95BCE3B81F67DB7400F944B4 /* addIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = addIcon.png; sourceTree = "<group>"; };
 		95BCE3B91F67DB7400F944B4 /* trashIcon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = trashIcon.png; sourceTree = "<group>"; };
 		95BDB2FC1F1CF14900EF2BC9 /* Particle.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Particle.swift; sourceTree = "<group>"; };
-		95C3C1AD1ECC3C5100704437 /* KalmanFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KalmanFilter.swift; sourceTree = "<group>"; };
+		95C3C1AD1ECC3C5100704437 /* ExtendedKalmanFilter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtendedKalmanFilter.swift; sourceTree = "<group>"; };
 		95E3DCBA1E9D2F0E006D6C08 /* FilterSettings.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterSettings.swift; sourceTree = "<group>"; };
 		95E3DCC21EA0E014006D6C08 /* NetworkManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		95E3DCC71EA103A5006D6C08 /* IndoorLocationManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IndoorLocationManager.swift; sourceTree = "<group>"; };
@@ -272,7 +272,7 @@
 				95E3DCC91EA10817006D6C08 /* BayesianFilter.swift */,
 				95E3DCBA1E9D2F0E006D6C08 /* FilterSettings.swift */,
 				95E3DCC71EA103A5006D6C08 /* IndoorLocationManager.swift */,
-				95C3C1AD1ECC3C5100704437 /* KalmanFilter.swift */,
+				95C3C1AD1ECC3C5100704437 /* ExtendedKalmanFilter.swift */,
 				956227C91E965F2700288A1A /* ParticleFilter.swift */,
 				95BDB2FC1F1CF14900EF2BC9 /* Particle.swift */,
 			);
@@ -497,7 +497,7 @@
 				95E3DCC81EA103A5006D6C08 /* IndoorLocationManager.swift in Sources */,
 				956227CA1E965F2700288A1A /* ParticleFilter.swift in Sources */,
 				95570C781EDD7E7000F15E30 /* AnchorTableViewCell.swift in Sources */,
-				95C3C1AE1ECC3C5100704437 /* KalmanFilter.swift in Sources */,
+				95C3C1AE1ECC3C5100704437 /* ExtendedKalmanFilter.swift in Sources */,
 				959540591F04EBFC0095755D /* EllipseView.swift in Sources */,
 				954B55F11EF0251C00AE923F /* IndoorMapView.swift in Sources */,
 				950769641E8D3F0400233FF8 /* Utilities.swift in Sources */,

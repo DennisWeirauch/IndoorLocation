@@ -100,11 +100,11 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
         if filterInitializationPending {
             switch filterSettings.filterType {
             case .none:
-                IndoorLocationManager.shared.filter = BayesianFilter()
+                IndoorLocationManager.shared.filter = nil
             case .kalman:
                 guard let anchors = IndoorLocationManager.shared.anchors,
                     let initialDistances = IndoorLocationManager.shared.initialDistances else { return }
-                if let filter = KalmanFilter(anchors: anchors.filter({ $0.isActive }), distances: initialDistances) {
+                if let filter = ExtendedKalmanFilter(anchors: anchors.filter({ $0.isActive }), distances: initialDistances) {
                     IndoorLocationManager.shared.filter = filter
                 } else {
                     alertWithTitle("Error", message: "Could not initialize Kalman filter! Make sure at least 3 anchors are within range.")
@@ -400,7 +400,7 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
                 case 0:
                     // Filter type segmented control
                     let selectedSegmentIndex = filterSettings.filterType.rawValue
-                    cell.setupWithSegments(["None", "Kalman", "Particle"], selectedSegmentIndex: selectedSegmentIndex, delegate: self, tag: SegmentedControlType.filterType.rawValue)
+                    cell.setupWithSegments(["None", "EKF", "Particle"], selectedSegmentIndex: selectedSegmentIndex, delegate: self, tag: SegmentedControlType.filterType.rawValue)
                 case 1:
                     // Particle filter type segmented control
                     let selectedSegmentIndex = filterSettings.particleFilterType.rawValue
@@ -452,11 +452,11 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
     /**
      Function to dismiss the keyboard if tapped outside of a UITextField
      */
-    func dismissKeyboard() {
+    @objc func dismissKeyboard() {
         view.endEditing(true)
     }
     
-    func didTapCloseButton(_ sender: UIButton) {
+    @objc func didTapCloseButton(_ sender: UIButton) {
         self.dismiss(animated: true)
     }
 }

@@ -14,57 +14,14 @@ import Accelerate
 class ParticleFilter: BayesianFilter {
     
     var numberOfParticles: Int
-    let stateDim = 4
     
     // The set of particles
     private(set) var particles: [Particle]
-    
-    // Matrices
-    /**
-     Process matrix F representing the physical model:
-     ````
-     |1 0 dt 0 |
-     |0 1 0  dt|
-     |0 0 1  0 |
-     |0 0 0  1 |
-     ````
-     */
-    private(set) var F: [Float]
-    
-    /**
-     Control input matrix B:
-     ````
-     |dt^2/2   0  |
-     |   0  dt^2/2|
-     |   dt    0  |
-     |   0     dt |
-     ````
-     */
-    private(set) var B: [Float]
-    
-    /// G is the factorization of the covariance matrix for the process noise Q
-    private(set) var G: [Float]
-    
-    /**
-     R is the covariance matrix for the measurement noise. It is a numAnchors x numAnchors
-     diagonal matrix with dist_sig entries on diagonal
-     ````
-     */
-    private(set) var R: [Float]
-    
-    /// The inverse of matrix R
-    private(set) var R_inv: [Float]
     
     /// The optimal bandwith for the regularization step
     var h_opt: Float {
         return pow(4/(Float(stateDim) + 2), 1/(Float(stateDim) + 4)) * pow(Float(numberOfParticles), -1/(Float(stateDim) + 4))
     }
-    
-    /// The acceleration measurement of the previous time step
-    private var u: [Float]
-    
-    /// The set of active anchors
-    var activeAnchors = [Anchor]()
     
     // Using a semaphore to make sure that only one thread can execute the algorithm at each time instance
     let semaphore = DispatchSemaphore(value: 1)
@@ -72,67 +29,16 @@ class ParticleFilter: BayesianFilter {
     init?(anchors: [Anchor], distances: [Float]) {
         // Make sure at least one anchor is within range. Otherwise initialization is not possible.
         guard anchors.count > 0 else { return nil }
-
-        activeAnchors = anchors
         
         let settings = IndoorLocationManager.shared.filterSettings
-        
-        let proc_sig = Float(settings.processUncertainty)
-        let dist_sig = Float(settings.distanceUncertainty)
         numberOfParticles = settings.numberOfParticles
-        let dt = settings.updateTime
-        
-        // Initialize matrices
-        F = [Float]()
-        for i in 0..<stateDim {
-            for j in 0..<stateDim {
-                if (i == j) {
-                    F.append(1)
-                } else if (i + 2 == j) {
-                    F.append(dt)
-                } else {
-                    F.append(0)
-                }
-            }
-        }
-        
-        B = [Float]()
-        for i in 0..<stateDim {
-            for j in 0..<2 {
-                if (i == j) {
-                    B.append(dt ^^ 2 / 2)
-                } else if (i == j + 2) {
-                    B.append(dt)
-                } else {
-                    B.append(0)
-                }
-            }
-        }
-        
-        // Compute G = B * sqrt(proc_sig)
-        G = [Float](repeating: 0, count: B.count)
-        var sqrtProcSig = sqrt(proc_sig)
-        vDSP_vsmul(B, 1, &sqrtProcSig, &G, 1, vDSP_Length(B.count))
-        
-        R = [Float]()
-        for i in 0..<anchors.count {
-            for j in 0..<anchors.count {
-                if (i == j && i < anchors.count) {
-                    R.append(dist_sig)
-                } else {
-                    R.append(0)
-                }
-            }
-        }
-        
-        // Store inverse of matrix R as well to avoid computing it in every step for every particle
-        R_inv = R.inverse()
+        let dist_sig = Float(settings.distanceUncertainty)
         
         particles = [Particle]()
         
-        u = [0, 0]
-        
         super.init()
+        
+        super.didChangeAnchors(anchors)
         
         // If at least 3 anchors are active for the linear least squares algorithm to work, we use it to initialize all particles around that position.
         if let position = linearLeastSquares(anchors: activeAnchors.map { $0.position }, distances: distances) {
@@ -204,23 +110,17 @@ class ParticleFilter: BayesianFilter {
                 position.x += Float(particle.position.x) * particle.weight
                 position.y += Float(particle.position.y) * particle.weight
             }
-            
-            // Prepare for regularization step
-            var D: [Float]?
-            if (IndoorLocationManager.shared.filterSettings.particleFilterType == .regularized) {
-                D = self.determineDForRegularization()
-            }
 
             // Execute resampling if N_eff is below N_thr
             let N_eff = 1 / self.particles.reduce(0, { $0 + $1.weight ^^ 2 })
             if N_eff < IndoorLocationManager.shared.filterSettings.N_thr {
-                // Execute resampling algorithm
-                self.resample()
-            }
-            
-            // Execute regularization step if necessary
-            if IndoorLocationManager.shared.filterSettings.particleFilterType == .regularized, let D = D {
-                self.particles.forEach { $0.regularize(D: D) }
+                if (IndoorLocationManager.shared.filterSettings.particleFilterType == .regularized) {
+                    // Execute regularization step
+                    self.regularize()
+                } else {
+                    // Execute resampling step
+                    self.resample()
+                }
             }
             
             // Transform weights back to log domain
@@ -270,12 +170,7 @@ class ParticleFilter: BayesianFilter {
         particles = resampledParticles
     }
     
-    /**
-     Determines the matrix D that is necessary for the regularization step.
-     - Returns: Matrix D, such that D * D' = S, with S as sample covariance matrix of all particles
-     */
-    private func determineDForRegularization() -> [Float] {
-        
+    private func regularize() {
         // Determine mean state
         var meanState = [Float](repeating: 0, count: self.stateDim)
         for particle in self.particles {
@@ -304,7 +199,7 @@ class ParticleFilter: BayesianFilter {
             }
         }
         
-        // Compute D such that D * D' = S. For this the eigenvalue decomposition of S is determined with S = Q * Λ * Q' = Q * Λ^(1/2) * Λ^(1/2) * Q'.
+        // Factorize S, such that D * D' = S. For this the eigenvalue decomposition of S is determined with S = Q * Λ * Q' = Q * Λ^(1/2) * Λ^(1/2) * Q'.
         // Such that D = Q * Λ^(1/2)
         var (eigenvalues, Q) = S.computeEigenvalueDecomposition()
         
@@ -325,30 +220,10 @@ class ParticleFilter: BayesianFilter {
         var D = [Float](repeating: 0, count: Q.count)
         vDSP_mmul(Q, 1, Λ, 1, &D, 1, vDSP_Length(meanState.count), vDSP_Length(meanState.count), vDSP_Length(meanState.count))
         
-        return D
-    }
-    
-    /**
-     A function to update the set of active anchors. The new matrix R along with its inverse is determined.
-     - Parameter anchors: The new set of active anchors
-     */
-    private func didChangeAnchors(_ anchors: [Anchor]) {
-        self.activeAnchors = anchors
+        // Execute resampling step
+        self.resample()
         
-        let pos_sig = Float(IndoorLocationManager.shared.filterSettings.distanceUncertainty)
-        
-        R.removeAll()
-        for i in 0..<anchors.count {
-            for j in 0..<anchors.count {
-                if (i == j && i < anchors.count) {
-                    R.append(pos_sig)
-                } else {
-                    R.append(0)
-                }
-            }
-        }
-        
-        // Store inverse of matrix R as well to avoid computing it in every step for every particle
-        R_inv = R.inverse()
+        // Execute regularization on all particles
+        self.particles.forEach { $0.regularize(D: D) }
     }
 }

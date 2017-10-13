@@ -1,5 +1,5 @@
 //
-//  KalmanFilter.swift
+//  ExtendedKalmanFilter.swift
 //  IndoorLocation
 //
 //  Created by Dennis Hirschgänger on 17.05.17.
@@ -11,62 +11,17 @@ import Accelerate
 /**
  Class that implements an Extended Kalman filter.
  */
-class KalmanFilter: BayesianFilter {
+class ExtendedKalmanFilter: BayesianFilter {
     
     /// State vector containing: [xPos, yPos, xVel, yVel]
     private var state: [Float]
-    
-    var position: CGPoint {
-        return CGPoint(x: CGFloat(state[0]), y: CGFloat(state[1]))
-    }
 
-    // Matrices
     /// P is the covariance matrix for the state
     private(set) var P: [Float]
-    
-    /**
-     Process matrix F representing the physical model:
-     ````
-     |1 0 dt 0 |
-     |0 1 0  dt|
-     |0 0 1  0 |
-     |0 0 0  1 |
-     ````
-     */
-    private var F: [Float]
-    
-    /// Q is the covariance matrix for the process noise
-    private var Q: [Float]
-    
-    /**
-     Control input matrix B:
-     ````
-     |dt^2/2   0  |
-     |   0  dt^2/2|
-     |   dt    0  |
-     |   0     dt |
-     ````
-     */
-    private(set) var B: [Float]
-    
-    /**
-     R is the covariance matrix for the measurement noise. It is a numAnchors x numAnchors
-     diagonal matrix with dist_sig entries on diagonal
-     ````
-     */
-    private var R: [Float]
-    
-    /// The acceleration measurement of the previous time step
-    private var u: [Float]
-    
-    /// The set of active anchors
-    var activeAnchors = [Anchor]()
     
     init?(anchors: [Anchor], distances: [Float]) {
         // Make sure at least one anchor is within range. Otherwise initialization is not possible.
         guard anchors.count > 0 else { return nil }
-        
-        activeAnchors = anchors
         
         var position: CGPoint
         switch anchors.count {
@@ -114,59 +69,10 @@ class KalmanFilter: BayesianFilter {
         
         let settings = IndoorLocationManager.shared.filterSettings
 
-        var proc_sig = Float(settings.processUncertainty)
         let dist_sig = Float(settings.distanceUncertainty)
-        let dt = settings.updateTime
         
         // Initialize state vector with position from linear least squares algorithm and no motion.
         state = [Float(position.x), Float(position.y), 0, 0]
-        
-        // Initialize matrices
-        F = [Float]()
-        for i in 0..<state.count {
-            for j in 0..<state.count {
-                if (i == j) {
-                    F.append(1)
-                } else if (i + 2 == j) {
-                    F.append(dt)
-                } else {
-                    F.append(0)
-                }
-            }
-        }
-
-        B = [Float]()
-        for i in 0..<state.count {
-            for j in 0..<2 {
-                if (i == j) {
-                    B.append(dt ^^ 2 / 2)
-                } else if (i == j + 2) {
-                    B.append(dt)
-                } else {
-                    B.append(0)
-                }
-            }
-        }
-        
-        // Transpose B
-        var B_t = [Float](repeating: 0, count: B.count)
-        vDSP_mtrans(B, 1, &B_t, 1, 2, vDSP_Length(state.count))
-        
-        // Compute Q from Q = B * B_t * proc_sig
-        Q = [Float](repeating: 0, count: state.count * state.count)
-        vDSP_mmul(B, 1, B_t, 1, &Q, 1, vDSP_Length(state.count), vDSP_Length(state.count), 2)
-        vDSP_vsmul(Q, 1, &proc_sig, &Q, 1, vDSP_Length(Q.count))
-        
-        R = [Float]()
-        for i in 0..<anchors.count {
-            for j in 0..<anchors.count {
-                if (i == j) {
-                    R.append(dist_sig)
-                } else {
-                    R.append(0)
-                }
-            }
-        }
         
         // Initialize matrix P with the selected distance uncertainty
         P = [Float]()
@@ -180,7 +86,7 @@ class KalmanFilter: BayesianFilter {
             }
         }
         
-        u = [0, 0]
+        super.init()
     }
     
     override func executeAlgorithm(anchors: [Anchor], distances: [Float], acceleration: [Float], successCallback: @escaping (_ position: CGPoint) -> Void) {
@@ -198,7 +104,7 @@ class KalmanFilter: BayesianFilter {
         
         u = acceleration
         
-        successCallback(position)
+        successCallback(CGPoint(x: CGFloat(state[0]), y: CGFloat(state[1])))
     }
     
     //MARK: Private API
@@ -283,7 +189,6 @@ class KalmanFilter: BayesianFilter {
             // Determine the euclidean distance to each anchor point
             h.append(sqrt((Float(anchorPositions[i].x) - state[0]) ^^ 2 + (Float(anchorPositions[i].y) - state[1]) ^^ 2))
         }
-        
         return h
     }
     
@@ -310,29 +215,6 @@ class KalmanFilter: BayesianFilter {
             // Append zeros for last two columns of H_j
             H_j += [0, 0]
         }
-        
         return H_j
-    }
-    
-    /**
-     A function to update the set of active anchors. The new matrix R is determined.
-     - Parameter anchors: The new set of active anchors
-     */
-    private func didChangeAnchors(_ anchors: [Anchor]) {
-        self.activeAnchors = anchors
-
-        let pos_sig = Float(IndoorLocationManager.shared.filterSettings.distanceUncertainty)
-        
-        // R is a numAnchors x numAnchors covariance matrix for the measurement noise
-        R.removeAll()
-        for i in 0..<anchors.count {
-            for j in 0..<anchors.count {
-                if (i == j) {
-                    R.append(pos_sig)
-                } else {
-                    R.append(0)
-                }
-            }
-        }
     }
 }

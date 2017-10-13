@@ -383,7 +383,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     /**
      Function that is called when a rotating gesture is recognized in the mapView. The view is rotated accordingly.
      */
-    func handleRotation(_ recognizer: UIRotationGestureRecognizer) {
+    @objc func handleRotation(_ recognizer: UIRotationGestureRecognizer) {
         if (recognizer.state == .began) {
             initAngle = angle
         }
@@ -395,7 +395,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     /**
      Function that is called when a pinch gesture is recognized in the mapView. The view is zoomed accordingly.
      */
-    func handlePinch(_ recognizer: UIPinchGestureRecognizer) {
+    @objc func handlePinch(_ recognizer: UIPinchGestureRecognizer) {
         if recognizer.state == .began {
             initScale = scale
         }
@@ -407,7 +407,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     /**
      Function that is called when a pan gesture is recognized in the mapView. The view is translated accordingly.
      */
-    func handlePan(_ recognizer: UIPanGestureRecognizer) {
+    @objc func handlePan(_ recognizer: UIPanGestureRecognizer) {
         let translation = recognizer.translation(in: mapView.superview)
         adjustAnchorPointForGestureRecognizer(recognizer)
         updateTransformWithOffset(translation)
@@ -417,7 +417,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     /**
      Function that is called when an anchor is dragged by the user. This initiates calibration from view.
      */
-    func draggedAnchor(_ sender: UIPanGestureRecognizer) {
+    @objc func draggedAnchor(_ sender: UIPanGestureRecognizer) {
         // Move anchor on mapView
         let translation = sender.translation(in: mapView)
         sender.view?.center = CGPoint(x: (sender.view?.center.x)! + translation.x, y: (sender.view?.center.y)! + translation.y)
@@ -431,7 +431,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     /**
      Function that is called when then calibration button is tapped. The new array of anchors and their positions is passed to the delegate.
      */
-    func didTapCalibrationButton(_ sender: UIButton) {
+    @objc func didTapCalibrationButton(_ sender: UIButton) {
         // Determine anchor positions
         guard let anchorViews = anchorViews else { return }
         
@@ -457,7 +457,7 @@ class IndoorMapView: UIView, UIGestureRecognizerDelegate {
     /**
      Function that is called when the cancel calibration button is tapped. The view is restored to the previous state.
      */
-    func didTapCancelCalibrationButton(_ sender: UIButton) {
+    @objc func didTapCancelCalibrationButton(_ sender: UIButton) {
         // Restore view from stored anchors
         setAnchors()
         

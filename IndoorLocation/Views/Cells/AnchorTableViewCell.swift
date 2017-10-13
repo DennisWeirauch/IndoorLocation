@@ -88,7 +88,7 @@ class AnchorTableViewCell: UITableViewCell {
     /**
      Function that is called when the plus button of the cell is tapped. The entered data is forwarded to the delegate.
      */
-    func onAddAnchorButtonTapped(_ sender: UIButton) {
+    @objc func onAddAnchorButtonTapped(_ sender: UIButton) {
         guard let id = Int(idTextField.text!, radix: 16), let x = Int(xTextField.text!), let y = Int(yTextField.text!) else { return }
         delegate?.onAddAnchorButtonTapped(sender, id: id, x: x, y: y)
     }
@@ -96,7 +96,7 @@ class AnchorTableViewCell: UITableViewCell {
     /**
      Function that is called when the trash button of the cell is tapped. The ID of the cell is forwarded to the delegate.
      */
-    func onRemoveAnchorButtonTapped(_ sender: UIButton) {
+    @objc func onRemoveAnchorButtonTapped(_ sender: UIButton) {
         guard let id = Int(idTextField.text!, radix: 16) else { return }
         delegate?.onRemoveAnchorButtonTapped(sender, id: id)
     }

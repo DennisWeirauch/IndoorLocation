@@ -136,7 +136,7 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
     /**
      Function that is called when the settings button is tapped. It presents the SettingsViewController as popover.
      */
-    func onSettingsButtonTapped(_ sender: Any) {
+    @objc func onSettingsButtonTapped(_ sender: Any) {
         let settingsVC = SettingsTableViewController()
         
         settingsVC.modalPresentationStyle = .popover
@@ -157,7 +157,7 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
     /**
      Function that is called when the start button is tapped. It begins and stops ranging and changes its image accordingly.
      */
-    func onStartButtonTapped(_ sender: Any) {
+    @objc func onStartButtonTapped(_ sender: Any) {
         // Show activity indicator
         activityIndicatorView.startAnimating()
         view.bringSubview(toFront: activityIndicatorView)
