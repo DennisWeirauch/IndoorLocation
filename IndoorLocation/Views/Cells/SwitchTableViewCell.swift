@@ -54,7 +54,7 @@ class SwitchTableViewCell: UITableViewCell {
     /**
      Function that is called when the switch is tapped. The delegate is informed about this event.
      */
-    func onSwitchTapped(_ sender: UISwitch) {
+    @objc func onSwitchTapped(_ sender: UISwitch) {
         delegate?.onSwitchTapped(sender)
     }
 }

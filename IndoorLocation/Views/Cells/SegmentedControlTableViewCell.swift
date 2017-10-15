@@ -51,7 +51,7 @@ class SegmentedControlTableViewCell: UITableViewCell {
     /**
      Function that is called when the value of the segmented control changes. The delegate is informed about this event.
      */
-    func onSegmentedControlValueChanged(_ sender: UISegmentedControl) {
+    @objc func onSegmentedControlValueChanged(_ sender: UISegmentedControl) {
         delegate?.onSegmentedControlValueChanged(sender)
     }
 }

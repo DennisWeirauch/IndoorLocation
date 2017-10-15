@@ -71,7 +71,7 @@ class SliderTableViewCell: UITableViewCell {
     /**
      Function that is called when the value of the slider changes. The delegate is informed about this event.
      */
-    func onSliderValueChanged(_ sender: UISlider) {
+    @objc func onSliderValueChanged(_ sender: UISlider) {
         label.text = labelDescription + " \(Int(sender.value)) " + labelUnit
         delegate?.onSliderValueChanged(sender)
     }

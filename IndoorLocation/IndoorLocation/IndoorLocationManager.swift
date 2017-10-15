@@ -295,10 +295,12 @@ class IndoorLocationManager {
         
         // Execute the algorithm of the selected filter
         if let filter = filter {
+            // Execute algorithm of filter
             filter.executeAlgorithm(anchors: anchors.filter({ $0.isActive }), distances: distances, acceleration: acceleration) { position in
                 self.processResultWithPosition(position, anchors: anchors, distances: distances, acceleration: acceleration)
             }
         } else {
+            // Execute least squares algorithm to determine position
             if let position = linearLeastSquares(anchors: anchors.filter({ $0.isActive }).map { $0.position }, distances: distances) {
                 processResultWithPosition(position, anchors: anchors, distances: distances, acceleration: acceleration)
             }
@@ -320,7 +322,7 @@ class IndoorLocationManager {
         switch (self.filterSettings.filterType) {
         case .kalman:
             guard let filter = self.filter as? ExtendedKalmanFilter else { return }
-            let positionCovariance = [filter.P[0], filter.P[1], filter.P[6], filter.P[7]]
+            let positionCovariance = [filter.P[0], filter.P[1], filter.P[filter.stateDim], filter.P[filter.stateDim + 1]]
             let (eigenvalues, eigenvectors) = positionCovariance.computeEigenvalueDecomposition()
             let angle = atan(eigenvectors[2] / eigenvectors[0])
             self.delegate?.updateCovariance(eigenvalue1: eigenvalues[0], eigenvalue2: eigenvalues[1], angle: angle)

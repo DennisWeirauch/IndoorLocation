@@ -51,14 +51,14 @@ class BayesianFilter {
      */
     private(set) var R: [Float]
     
-    /// The inverse of matrix R
-    private(set) var R_inv: [Float]
-    
     /// The acceleration measurement of the previous time step as control input
     var u: [Float]
     
     /// The set of active anchors
     private(set) var activeAnchors = [Anchor]()
+    
+    // Using a semaphore to make sure that only one thread can execute the algorithm at each time instance
+    let semaphore = DispatchSemaphore(value: 1)
     
     init() {
         let settings = IndoorLocationManager.shared.filterSettings
@@ -107,7 +107,6 @@ class BayesianFilter {
         vDSP_mmul(G, 1, G_t, 1, &Q, 1, vDSP_Length(stateDim), vDSP_Length(stateDim), 2)
         
         R = [Float]()
-        R_inv = [Float]()
         
         activeAnchors = [Anchor]()
         u = [0,0]
@@ -121,8 +120,28 @@ class BayesianFilter {
      - Parameter successCallback: A closure which is called when the function returns successfully
      - Parameter position: The position determined by the algorithm
      */
-    func executeAlgorithm(anchors: [Anchor], distances: [Float], acceleration: [Float], successCallback: @escaping (_ position: CGPoint) -> Void) {}
-
+    func executeAlgorithm(anchors: [Anchor], distances: [Float], acceleration: [Float], successCallback: @escaping (_ position: CGPoint) -> Void) {
+        // Make function quasi virtual as Swift does not support real virtual functions
+        fatalError("Must override this function!")
+    }
+    
+    /**
+     Evaluates the measurement equation
+     - Parameter state: The current state to evaluate
+     - Parameter anchors: The set of anchors that are currently active
+     - Returns: A vector containing the distances to all anchors: [dist0, ..., distN]
+     */
+    func h(_ state: [Float]) -> [Float] {
+        let anchorPositions = activeAnchors.map { $0.position }
+        
+        var h = [Float]()
+        for i in 0..<activeAnchors.count {
+            // Determine the euclidean distance to each anchor point
+            h.append(sqrt((Float(anchorPositions[i].x) - state[0]) ^^ 2 + (Float(anchorPositions[i].y) - state[1]) ^^ 2))
+        }
+        return h
+    }
+    
     /**
      A function to update the set of active anchors. The new matrix R along with its inverse is determined.
      - Parameter anchors: The new set of active anchors
@@ -142,8 +161,5 @@ class BayesianFilter {
                 }
             }
         }
-        
-        // Store inverse of matrix R as well to avoid computing it in every step for every particle
-        R_inv = R.inverse()
     }
 }

@@ -15,6 +15,9 @@ class ParticleFilter: BayesianFilter {
     
     var numberOfParticles: Int
     
+    /// The inverse of matrix R
+    private(set) var R_inv: [Float]
+    
     // The set of particles
     private(set) var particles: [Particle]
     
@@ -22,9 +25,6 @@ class ParticleFilter: BayesianFilter {
     var h_opt: Float {
         return pow(4/(Float(stateDim) + 2), 1/(Float(stateDim) + 4)) * pow(Float(numberOfParticles), -1/(Float(stateDim) + 4))
     }
-    
-    // Using a semaphore to make sure that only one thread can execute the algorithm at each time instance
-    let semaphore = DispatchSemaphore(value: 1)
     
     init?(anchors: [Anchor], distances: [Float]) {
         // Make sure at least one anchor is within range. Otherwise initialization is not possible.
@@ -36,9 +36,11 @@ class ParticleFilter: BayesianFilter {
         
         particles = [Particle]()
         
+        R_inv = [Float]()
+        
         super.init()
         
-        super.didChangeAnchors(anchors)
+        didChangeAnchors(anchors)
         
         // If at least 3 anchors are active for the linear least squares algorithm to work, we use it to initialize all particles around that position.
         if let position = linearLeastSquares(anchors: activeAnchors.map { $0.position }, distances: distances) {
@@ -93,26 +95,26 @@ class ParticleFilter: BayesianFilter {
             // Store current acceleration for next iteration
             self.u = acceleration
 
-            // Rescale weights for numerical stability
+            // Rescale weights for numerical stability and transform to normal domain. Also determine total weight
             let maxWeight = self.particles.map { $0.weight }.max()!
-            self.particles.forEach { $0.weight = $0.weight - maxWeight }
-        
-            // Transform weights to normal domain
-            self.particles.forEach { $0.weight = exp($0.weight) }
-            
-            // Normalize weights of all particles
-            let totalWeight = self.particles.reduce(0, { $0 + $1.weight })
-            self.particles.forEach { $0.weight = $0.weight / totalWeight }
-            
-            // Determine position before resampling
-            var position = (x: Float(0), y: Float(0))
+            var totalWeight = Float(0)
             for particle in self.particles {
+                particle.weight = exp(particle.weight - maxWeight)
+                totalWeight += particle.weight
+            }
+            
+            // Normalize weights of all particles, determine position and determine effective sample size
+            var position = (x: Float(0), y: Float(0))
+            var N_eff_inv = Float(0)
+            for particle in self.particles {
+                particle.weight = particle.weight / totalWeight
                 position.x += Float(particle.position.x) * particle.weight
                 position.y += Float(particle.position.y) * particle.weight
+                N_eff_inv += particle.weight ^^ 2
             }
 
             // Execute resampling if N_eff is below N_thr
-            let N_eff = 1 / self.particles.reduce(0, { $0 + $1.weight ^^ 2 })
+            let N_eff = 1 / N_eff_inv
             if N_eff < IndoorLocationManager.shared.filterSettings.N_thr {
                 if (IndoorLocationManager.shared.filterSettings.particleFilterType == .regularized) {
                     // Execute regularization step
@@ -134,6 +136,13 @@ class ParticleFilter: BayesianFilter {
                 successCallback(CGPoint(x: CGFloat(position.x), y: CGFloat(position.y)))
             }
         }
+    }
+    
+    override func didChangeAnchors(_ anchors: [Anchor]) {
+        super.didChangeAnchors(anchors)
+        
+        // Store inverse of matrix R as well to avoid computing it in every step for every particle
+        R_inv = R.inverse()
     }
     
     //MARK: Private API
@@ -173,15 +182,17 @@ class ParticleFilter: BayesianFilter {
     private func regularize() {
         // Determine mean state
         var meanState = [Float](repeating: 0, count: self.stateDim)
+        var sumOfSquaredWeights = Float(0)
         for particle in self.particles {
             var weightedState = [Float](repeating: 0, count: particle.state.count)
             vDSP_vsmul(particle.state, 1, &particle.weight, &weightedState, 1, vDSP_Length(meanState.count))
             vDSP_vadd(meanState, 1, weightedState, 1, &meanState, 1, vDSP_Length(meanState.count))
+            
+            sumOfSquaredWeights += particle.weight ^^ 2
         }
         
         // Determine empirical covariance matrix S
         var S = [Float]()
-        let sumOfSquaredWeights = self.particles.reduce(0, { $0 + $1.weight ^^ 2 })
         for j in 0..<meanState.count {
             for k in 0..<meanState.count {
                 if k < j {

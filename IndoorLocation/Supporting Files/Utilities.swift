@@ -83,7 +83,7 @@ extension Array where Iterator.Element == Float {
     /**
      Generate a random gaussian distributed vector with specified mean and covariance.
      - Parameter mean: The mean of the random vector
-     - Parameter A: The cholesky decomposition of the covariance matrix. It holds A * A' = Cov
+     - Parameter A: The factorization of the covariance matrix. It holds A * A' = Cov
      - Returns: A random gaussian distributed vector with specified mean and covariance
      */
     static func randomGaussianVector(mean: [Float], A: [Float]) -> [Float] {
@@ -107,21 +107,21 @@ extension Array where Iterator.Element == Float {
         var matrix = self
         
         // Get the dimensions of the matrix
-        var N = __CLPK_integer(sqrt(Float(matrix.count)))
+        var n = __CLPK_integer(sqrt(Float(matrix.count)))
         
-        var pivots = [__CLPK_integer](repeating: 0, count: Int(N))
-        var workspace = [Float](repeating: 0, count: Int(N))
+        var pivots = [__CLPK_integer](repeating: 0, count: Int(n))
+        var workspace = [Float](repeating: 0, count: Int(n))
         var error = __CLPK_integer(0)
         
         // Perform LU factorization
-        sgetrf_(&N, &N, &matrix, &N, &pivots, &error)
+        sgetrf_(&n, &n, &matrix, &n, &pivots, &error)
         
         if error != 0 {
             return matrix
         }
         
         // Calculate inverse from LU factorization
-        sgetri_(&N, &matrix, &N, &pivots, &workspace, &N, &error)
+        sgetri_(&n, &matrix, &n, &pivots, &workspace, &n, &error)
         return matrix
     }
     
@@ -254,7 +254,7 @@ func computeNormalDistribution(x: [Float], m: [Float], forTriangularCovariance P
     for i in 0..<m.count {
         determinant *= P[(m.count + 1) * i]
     }
-    let prefactor = 1 / sqrt((2 * Float.pi) ^^ Float(m.count) * determinant)
+    let prefactor = 1 / sqrt((2 * Float.pi) * determinant)
     
     // Compute the exponent = (-0.5 * (x - m)' * P_inv * (x - m))
     var diff = [Float](repeating: 0, count: x.count)

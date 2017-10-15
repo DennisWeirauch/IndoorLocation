@@ -49,7 +49,7 @@ class ButtonTableViewCell: UITableViewCell {
     /**
      Function that is called when the button is tapped. The delegate is informed about this event.
      */
-    func onButtonTapped(_ sender: UIButton) {
+    @objc func onButtonTapped(_ sender: UIButton) {
         delegate?.onButtonTapped(sender)
     }
 }

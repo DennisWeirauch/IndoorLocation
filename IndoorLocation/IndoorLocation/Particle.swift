@@ -62,7 +62,7 @@ class Particle {
      */
     func updateWeight(anchors: [Anchor], measurements: [Float]) {
         // Compute new weight = weight * p(z|x), with p(z|x) = N(z; h(x), R)
-        let normalDist = computeNormalDistribution(x: measurements, m: h(state, anchors: anchors), forTriangularCovariance: filter.R, withInverse: filter.R_inv)
+        let normalDist = computeNormalDistribution(x: measurements, m: filter.h(state), forTriangularCovariance: filter.R, withInverse: filter.R_inv)
         
         // Multiply weight with transitional prior. As weights are in log domain they have to be added
         weight = weight + normalDist
@@ -85,24 +85,5 @@ class Particle {
         
         // Add noise to state
         vDSP_vadd(state, 1, regularizationNoise, 1, &state, 1, vDSP_Length(state.count))
-    }
-    
-    //MARK: Private API
-    /**
-     Evaluates the measurement equation
-     - Parameter state: The current state to evaluate
-     - Parameter anchors: The currently active anchors
-     - Returns: A vector containing the distances to all anchors
-     */
-    private func h(_ state: [Float], anchors: [Anchor]) -> [Float] {
-        let anchorPositions = anchors.map { $0.position }
-
-        var h = [Float]()
-        for i in 0..<anchors.count {
-            // Determine the euclidean distance to each anchor point
-            h.append(sqrt((Float(anchorPositions[i].x) - state[0]) ^^ 2 + (Float(anchorPositions[i].y) - state[1]) ^^ 2))
-        }
-        
-        return h
     }
 }

@@ -87,9 +87,13 @@ class ExtendedKalmanFilter: BayesianFilter {
         }
         
         super.init()
+        
+        didChangeAnchors(anchors)
     }
     
     override func executeAlgorithm(anchors: [Anchor], distances: [Float], acceleration: [Float], successCallback: @escaping (_ position: CGPoint) -> Void) {
+        // Request semaphore. Wait in case the algorithm is still in execution
+        semaphore.wait()
         
         // Determine whether the active anchors have changed
         if (activeAnchors.map { $0.id } != anchors.map { $0.id }) {
@@ -100,9 +104,13 @@ class ExtendedKalmanFilter: BayesianFilter {
         predict(u: u)
         
         // Execute the update step of the algorithm
-        update(anchors: anchors, measurements: distances)
+        update(z: distances)
         
+        // Store current acceleration for next iteration
         u = acceleration
+        
+        // Release semaphore
+        semaphore.signal()
         
         successCallback(CGPoint(x: CGFloat(state[0]), y: CGFloat(state[1])))
     }
@@ -137,59 +145,42 @@ class ExtendedKalmanFilter: BayesianFilter {
      - Parameter anchors: The current set of active anchors
      - Parameter measurements: The new measurement vector
      */
-    private func update(anchors: [Anchor], measurements: [Float]) {
+    private func update(z: [Float]) {
         
-        let H = H_j(state, anchors: anchors)
+        let H = H_j(state)
         
         // Compute S from S = H * P * H_t + R
         var H_t = [Float](repeating: 0, count : H.count)
-        vDSP_mtrans(H, 1, &H_t, 1, vDSP_Length(state.count), vDSP_Length(measurements.count))
+        vDSP_mtrans(H, 1, &H_t, 1, vDSP_Length(state.count), vDSP_Length(z.count))
         
         var P_H_t = [Float](repeating: 0, count: H_t.count)
-        vDSP_mmul(P, 1, H_t, 1, &P_H_t, 1, vDSP_Length(state.count), vDSP_Length(measurements.count), vDSP_Length(state.count))
+        vDSP_mmul(P, 1, H_t, 1, &P_H_t, 1, vDSP_Length(state.count), vDSP_Length(z.count), vDSP_Length(state.count))
         
         var S = [Float](repeating: 0, count : R.count)
-        vDSP_mmul(H, 1, P_H_t, 1, &S, 1, vDSP_Length(measurements.count), vDSP_Length(measurements.count), vDSP_Length(state.count))
+        vDSP_mmul(H, 1, P_H_t, 1, &S, 1, vDSP_Length(z.count), vDSP_Length(z.count), vDSP_Length(state.count))
         
         vDSP_vadd(S, 1, R, 1, &S, 1, vDSP_Length(R.count))
         
         // Compute K from K = P * H_t * S_inv
-        var K = [Float](repeating: 0, count: state.count * measurements.count)
-        vDSP_mmul(P_H_t, 1, S.inverse(), 1, &K, 1, vDSP_Length(state.count), vDSP_Length(measurements.count), vDSP_Length(measurements.count))
+        var K = [Float](repeating: 0, count: state.count * z.count)
+        vDSP_mmul(P_H_t, 1, S.inverse(), 1, &K, 1, vDSP_Length(state.count), vDSP_Length(z.count), vDSP_Length(z.count))
         
         // Compute new state = state + K * (measurements - h(state))
-        var innovation = [Float](repeating: 0, count: measurements.count)
-        vDSP_vsub(h(state, anchors: anchors), 1, measurements, 1, &innovation, 1, vDSP_Length(measurements.count))
+        var innovation = [Float](repeating: 0, count: z.count)
+        vDSP_vsub(h(state), 1, z, 1, &innovation, 1, vDSP_Length(z.count))
         
         var update = [Float](repeating: 0, count: state.count)
-        vDSP_mmul(K, 1, innovation, 1, &update, 1, vDSP_Length(state.count), 1, vDSP_Length(measurements.count))
+        vDSP_mmul(K, 1, innovation, 1, &update, 1, vDSP_Length(state.count), 1, vDSP_Length(z.count))
         
         vDSP_vadd(state, 1, update, 1, &state, 1, vDSP_Length(state.count))
         
         // Compute new P from P = P - K * H * P
         var cov_update = [Float](repeating: 0, count: P.count)
-        vDSP_mmul(K, 1, H, 1, &cov_update, 1, vDSP_Length(state.count), vDSP_Length(state.count), vDSP_Length(measurements.count))
+        vDSP_mmul(K, 1, H, 1, &cov_update, 1, vDSP_Length(state.count), vDSP_Length(state.count), vDSP_Length(z.count))
         
         vDSP_mmul(cov_update, 1, P, 1, &cov_update, 1, vDSP_Length(state.count), vDSP_Length(state.count), vDSP_Length(state.count))
         
         vDSP_vsub(cov_update, 1, P, 1, &P, 1, vDSP_Length(P.count))
-    }
-    
-    /**
-     Evaluates the measurement equation
-     - Parameter state: The current state to evaluate
-     - Parameter anchors: The set of anchors that are currently active
-     - Returns: A vector containing the distances to all anchors: [dist0, ..., distN]
-     */
-    private func h(_ state: [Float], anchors: [Anchor]) -> [Float] {
-        let anchorPositions = anchors.map { $0.position }
-
-        var h = [Float]()
-        for i in 0..<anchors.count {
-            // Determine the euclidean distance to each anchor point
-            h.append(sqrt((Float(anchorPositions[i].x) - state[0]) ^^ 2 + (Float(anchorPositions[i].y) - state[1]) ^^ 2))
-        }
-        return h
     }
     
     /**
@@ -198,12 +189,12 @@ class ExtendedKalmanFilter: BayesianFilter {
      - Parameter anchors: The current set of active anchors
      - Returns: The Jacobian of function h, evaluated at the current state
      */
-    private func H_j(_ state: [Float], anchors: [Anchor]) -> [Float] {
+    private func H_j(_ state: [Float]) -> [Float] {
         
-        let anchorPositions = anchors.map { $0.position }
+        let anchorPositions = activeAnchors.map { $0.position }
 
         var H_j = [Float]()
-        for i in 0..<anchors.count {
+        for i in 0..<activeAnchors.count {
             if (state[0] == Float(anchorPositions[i].x) && state[1] == Float(anchorPositions[i].y)) {
                 // If position is exactly the same as an anchor, we would divide by 0. Therefore this
                 // case is treated here separately and zeros are added.
