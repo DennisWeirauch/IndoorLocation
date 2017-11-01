@@ -408,8 +408,6 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
                 default:
                     break
                 }
-                
-
             } else if let cell = cell as? SliderTableViewCell {
                 switch filterSettings.filterType {
                 // Kalman filter sliders
@@ -417,7 +415,7 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
                     switch indexPath.row {
                     case 1:
                         // Process uncertainty slider
-                        cell.setupWithValue(filterSettings.processUncertainty, minValue: 0, maxValue: 100, text: "Proc. uncertainty:", unit: "mg²", delegate: self, tag: SliderType.processUncertainty.rawValue)
+                        cell.setupWithValue(filterSettings.processUncertainty, minValue: 0, maxValue: 200, text: "Proc. uncertainty:", unit: "mG²", delegate: self, tag: SliderType.processUncertainty.rawValue)
                     case 2:
                         // Distance uncertainty slider
                         cell.setupWithValue(filterSettings.distanceUncertainty, minValue: 1, maxValue: 100, text: "Dist. uncertainty:", unit: "cm²", delegate: self, tag: SliderType.distanceUncertainty.rawValue)
@@ -429,16 +427,16 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
                     switch indexPath.row {
                     case 2:
                         // Process uncertainty slider
-                        cell.setupWithValue(filterSettings.processUncertainty, minValue: 0, maxValue: 200, text: "Proc. uncertainty:", unit: "mg²", delegate: self, tag: SliderType.processUncertainty.rawValue)
+                        cell.setupWithValue(filterSettings.processUncertainty, minValue: 0, maxValue: 200, text: "Proc. uncertainty:", unit: "mG²", delegate: self, tag: SliderType.processUncertainty.rawValue)
                     case 3:
                         // Distance uncertainty slider
                         cell.setupWithValue(filterSettings.distanceUncertainty, minValue: 1, maxValue: 100, text: "Dist. uncertainty:", unit: "cm²", delegate: self, tag: SliderType.distanceUncertainty.rawValue)
                     case 4:
                         // Number of particles slider
-                        cell.setupWithValue(filterSettings.numberOfParticles, minValue: 1, maxValue: 1000, text: "No. Particles:", delegate: self, tag: SliderType.numberOfParticles.rawValue)
+                        cell.setupWithValue(filterSettings.numberOfParticles, minValue: 1, maxValue: 2500, text: "No. Particles:", delegate: self, tag: SliderType.numberOfParticles.rawValue)
                     case 5:
                         // Effective sample size slider
-                        cell.setupWithValue(Int(filterSettings.N_thr), minValue: 1, maxValue: filterSettings.numberOfParticles, text: "N_thr:", delegate: self, tag: SliderType.N_thr.rawValue)
+                        cell.setupWithValue(Int(filterSettings.N_thr), minValue: 1, maxValue: 2500, text: "N_thr:", delegate: self, tag: SliderType.N_thr.rawValue)
                     default:
                         break
                     }

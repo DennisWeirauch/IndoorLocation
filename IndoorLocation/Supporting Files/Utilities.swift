@@ -150,13 +150,13 @@ extension Array where Iterator.Element == Float {
         var lwork = __CLPK_integer(-1)
         var info: __CLPK_integer = 0
         
-        // Execute LAPACK function dgeev() to obtain the workspace size
+        // Execute LAPACK function sgeev() to obtain the workspace size
         sgeev_(jobvl, jobvr, &n, &a, &n, &wr, &wi, &vl, &n, &vr, &n, &workspaceQuery, &lwork, &info)
         
         var work = [Float](repeating: 0, count: Int(workspaceQuery))
         lwork = __CLPK_integer(workspaceQuery)
         
-        // Execute dgeev() again to compute eigenvalues and eigenvectors
+        // Execute sgeev() again to compute eigenvalues and eigenvectors
         sgeev_(jobvl, jobvr, &n, &a, &n, &wr, &wi, &vl, &n, &vr, &n, &work, &lwork, &info)
         
         return (eigenvalues: wr, eigenvectors: vr)
@@ -254,7 +254,7 @@ func computeNormalDistribution(x: [Float], m: [Float], forTriangularCovariance P
     for i in 0..<m.count {
         determinant *= P[(m.count + 1) * i]
     }
-    let prefactor = 1 / sqrt((2 * Float.pi) * determinant)
+    let base = 1 / sqrt((2 * Float.pi) * determinant)
     
     // Compute the exponent = (-0.5 * (x - m)' * P_inv * (x - m))
     var diff = [Float](repeating: 0, count: x.count)
@@ -268,8 +268,8 @@ func computeNormalDistribution(x: [Float], m: [Float], forTriangularCovariance P
     
     exponent = -0.5 * exponent
     
-    // Return log(prefactor * exp(exponent)) = log(prefactor) + exponent
-    return log(prefactor) + exponent
+    // Return ln(base * exp(exponent)) = ln(base) + exponent
+    return log(base) + exponent
 }
 
 /**

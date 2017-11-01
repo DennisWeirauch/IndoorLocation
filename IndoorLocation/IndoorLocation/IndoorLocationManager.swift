@@ -119,19 +119,6 @@ class IndoorLocationManager {
      - Parameter error: The error that occurred
      */
     func calibrate(resultCallback: @escaping (_ error: Error?) -> ()) {
-        // Faking anchors as I'm too lazy to enter coordinates every time.
-        if (anchors == nil || !(anchors!.count > 0)) {
-            // Home anchors
-            addAnchorWithID(Int("666D", radix: 16)!, x: 425, y: 0)
-            addAnchorWithID(Int("6F21", radix: 16)!, x: 345, y: 320)
-            addAnchorWithID(Int("6F59", radix: 16)!, x: 0, y: 115)
-            addAnchorWithID(Int("6F51", radix: 16)!, x: 140, y: 345)
-            // Evaluation anchors
-//            addAnchorWithID(Int("6F3B", radix: 16)!, x: 0, y: 185)
-//            addAnchorWithID(Int("6F0D", radix: 16)!, x: 0, y: -160)
-//            addAnchorWithID(Int("6F44", radix: 16)!, x: 175, y: 0)
-        }
-        
         // Generate string of calibration data to send to the arduino.
         guard let anchors = anchors else { return }
         var anchorStringData = ""
@@ -257,20 +244,18 @@ class IndoorLocationManager {
             var anchors = anchors,
             var measurementDict = try? parseData(data) else { return }
         
-        // Discard measurements equal to 0. This might sometimes happen as Pozyx is not that stable
-        for measurement in measurementDict {
-            if measurement.value == 0 {
-                measurementDict.removeValue(forKey: measurement.key)
-            }
-        }
-        
         // Determine which anchors are active
         var distances = [Float]()
         for i in 0..<anchors.count {
             if let distance = measurementDict["dist\(anchors[i].id)"] {
-                // Divide distance by 10 to convert from mm to cm.
-                distances.append(distance / 10)
-                anchors[i].isActive = true
+                // Assume distance measurements are in the range of (0,40m).
+                if distance > 0 && distance < 40000 {
+                    // Divide distance by 10 to convert from mm to cm.
+                    distances.append(distance / 10)
+                    anchors[i].isActive = true
+                } else {
+                    anchors[i].isActive = false
+                }
             } else {
                 anchors[i].isActive = false
             }
@@ -283,12 +268,23 @@ class IndoorLocationManager {
         
         var acceleration = [Float]()
         if let xAcc = measurementDict["xAcc"] {
-            acceleration.append(xAcc)
+            if abs(xAcc) < 5000 {
+                // Multiply acceleration by 0.981 to convert from mG to cm/s^2.
+                acceleration.append(xAcc * 0.981)
+            } else {
+                acceleration.append(0)
+            }
         } else {
             acceleration.append(0)
         }
         if let yAcc = measurementDict["yAcc"] {
-            acceleration.append(yAcc)
+            if abs(yAcc) < 5000 {
+                // Multiply acceleration by 0.981 to convert from mG to cm/s^2.
+                acceleration.append(yAcc * 0.981)
+                
+            } else {
+                acceleration.append(0)
+            }
         } else {
             acceleration.append(0)
         }
@@ -309,10 +305,13 @@ class IndoorLocationManager {
 
     
     private func processResultWithPosition(_ position: CGPoint, anchors: [Anchor], distances: [Float], acceleration: [Float]) {
-        //            // Print estimated position with timestamp
-        //            let timestamp = Date().timeIntervalSince(self.beginningOfMeasurement)
-        //            print("\(timestamp),\(position.x/100),\(position.y/100);")
-        
+//        // Print timestamp, estimated position and acceleration for evaluation
+//        let timestamp = Date().timeIntervalSince(self.beginningOfMeasurement)
+//        if distances.count == 3 {
+//            print("\(timestamp),\(position.x/100),\(position.y/100),\(acceleration[0]),\(acceleration[1]),\(distances[0]),\(distances[1]),\(distances[2]);")
+//        } else {
+//            print("\(timestamp),\(position.x/100),\(position.y/100),\(acceleration[0]),\(acceleration[1]),0,0,0;")
+//        }
         self.position = position
         
         // Inform delegate about UI changes

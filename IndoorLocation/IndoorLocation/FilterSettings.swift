@@ -13,26 +13,26 @@ class FilterSettings {
     
     //MARK: View settings
     var isFloorplanVisible = false
-    var areMeasurementsVisible = true
+    var areMeasurementsVisible = false
     
     //MARK: Filter settings
     var filterType: FilterType = .none
 
     /// This models the uncertainty of the applied physical model. As the acceleration within one time step is not constant, the physical model is
-    /// not perfectly precise. Also measurement noise from acceleration measurements is included here. Its unit is in mg^2.
-    var processUncertainty: Int = 40
+    /// not perfectly precise. Also measurement noise from acceleration measurements is included here. Its unit is in mG^2.
+    var processUncertainty: Int = 100
     
     /// This models the uncertainty of the distance measurements. Its unit is in cm^2.
-    var distanceUncertainty: Int = 50
+    var distanceUncertainty: Int = 40
     
-    var numberOfParticles: Int = 750
+    var numberOfParticles: Int = 500
     
     /// The effective sample size. The larger it is chosen, the more frequently resampling is executed.
-    var N_thr: Float = 100
+    var N_thr: Float = 500
     
     // The particle filter type. Default is bootstrap filter.
     var particleFilterType = ParticleFilterType.bootstrap
     
     /// The update time is necessary for the filters. It cannot be changed unless the frequency for measurements on the Arduino is changed as well.
-    let updateTime: Float = 0.15
+    let updateTime: Float = 0.145
 }
