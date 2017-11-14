@@ -46,7 +46,7 @@ class ParticleFilter: BayesianFilter {
         if let position = linearLeastSquares(anchors: activeAnchors.map { $0.position }, distances: distances) {
             for _ in 0..<numberOfParticles {
                 let (r1, r2) = Float.randomGaussian()
-                let randomizedPosition = [Float(position.x) + dist_sig * r1, Float(position.y) + dist_sig * r2]
+                let randomizedPosition = [Float(position.x) + sqrt(dist_sig) * r1, Float(position.y) + sqrt(dist_sig) * r2]
                 let randomizedState = randomizedPosition + [Float](repeating: 0, count: stateDim - 2)
                 let particle = Particle(state: randomizedState, weight: log(1 / Float(numberOfParticles)), filter: self)
                 particles.append(particle)
@@ -60,7 +60,7 @@ class ParticleFilter: BayesianFilter {
             for _ in 0..<numberOfParticles {
                 let phi = Float.random(upperBound: 2 * Float.pi)
                 let (r1, _) = Float.randomGaussian()
-                let radius = nearestDistance + dist_sig * r1
+                let radius = nearestDistance + sqrt(dist_sig) * r1
                 let randomizedPosition = [cos(phi) * radius + Float(nearestAnchor.position.x), sin(phi) * radius + Float(nearestAnchor.position.y)]
                 let randomizedState = randomizedPosition + [Float](repeating: 0, count: stateDim - 2)
                 let particle = Particle(state: randomizedState, weight: log(1 / Float(numberOfParticles)), filter: self)

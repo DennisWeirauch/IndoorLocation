@@ -25,6 +25,8 @@ class SliderTableViewCell: UITableViewCell {
     var labelDescription: String!
     var labelUnit: String!
     
+    var isLogarithmic: Bool!
+    
     //MARK: Public API
     /**
      Sets up the cell with the provided data
@@ -36,7 +38,7 @@ class SliderTableViewCell: UITableViewCell {
      - Parameter delegate: The cell's delegate
      - Parameter tag: The tag of the cell
      */
-    func setupWithValue(_ value: Int, minValue: Int, maxValue: Int, text: String, unit: String = "", delegate: SliderTableViewCellDelegate, tag: Int) {
+    func setupWithValue(_ value: Float, minValue: Float, maxValue: Float, text: String, unit: String = "", isLogarithmic: Bool = false, delegate: SliderTableViewCellDelegate, tag: Int) {
         
         for subview in contentView.subviews {
             subview.removeFromSuperview()
@@ -44,35 +46,47 @@ class SliderTableViewCell: UITableViewCell {
         
         self.delegate = delegate
         
-        // Set up label
-        labelDescription = text
-        labelUnit = unit
-                
-        label = UILabel(frame: CGRect(x: 10, y: 4, width: contentView.frame.width - 20, height: 16))
-        
-        label.text = labelDescription + " \(value) " + labelUnit
-        label.font = UIFont.systemFont(ofSize: 13)
-        
-        contentView.addSubview(label)
+        self.isLogarithmic = isLogarithmic
         
         // Set up slider
         slider = UISlider(frame: CGRect(x: 10, y: 24, width: contentView.frame.width - 20, height: 20))
         
-        slider.minimumValue = Float(minValue)
-        slider.maximumValue = Float(maxValue)
-        slider.value = Float(value)
+        if isLogarithmic {
+            slider.minimumValue = log10(minValue)
+            slider.maximumValue = log10(maxValue)
+            slider.value = log10(value)
+        } else {
+            slider.minimumValue = minValue
+            slider.maximumValue = maxValue
+            slider.value = value
+        }
         slider.tag = tag
         
         slider.addTarget(self, action: #selector(onSliderValueChanged(_:)), for: .valueChanged)
         
         contentView.addSubview(slider)
+
+        // Set up label
+        labelDescription = text
+        labelUnit = unit
+        
+        label = UILabel(frame: CGRect(x: 10, y: 4, width: contentView.frame.width - 20, height: 16))
+        
+        label.text = labelDescription + " \(Int(value)) " + labelUnit
+        label.font = UIFont.systemFont(ofSize: 13)
+        
+        contentView.addSubview(label)
     }
     
     /**
      Function that is called when the value of the slider changes. The delegate is informed about this event.
      */
     @objc func onSliderValueChanged(_ sender: UISlider) {
-        label.text = labelDescription + " \(Int(sender.value)) " + labelUnit
+        if isLogarithmic {
+            label.text = labelDescription + " \(Int(10^^sender.value)) " + labelUnit
+        } else {
+            label.text = labelDescription + " \(Int(sender.value)) " + labelUnit
+        }
         delegate?.onSliderValueChanged(sender)
     }
 }

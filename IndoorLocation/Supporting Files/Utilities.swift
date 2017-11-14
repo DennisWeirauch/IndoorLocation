@@ -109,19 +109,23 @@ extension Array where Iterator.Element == Float {
         // Get the dimensions of the matrix
         var n = __CLPK_integer(sqrt(Float(matrix.count)))
         
+        // Copy value of n to n1 and n2 as otherwise LAPACK functions show warnings
+        var n1 = n
+        var n2 = n
+        
         var pivots = [__CLPK_integer](repeating: 0, count: Int(n))
         var workspace = [Float](repeating: 0, count: Int(n))
         var error = __CLPK_integer(0)
         
         // Perform LU factorization
-        sgetrf_(&n, &n, &matrix, &n, &pivots, &error)
+        sgetrf_(&n, &n1, &matrix, &n2, &pivots, &error)
         
         if error != 0 {
             return matrix
         }
         
         // Calculate inverse from LU factorization
-        sgetri_(&n, &matrix, &n, &pivots, &workspace, &n, &error)
+        sgetri_(&n, &matrix, &n1, &pivots, &workspace, &n2, &error)
         return matrix
     }
     
@@ -136,6 +140,11 @@ extension Array where Iterator.Element == Float {
         let jobvl = UnsafeMutablePointer(mutating: ("N" as NSString).utf8String)
         let jobvr = UnsafeMutablePointer(mutating: ("V" as NSString).utf8String)
         var n = __CLPK_integer(dim)
+        // Copy value of n to n1, n2 and n3 as otherwise LAPACK functions show warnings
+        var n1 = n
+        var n2 = n
+        var n3 = n
+        
         var a = self
         // Real parts of eigenvalues
         var wr = [Float](repeating: 0, count: dim)
@@ -151,13 +160,13 @@ extension Array where Iterator.Element == Float {
         var info: __CLPK_integer = 0
         
         // Execute LAPACK function sgeev() to obtain the workspace size
-        sgeev_(jobvl, jobvr, &n, &a, &n, &wr, &wi, &vl, &n, &vr, &n, &workspaceQuery, &lwork, &info)
+        sgeev_(jobvl, jobvr, &n, &a, &n1, &wr, &wi, &vl, &n2, &vr, &n3, &workspaceQuery, &lwork, &info)
         
         var work = [Float](repeating: 0, count: Int(workspaceQuery))
         lwork = __CLPK_integer(workspaceQuery)
         
         // Execute sgeev() again to compute eigenvalues and eigenvectors
-        sgeev_(jobvl, jobvr, &n, &a, &n, &wr, &wi, &vl, &n, &vr, &n, &work, &lwork, &info)
+        sgeev_(jobvl, jobvr, &n, &a, &n1, &wr, &wi, &vl, &n2, &vr, &n3, &work, &lwork, &info)
         
         return (eigenvalues: wr, eigenvectors: vr)
     }

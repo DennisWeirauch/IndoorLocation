@@ -140,16 +140,13 @@ class MapViewController: UIViewController, UIPopoverPresentationControllerDelega
         let settingsVC = SettingsTableViewController()
         
         settingsVC.modalPresentationStyle = .popover
-        let frame = self.view.frame
-        
-        settingsVC.preferredContentSize = CGSize(width: min(250, 2 * frame.width / 3), height: frame.height)
         settingsVC.settingsDelegate = self
         
         let popoverVC = settingsVC.popoverPresentationController
-        popoverVC?.permittedArrowDirections = UIPopoverArrowDirection(rawValue: 0)
+        popoverVC?.permittedArrowDirections = .up// UIPopoverArrowDirection(rawValue: 0)
         popoverVC?.delegate = self
         popoverVC?.sourceView = self.view
-        popoverVC?.sourceRect = CGRect(x: frame.width, y: frame.height / 2, width: 1, height: 1)
+        popoverVC?.sourceRect = settingsButton.frame// CGRect(x: frame.width, y: frame.height / 2, width: 1, height: 1)
         
         self.present(settingsVC, animated: true, completion: nil)
     }

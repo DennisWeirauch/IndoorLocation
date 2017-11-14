@@ -88,6 +88,7 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
     }
     
     override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
         // Set up close button
         let closeButton = UIButton(frame: CGRect(x: view.frame.width - 35, y: 15, width: 20, height: 20))
         closeButton.setImage(UIImage(named: "closeIcon"), for: .normal)
@@ -96,6 +97,7 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
     }
     
     override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
         // Initialize filter if necessary
         if filterInitializationPending {
             switch filterSettings.filterType {
@@ -103,15 +105,23 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
                 IndoorLocationManager.shared.filter = nil
             case .kalman:
                 guard let anchors = IndoorLocationManager.shared.anchors,
-                    let initialDistances = IndoorLocationManager.shared.initialDistances else { return }
+                    let initialDistances = IndoorLocationManager.shared.initialDistances else {
+                        filterSettings.filterType = .none
+                        IndoorLocationManager.shared.filter = nil
+                        return
+                }
                 if let filter = ExtendedKalmanFilter(anchors: anchors.filter({ $0.isActive }), distances: initialDistances) {
                     IndoorLocationManager.shared.filter = filter
                 } else {
-                    alertWithTitle("Error", message: "Could not initialize Kalman filter! Make sure at least 3 anchors are within range.")
+                    alertWithTitle("Error", message: "Could not initialize Extended Kalman filter! Make sure at least one anchor is within range.")
                 }
             case .particle:
                 guard let anchors = IndoorLocationManager.shared.anchors,
-                    let initialDistances = IndoorLocationManager.shared.initialDistances else { return }
+                    let initialDistances = IndoorLocationManager.shared.initialDistances else {
+                        filterSettings.filterType = .none
+                        IndoorLocationManager.shared.filter = nil
+                        return
+                }
                 if let filter = ParticleFilter(anchors: anchors.filter({ $0.isActive }), distances: initialDistances) {
                     IndoorLocationManager.shared.filter = filter
                 } else {
@@ -156,8 +166,8 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
             return 2
         case .calibration:
             var numAnchorCells = IndoorLocationManager.shared.anchors?.count ?? 0
-            if numAnchorCells < 20 {
-                // If less than 20 anchors are entered add an empty cell
+            if numAnchorCells < 10 {
+                // If less than 10 anchors are entered add an empty cell
                 numAnchorCells += 1
             }
             // Another cell is added for the calibration button
@@ -312,10 +322,10 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
         // Determine which slider has changed and edit its value in the settings accordingly
         switch sliderType {
         case .processUncertainty:
-            filterSettings.processUncertainty = Int(sender.value)
+            filterSettings.processUncertainty = Int(10^^sender.value)
             filterInitializationPending = true
         case .distanceUncertainty:
-            filterSettings.distanceUncertainty = Int(sender.value)
+            filterSettings.distanceUncertainty = Int(10^^sender.value)
             filterInitializationPending = true
         case .numberOfParticles:
             filterSettings.numberOfParticles = Int(sender.value)
@@ -415,10 +425,10 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
                     switch indexPath.row {
                     case 1:
                         // Process uncertainty slider
-                        cell.setupWithValue(filterSettings.processUncertainty, minValue: 0, maxValue: 200, text: "Proc. uncertainty:", unit: "mG²", delegate: self, tag: SliderType.processUncertainty.rawValue)
+                        cell.setupWithValue(Float(filterSettings.processUncertainty), minValue: 1, maxValue: 1000000, text: "Process uncertainty:", unit: "mG²", isLogarithmic: true, delegate: self, tag: SliderType.processUncertainty.rawValue)
                     case 2:
                         // Distance uncertainty slider
-                        cell.setupWithValue(filterSettings.distanceUncertainty, minValue: 1, maxValue: 100, text: "Dist. uncertainty:", unit: "cm²", delegate: self, tag: SliderType.distanceUncertainty.rawValue)
+                        cell.setupWithValue(Float(filterSettings.distanceUncertainty), minValue: 1, maxValue: 1000000, text: "Distance uncertainty:", unit: "cm²", isLogarithmic: true, delegate: self, tag: SliderType.distanceUncertainty.rawValue)
                     default:
                         break
                     }
@@ -427,16 +437,16 @@ class SettingsTableViewController: UITableViewController, AnchorTableViewCellDel
                     switch indexPath.row {
                     case 2:
                         // Process uncertainty slider
-                        cell.setupWithValue(filterSettings.processUncertainty, minValue: 0, maxValue: 200, text: "Proc. uncertainty:", unit: "mG²", delegate: self, tag: SliderType.processUncertainty.rawValue)
+                        cell.setupWithValue(Float(filterSettings.processUncertainty), minValue: 1, maxValue: 1000000, text: "Process uncertainty:", unit: "mG²", isLogarithmic: true, delegate: self, tag: SliderType.processUncertainty.rawValue)
                     case 3:
                         // Distance uncertainty slider
-                        cell.setupWithValue(filterSettings.distanceUncertainty, minValue: 1, maxValue: 100, text: "Dist. uncertainty:", unit: "cm²", delegate: self, tag: SliderType.distanceUncertainty.rawValue)
+                        cell.setupWithValue(Float(filterSettings.distanceUncertainty), minValue: 1, maxValue: 1000000, text: "Distance uncertainty:", unit: "cm²", isLogarithmic: true, delegate: self, tag: SliderType.distanceUncertainty.rawValue)
                     case 4:
                         // Number of particles slider
-                        cell.setupWithValue(filterSettings.numberOfParticles, minValue: 1, maxValue: 2500, text: "No. Particles:", delegate: self, tag: SliderType.numberOfParticles.rawValue)
+                        cell.setupWithValue(Float(filterSettings.numberOfParticles), minValue: 1, maxValue: 3000, text: "No. Particles:", delegate: self, tag: SliderType.numberOfParticles.rawValue)
                     case 5:
                         // Effective sample size slider
-                        cell.setupWithValue(Int(filterSettings.N_thr), minValue: 1, maxValue: 2500, text: "N_thr:", delegate: self, tag: SliderType.N_thr.rawValue)
+                        cell.setupWithValue(filterSettings.N_thr, minValue: 1, maxValue: 3000, text: "N_thr:", delegate: self, tag: SliderType.N_thr.rawValue)
                     default:
                         break
                     }

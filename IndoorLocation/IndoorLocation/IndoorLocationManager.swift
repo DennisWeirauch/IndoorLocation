@@ -120,7 +120,10 @@ class IndoorLocationManager {
      */
     func calibrate(resultCallback: @escaping (_ error: Error?) -> ()) {
         // Generate string of calibration data to send to the arduino.
-        guard let anchors = anchors else { return }
+        guard let anchors = anchors else {
+            alertWithTitle("Error", message: "No anchors were specified!")
+            return
+        }
         var anchorStringData = ""
         for (i, anchor) in anchors.enumerated() {
             // Multiply coordinates by 10 to convert from cm to mm. Also mirror y axis.
@@ -222,6 +225,7 @@ class IndoorLocationManager {
                 resultCallback(error)
             case .success(_):
                 self.isRanging = false
+                self.position = nil
                 resultCallback(nil)
             }
         }

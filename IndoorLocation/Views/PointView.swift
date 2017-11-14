@@ -31,11 +31,11 @@ class PointView: UIView {
         
         switch pointType {
         case .position(let position):
-            pointSize = 20
+            pointSize = 12
             width = pointSize
             pointPosition = position
         case .anchor(let anchor):
-            pointSize = 20
+            pointSize = 12
             width = 5 * pointSize
             pointPosition = anchor.position
         case .particle(let particle):
